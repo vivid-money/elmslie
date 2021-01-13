@@ -14,7 +14,13 @@ android {
 }
 
 dependencies {
+    implementation(project(":elmslie-core"))
+    implementation(project(":elmslie-utils"))
+
+    implementation("androidx.appcompat:appcompat:1.1.0")
+
     implementation("io.reactivex.rxjava2:rxjava:2.2.20")
+    implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
 }
 
 apply from: "../gradle/junit-5.gradle"
