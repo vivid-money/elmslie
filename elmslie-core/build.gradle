@@ -2,12 +2,10 @@ plugins {
     id("kotlin")
 }
 
-test {
-    useJUnitPlatform()
-}
-
 dependencies {
+    implementation(project(":elmslie-utils"))
     implementation("io.reactivex.rxjava2:rxjava:2.2.20")
 }
 
+apply from: "../gradle/junit-5.gradle"
 apply from: "../gradle/kotlin-publishing.gradle"
