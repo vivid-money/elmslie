@@ -1,0 +1,24 @@
+plugins {
+    id("com.android.library")
+    id("kotlin-android")
+}
+
+tasks.withType(Test) { // FIXME: Unify platform integration
+    useJUnitPlatform()
+}
+
+android {
+    compileSdkVersion 30
+
+    defaultConfig.minSdkVersion 15 // FIXME Decide
+    defaultConfig.targetSdkVersion 30
+
+    compileOptions.sourceCompatibility = JavaVersion.VERSION_1_8
+    compileOptions.targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+dependencies {
+    implementation("io.reactivex.rxjava2:rxjava:2.2.20")
+}
+
+apply from: "../gradle/android-publishing.gradle"

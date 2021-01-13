@@ -1,0 +1,3 @@
+include ':elmslie-core'
+include ':elmslie-android'
+rootProject.name = "Elmslie"

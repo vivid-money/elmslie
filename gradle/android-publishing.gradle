@@ -1,0 +1,40 @@
+apply plugin: "maven-publish"
+
+group = libraryGroup
+version = libraryVersion
+
+task sourcesJar(type: Jar) {
+    archiveClassifier.set("sources")
+    from android.sourceSets.main.java.srcDirs
+}
+
+task javadocs(type: Javadoc) {
+    failOnError false
+    source = android.sourceSets.main.java.sourceFiles
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    classpath += configurations.compile
+}
+
+task javadocsJar(type: Jar, dependsOn: javadocs) {
+    archiveClassifier.set('javadoc')
+    from javadocs.destinationDir
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                artifactId = project.name
+                artifact javadocsJar
+                artifact sourcesJar
+            }
+            debug(MavenPublication) {
+                from components.debug
+                artifactId = "$project.name-debug"
+                artifact javadocsJar
+                artifact sourcesJar
+            }
+        }
+    }
+}
