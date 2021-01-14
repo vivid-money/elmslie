@@ -1,14 +1,11 @@
 package vivid.money.elmslie.android.screen
 
-import androidx.lifecycle.Lifecycle
 import vivid.money.elmslie.core.store.Store
 
 /**
  * Required part of MVI implementation for each fragment
  */
 interface MviDelegate<Event : Any, Effect : Any, State : Any, MviStore : Store<Event, Effect, State>> {
-
-    val screenLifecycle: Lifecycle
 
     val initEvent: Event
     fun createStore(): MviStore

@@ -13,8 +13,9 @@ import vivid.money.elmslie.android.util.fastLazy
 import vivid.money.elmslie.core.config.ElmslieConfig
 import vivid.money.elmslie.core.store.Store
 
-internal class ScreenMvi<Event : Any, Effect : Any, State : Any, MviStore : Store<Event, Effect, State>>(
+class ScreenMvi<Event : Any, Effect : Any, State : Any, MviStore : Store<Event, Effect, State>>(
     private val delegate: MviDelegate<Event, Effect, State, MviStore>,
+    screenLifecycle: Lifecycle,
     private val activityProvider: () -> Activity
 ) {
 
@@ -68,7 +69,7 @@ internal class ScreenMvi<Event : Any, Effect : Any, State : Any, MviStore : Stor
     }
 
     init {
-        delegate.screenLifecycle.addObserver(lifecycleObserver)
+        screenLifecycle.addObserver(lifecycleObserver)
     }
 
     private fun isAllowedToRunMvi() = !isAfterProcessDeath || activityProvider() is MviSurvivesProcessDeath
@@ -77,19 +78,17 @@ internal class ScreenMvi<Event : Any, Effect : Any, State : Any, MviStore : Stor
         .skip(1) // skipped first state, because we need to avoid rendering initial state twice
         .observeOn(Schedulers.computation())
         .map { state -> state to delegate.mapList(state) }
+        .doOnError { logger.fatal("Crash while rendering state", it) }
+        .retry()
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe({ (state, list) ->
+        .subscribe { (state, list) ->
             delegate.render(state)
             delegate.renderList(list)
-        }, {
-            logger.fatal("Crash while rendering state", it)
-        })
+        }
 
     private fun observeEffects(): Disposable = store.effects
+        .doOnError { logger.fatal("Crash while handling effect", it) }
+        .retry()
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe({
-            delegate.handleEffect(it)
-        }, {
-            logger.fatal("Crash while handling effect", it)
-        })
+        .subscribe { delegate.handleEffect(it) }
 }
