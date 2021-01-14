@@ -62,7 +62,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
                     .subscribeOn(io())
             }
             .subscribe(eventsInternal::onNext) {
-                logger.error("Exception happened while executing a command", it)
+                logger.fatal("Unexpected actor error", it)
             }
             .bind()
 

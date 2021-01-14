@@ -53,11 +53,11 @@ interface MappingActor<Event : Any> {
         failureEventMapper: (Throwable) -> Event
     ): Observable<Event> = mapSuccessEvent(successEventMapper).mapErrorEvent(failureEventMapper)
 
-    fun <T> Single<T>.mapSuccessEvent(
+    fun <T : Any> Single<T>.mapSuccessEvent(
         successEvent: Event
     ): Observable<Event> = toObservable().mapSuccessEvent(successEvent)
 
-    fun <T> Single<T>.mapSuccessEvent(
+    fun <T : Any> Single<T>.mapSuccessEvent(
         successEventMapper: (T) -> Event
     ): Observable<Event> = toObservable().mapSuccessEvent(successEventMapper)
 
@@ -92,6 +92,7 @@ interface MappingActor<Event : Any> {
     ): Observable<Event> = this
         .map(successEventMapper)
         .toSingle(completionEvent)
+        .doOnSuccess { ElmslieConfig.logger.debug("Completed app state: $it") }
         .mapErrorEvent(failureEventMapper)
 
     fun <T : Any> Observable<T>.mapEvents(
@@ -109,11 +110,11 @@ interface MappingActor<Event : Any> {
         failureEventMapper: (throwable: Throwable) -> Event
     ): Observable<Event> = mapSuccessEvent(successEventMapper).mapErrorEvent(failureEventMapper)
 
-    fun <T> Observable<T>.mapSuccessEvent(
+    fun <T : Any> Observable<T>.mapSuccessEvent(
         successEvent: Event
     ): Observable<Event> = mapSuccessEvent { successEvent }
 
-    fun <T> Observable<T>.mapSuccessEvent(
+    fun <T : Any> Observable<T>.mapSuccessEvent(
         successEventMapper: (T) -> Event
     ): Observable<Event> = map(successEventMapper).doOnNext {
         ElmslieConfig.logger.debug("Completed app state: $it")
@@ -126,7 +127,7 @@ interface MappingActor<Event : Any> {
     fun Observable<Event>.mapErrorEvent(
         failureEvent: (Throwable) -> Event
     ): Observable<Event> = onErrorReturn { error ->
-        ElmslieConfig.logger.error(error = error)
+        ElmslieConfig.logger.nonfatal(error = error)
         failureEvent(error).also { ElmslieConfig.logger.debug("Failed app state: $it") }
     }
 }
