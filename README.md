@@ -39,3 +39,6 @@ allprojects {
 - [ELM. Pt2 (English)](https://proandroiddev.com/taming-state-in-android-with-elm-architecture-and-kotlin-part-2-c709f75f7596)
 - [ELM. Pt3 (English)](https://proandroiddev.com/taming-state-in-android-with-elm-architecture-and-kotlin-part-2-c709f75f7596)
 
+## Publishing
+To publish the library add `github.api.token` with github api token with `repo` scope to `local.properties`  
+Then run `./sh/release.sh $NEXT_LIBRARY_VERSION`
