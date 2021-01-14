@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicReference
 /**
  * Buffers a [PublishSubject], if it's guaranteed that it has a single subscriber
  */
-class EffectsBuffer<T>(
+internal class EffectsBuffer<T>(
     private val source: PublishSubject<T>
 ) : AtomicBoolean(), Disposable {
 

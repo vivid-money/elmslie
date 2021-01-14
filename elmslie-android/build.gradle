@@ -15,7 +15,6 @@ android {
 
 dependencies {
     implementation(project(":elmslie-core"))
-    implementation(project(":elmslie-utils"))
 
     implementation("androidx.appcompat:appcompat:1.1.0")
 

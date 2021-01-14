@@ -13,7 +13,7 @@ import vivid.money.elmslie.android.util.fastLazy
 import vivid.money.elmslie.core.config.ElmslieConfig
 import vivid.money.elmslie.core.store.Store
 
-class ScreenMvi<Event : Any, Effect : Any, State : Any, MviStore : Store<Event, Effect, State>>(
+internal class ScreenMvi<Event : Any, Effect : Any, State : Any, MviStore : Store<Event, Effect, State>>(
     private val delegate: MviDelegate<Event, Effect, State, MviStore>,
     private val activityProvider: () -> Activity
 ) {

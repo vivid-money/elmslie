@@ -1,9 +1,9 @@
-package vivid.money.elmslie.utils.model
+package vivid.money.elmslie.core.store
 
 /**
  * Use this wrapper in case when expected not null value but null value can be present
  */
-data class Option<T : Any>(
+internal data class Option<T : Any>(
     val value: T?
 ) {
 

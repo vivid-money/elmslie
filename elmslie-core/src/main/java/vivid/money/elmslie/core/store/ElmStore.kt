@@ -1,21 +1,22 @@
 package vivid.money.elmslie.core.store
 
 import io.reactivex.Observable
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.schedulers.Schedulers.io
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import vivid.money.elmslie.core.config.ElmslieConfig
-import vivid.money.elmslie.utils.disposable.DisposableDelegate
-import vivid.money.elmslie.utils.disposable.DisposableDelegateImpl
 
 class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     initialState: State,
     private val reducer: StateReducer<Event, State, Effect, Command>,
     private val actor: Actor<Command, Event>
-) : Store<Event, Effect, State>, DisposableDelegate by DisposableDelegateImpl() {
+) : Store<Event, Effect, State> {
 
     private val logger = ElmslieConfig.logger
+    private val disposables = CompositeDisposable()
     private val scheduler = Schedulers.newThread() // TODO: Check if correct
 
     // We can't use subject to store state to keep it synchronized with children
@@ -87,7 +88,9 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
         store
             .effects
             .observeOn(scheduler)
-            .flatMap { effect -> effectMapper(statesInternal.value!!, effect)?.let { Observable.just(it) } ?: Observable.empty() }
+            .flatMap { effect ->
+                effectMapper(statesInternal.value!!, effect)?.let { Observable.just(it) } ?: Observable.empty()
+            }
             .subscribe(effectsInternal::onNext)
             .bind()
 
@@ -106,4 +109,10 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
 
         return this
     }
+
+    private fun Disposable.bind() = let(disposables::add)
+
+    override fun dispose() = disposables.dispose()
+
+    override fun isDisposed(): Boolean = disposables.isDisposed
 }

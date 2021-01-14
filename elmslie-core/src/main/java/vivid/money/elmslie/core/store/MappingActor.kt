@@ -5,7 +5,6 @@ import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
 import vivid.money.elmslie.core.config.ElmslieConfig
-import vivid.money.elmslie.utils.model.Option
 
 @Suppress("ComplexInterface", "TooManyFunctions")
 interface MappingActor<Event : Any> {
