@@ -1,6 +1,8 @@
 package vivid.money.elmslie.android.screen
 
 import android.app.Activity
+import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
@@ -20,6 +22,7 @@ class ElmScreen<Event : Any, Effect : Any, State : Any, MviStore : Store<Event, 
 ) {
 
     private val logger = ElmslieConfig.logger
+    private val handler = Handler(Looper.getMainLooper())
     val store: MviStore by fastLazy { delegate.createStore() }
 
     private var effectsDisposable: Disposable? = null
@@ -80,10 +83,12 @@ class ElmScreen<Event : Any, Effect : Any, State : Any, MviStore : Store<Event, 
         .map { state -> state to delegate.mapList(state) }
         .doOnError { logger.fatal("Crash while rendering state", it) }
         .retry()
-        .observeOn(AndroidSchedulers.mainThread())
         .subscribe { (state, list) ->
-            delegate.render(state)
-            delegate.renderList(list)
+            handler.removeCallbacksAndMessages(null)
+            handler.post {
+                delegate.render(state)
+                delegate.renderList(list)
+            }
         }
 
     private fun observeEffects(): Disposable = store.effects
