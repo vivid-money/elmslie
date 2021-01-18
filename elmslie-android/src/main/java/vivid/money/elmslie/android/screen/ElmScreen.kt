@@ -13,17 +13,16 @@ import vivid.money.elmslie.android.processdeath.StopElmOnProcessDeath
 import vivid.money.elmslie.android.processdeath.ProcessDeathDetector
 import vivid.money.elmslie.android.util.fastLazy
 import vivid.money.elmslie.core.config.ElmslieConfig
-import vivid.money.elmslie.core.store.Store
 
-class ElmScreen<Event : Any, Effect : Any, State : Any, MviStore : Store<Event, Effect, State>>(
-    private val delegate: ElmDelegate<Event, Effect, State, MviStore>,
+class ElmScreen<Event : Any, Effect : Any, State : Any>(
+    private val delegate: ElmDelegate<Event, Effect, State>,
     screenLifecycle: Lifecycle,
     private val activityProvider: () -> Activity
 ) {
 
     private val logger = ElmslieConfig.logger
     private val handler = Handler(Looper.getMainLooper())
-    val store: MviStore by fastLazy { delegate.createStore() }
+    val store by fastLazy { delegate.createStore() }
 
     private var effectsDisposable: Disposable? = null
     private var statesDisposable: Disposable? = null
