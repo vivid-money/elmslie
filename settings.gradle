@@ -1,3 +1,5 @@
 include ':elmslie-core'
 include ':elmslie-android'
+include ':elmslie-test'
+
 rootProject.name = "Elmslie"

@@ -1,4 +1,4 @@
-package vivid.money.elmslie.core.testutil.extension
+package vivid.money.elmslie.test
 
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.TestScheduler

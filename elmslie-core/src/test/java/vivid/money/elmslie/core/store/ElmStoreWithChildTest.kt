@@ -8,8 +8,8 @@ import vivid.money.elmslie.core.testutil.ext.NoOpActor
 import vivid.money.elmslie.core.testutil.ext.NoOpReducer
 import vivid.money.elmslie.core.testutil.ext.actor
 import vivid.money.elmslie.core.testutil.ext.reducer
-import vivid.money.elmslie.core.testutil.extension.TestSchedulerExtension
 import vivid.money.elmslie.core.testutil.model.*
+import vivid.money.elmslie.test.TestSchedulerExtension
 
 class ElmStoreWithChildTest {
 

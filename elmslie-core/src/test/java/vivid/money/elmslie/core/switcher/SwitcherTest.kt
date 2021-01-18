@@ -4,7 +4,7 @@ import io.reactivex.Observable
 import io.reactivex.schedulers.TestScheduler
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
-import vivid.money.elmslie.core.testutil.extension.TestSchedulerExtension
+import vivid.money.elmslie.test.TestSchedulerExtension
 import java.util.concurrent.TimeUnit
 
 class SwitcherTest {

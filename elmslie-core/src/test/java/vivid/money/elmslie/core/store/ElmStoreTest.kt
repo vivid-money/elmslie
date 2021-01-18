@@ -8,11 +8,11 @@ import vivid.money.elmslie.core.testutil.ext.NoOpActor
 import vivid.money.elmslie.core.testutil.ext.NoOpReducer
 import vivid.money.elmslie.core.testutil.ext.actor
 import vivid.money.elmslie.core.testutil.ext.reducer
-import vivid.money.elmslie.core.testutil.extension.TestSchedulerExtension
 import vivid.money.elmslie.core.testutil.model.Command
 import vivid.money.elmslie.core.testutil.model.Effect
 import vivid.money.elmslie.core.testutil.model.Event
 import vivid.money.elmslie.core.testutil.model.State
+import vivid.money.elmslie.test.TestSchedulerExtension
 import java.util.concurrent.TimeUnit
 
 class ElmStoreTest {
