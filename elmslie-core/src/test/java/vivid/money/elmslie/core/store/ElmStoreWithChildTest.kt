@@ -4,10 +4,6 @@ import io.reactivex.Observable
 import io.reactivex.schedulers.TestScheduler
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
-import vivid.money.elmslie.core.testutil.ext.NoOpActor
-import vivid.money.elmslie.core.testutil.ext.NoOpReducer
-import vivid.money.elmslie.core.testutil.ext.actor
-import vivid.money.elmslie.core.testutil.ext.reducer
 import vivid.money.elmslie.core.testutil.model.*
 import vivid.money.elmslie.test.TestSchedulerExtension
 
@@ -23,11 +19,11 @@ class ElmStoreWithChildTest {
     fun `Parent event is propagated to child and state update is received afterwards`() {
         val parent = parentStore(
             ParentState(),
-            reducer { _, state -> Result(state = state.copy(value = 10)) }
+            { _, state -> Result(state = state.copy(value = 10)) }
         )
         val child = childStore(
             ChildState(),
-            reducer { _, state -> Result(state.copy(value = 100), effect = ChildEffect) }
+            { _, state -> Result(state.copy(value = 100), effect = ChildEffect) }
         )
         parent.addChildStore(
             child,
@@ -52,11 +48,11 @@ class ElmStoreWithChildTest {
     fun `Parent event is propagated to child and effect is received afterwards`() {
         val parent = parentStore(
             ParentState(),
-            reducer { _, state -> Result(state = state.copy(value = 10)) }
+            { _, state -> Result(state = state.copy(value = 10)) }
         )
         val child = childStore(
             ChildState(),
-            reducer { _, state -> Result(state.copy(value = 100), effect = ChildEffect) }
+            { _, state -> Result(state.copy(value = 100), effect = ChildEffect) }
         )
         parent.addChildStore(
             child,
@@ -78,18 +74,18 @@ class ElmStoreWithChildTest {
     fun `Child state update after action is propagated to the parent`() {
         val parent = parentStore(
             ParentState(),
-            reducer { _, state -> Result(state = state.copy(value = 10)) }
+            { _, state -> Result(state = state.copy(value = 10)) }
         )
         val child = childStore(
             ChildState(),
-            reducer { event, state ->
+            { event, state ->
                 if (event == ChildEvent.First) {
                     Result(state.copy(value = 100), command = ChildCommand)
                 } else {
                     Result(state.copy(value = 200))
                 }
             },
-            actor { Observable.just(ChildEvent.Second) }
+            { Observable.just(ChildEvent.Second) }
         )
         parent.addChildStore(
             child,
@@ -128,14 +124,14 @@ class ElmStoreWithChildTest {
         val parent = parentStore(ParentState())
         val child = childStore(
             ChildState(),
-            reducer { event, state ->
+            { event, state ->
                 when (event) {
                     ChildEvent.First -> Result(state.copy(value = 100), command = ChildCommand)
                     ChildEvent.Second -> Result(state.copy(value = 200))
                     ChildEvent.Third -> Result(state.copy(value = 300))
                 }
             },
-            actor { Observable.just(ChildEvent.Second, ChildEvent.Third) }
+            { Observable.just(ChildEvent.Second, ChildEvent.Third) }
         )
         parent.addChildStore(
             child,

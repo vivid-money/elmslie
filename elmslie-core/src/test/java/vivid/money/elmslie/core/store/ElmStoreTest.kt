@@ -4,10 +4,6 @@ import io.reactivex.Observable
 import io.reactivex.schedulers.TestScheduler
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
-import vivid.money.elmslie.core.testutil.ext.NoOpActor
-import vivid.money.elmslie.core.testutil.ext.NoOpReducer
-import vivid.money.elmslie.core.testutil.ext.actor
-import vivid.money.elmslie.core.testutil.ext.reducer
 import vivid.money.elmslie.core.testutil.model.Command
 import vivid.money.elmslie.core.testutil.model.Effect
 import vivid.money.elmslie.core.testutil.model.Event
@@ -38,10 +34,10 @@ class ElmStoreTest {
     fun `Disposing store stops state`() {
         val store = store(
             State(),
-            reducer { _, state ->
+            { _, state ->
                 Result(state = state.copy(value = state.value + 1), command = Command())
             },
-            actor { Observable.timer(2, TimeUnit.SECONDS).map { Event() } }
+            { Observable.timer(2, TimeUnit.SECONDS).map { Event() } }
         ).start()
 
         val observer = store.states.test()
@@ -62,7 +58,7 @@ class ElmStoreTest {
     fun `Event triggers state update`() {
         val store = store(
             State(),
-            reducer { event, state -> Result(state = state.copy(value = event.value)) }
+            { event, state -> Result(state = state.copy(value = event.value)) }
         ).start()
 
         val observer = store.states.test()
@@ -79,7 +75,7 @@ class ElmStoreTest {
     fun `Not changed state is not emitted`() {
         val store = store(
             State(),
-            reducer { event, state -> Result(state = state.copy(value = event.value)) }
+            { event, state -> Result(state = state.copy(value = event.value)) }
         ).start()
 
         val observer = store.states.test()
@@ -94,7 +90,7 @@ class ElmStoreTest {
     fun `Emitted effect is received by observers`() {
         val store = store(
             State(),
-            reducer { event, state -> Result(state = state, effect = Effect(value = event.value)) }
+            { event, state -> Result(state = state, effect = Effect(value = event.value)) }
         ).start()
 
         val observer = store.effects.test()
@@ -109,13 +105,13 @@ class ElmStoreTest {
     fun `Command result is observed by store`() {
         val store = store(
             State(),
-            reducer { event, state ->
+            { event, state ->
                 Result(
                     state = state.copy(value = event.value),
                     command = Command(event.value - 1).takeIf { event.value > 0 }
                 )
             },
-            actor { Observable.just(Event(it.value)) }
+            { Observable.just(Event(it.value)) }
         ).start()
 
         val observer = store.states.test()

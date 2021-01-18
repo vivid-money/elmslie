@@ -2,7 +2,7 @@ package vivid.money.elmslie.core.store
 
 import io.reactivex.Observable
 
-interface Actor<Command : Any, Event : Any> : MappingActor<Event> {
+fun interface Actor<Command : Any, Event : Any> : MappingActor<Event> {
 
     /**
      * Executes a command.
@@ -13,3 +13,4 @@ interface Actor<Command : Any, Event : Any> : MappingActor<Event> {
      */
     fun execute(command: Command): Observable<Event>
 }
+
