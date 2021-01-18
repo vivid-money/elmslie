@@ -5,13 +5,13 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
-import vivid.money.elmslie.android.base.ElmslieActivity
+import vivid.money.elmslie.android.base.ElmActivity
 import vivid.money.elmslie.samples.android.loader.elm.Effect
 import vivid.money.elmslie.samples.android.loader.elm.Event
 import vivid.money.elmslie.samples.android.loader.elm.State
 import vivid.money.elmslie.samples.android.loader.elm.storeFactory
 
-class MainActivity : ElmslieActivity<Event, Effect, State>() {
+class MainActivity : ElmActivity<Event, Effect, State>() {
 
     override val initEvent: Event = Event.Init
 
