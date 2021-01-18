@@ -40,12 +40,14 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
         eventsInternal
             .observeOn(scheduler)
             .flatMap { event ->
+                logger.debug("New event: $event")
                 val (effects, commands) = synchronized(stateReferenceLock) {
                     val state = statesInternal.value!!
                     val result = reducer.reduce(event, state)
                     statesInternal.onNext(result.state)
                     result.effects to result.commands
                 }
+                effects.forEach { logger.debug("New effect: $it") }
                 effects.forEach(effectsInternal::onNext)
                 Observable.fromIterable(commands)
             }
@@ -56,6 +58,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
 
         commandsInternal
             .flatMap { command ->
+                logger.debug("Executing command: $command")
                 actor.execute(command)
                     .doOnError { logger.nonfatal(error = it) }
                     .onErrorResumeNext(Observable.empty())
