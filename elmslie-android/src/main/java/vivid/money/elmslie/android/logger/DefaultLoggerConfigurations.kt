@@ -5,13 +5,13 @@ import vivid.money.elmslie.android.logger.strategy.AndroidLog
 import vivid.money.elmslie.core.config.ElmslieConfig
 import vivid.money.elmslie.core.logger.strategy.IgnoreLog
 
-fun ElmslieConfig.defaultProdLogger() = logger {
+fun ElmslieConfig.defaultReleaseLogger() = logger {
     fatal(Crash)
     nonfatal(IgnoreLog)
     debug(IgnoreLog)
 }
 
-fun ElmslieConfig.defaultDevLogger() = logger {
+fun ElmslieConfig.defaultDebugLogger() = logger {
     fatal(Crash)
     nonfatal(AndroidLog)
     debug(AndroidLog)

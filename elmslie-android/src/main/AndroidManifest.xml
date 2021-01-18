@@ -1,1 +1,11 @@
-<manifest package="vivid.money.elmslie.android" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+        package="vivid.money.elmslie.android">
+
+    <application>
+        <provider
+                android:name=".logger.DefaultInitContentProvider"
+                android:authorities="${applicationId}.elmslie.initprovider"
+                android:exported="false"
+                android:initOrder="900" />
+    </application>
+</manifest>
