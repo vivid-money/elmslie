@@ -1,5 +1,7 @@
 include ':elmslie-core'
 include ':elmslie-android'
 include ':elmslie-test'
+include ':sample-kotlin-calculator'
+project(":sample-kotlin-calculator").projectDir = file("elmslie-samples/kotlin-calculator")
 
 rootProject.name = "Elmslie"
