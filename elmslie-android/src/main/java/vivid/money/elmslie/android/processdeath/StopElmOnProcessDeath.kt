@@ -1,3 +1,3 @@
 package vivid.money.elmslie.android.processdeath
 
-interface ElmSurvivesProcessDeath
+interface StopElmOnProcessDeath

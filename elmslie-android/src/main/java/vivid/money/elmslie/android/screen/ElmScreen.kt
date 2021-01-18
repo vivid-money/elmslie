@@ -7,7 +7,7 @@ import androidx.lifecycle.OnLifecycleEvent
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import vivid.money.elmslie.android.processdeath.ElmSurvivesProcessDeath
+import vivid.money.elmslie.android.processdeath.StopElmOnProcessDeath
 import vivid.money.elmslie.android.processdeath.ProcessDeathDetector
 import vivid.money.elmslie.android.util.fastLazy
 import vivid.money.elmslie.core.config.ElmslieConfig
@@ -72,7 +72,7 @@ class ElmScreen<Event : Any, Effect : Any, State : Any, MviStore : Store<Event, 
         screenLifecycle.addObserver(lifecycleObserver)
     }
 
-    private fun isAllowedToRunMvi() = !isAfterProcessDeath || activityProvider() is ElmSurvivesProcessDeath
+    private fun isAllowedToRunMvi() = !isAfterProcessDeath || activityProvider() !is StopElmOnProcessDeath
 
     private fun observeStates() = store.states
         .skip(1) // skipped first state, because we need to avoid rendering initial state twice
