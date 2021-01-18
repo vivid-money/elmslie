@@ -3,8 +3,8 @@ plugins {
 }
 
 dependencies {
-    implementation("org.junit.jupiter:junit-jupiter:5.7.0")
-    implementation("io.reactivex.rxjava2:rxjava:2.2.20")
+    implementation(deps.test.jUnit5)
+    implementation(deps.rx.rxJava2)
 }
 
 compileKotlin {

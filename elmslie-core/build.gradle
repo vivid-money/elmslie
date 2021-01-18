@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    implementation("io.reactivex.rxjava2:rxjava:2.2.20")
+    implementation(deps.rx.rxJava2)
     testImplementation(project(":elmslie-test"))
 }
 

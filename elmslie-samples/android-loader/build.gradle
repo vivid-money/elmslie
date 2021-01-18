@@ -4,10 +4,11 @@ plugins {
 }
 
 dependencies {
-    implementation("androidx.appcompat:appcompat:1.1.0")
-    implementation("io.reactivex.rxjava2:rxjava:2.2.20")
-    implementation(project(":elmslie-core"))
     implementation(project(":elmslie-android"))
+    implementation(project(":elmslie-core"))
+
+    implementation(deps.android.appcompat)
+    implementation(deps.rx.rxJava2)
 }
 
 apply from: "../../gradle/junit-5.gradle"

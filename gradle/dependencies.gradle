@@ -1,0 +1,27 @@
+ext.versions = [
+        kotlin       : "1.4.21",
+        androidPlugin: "4.0.1",
+        appcompat    : "1.1.0",
+        timber       : "4.7.1",
+        rxJava2      : "2.2.20",
+        rxAndroid    : "2.1.1",
+        jUnit5       : "5.7.0",
+]
+
+ext.deps = [
+        gradle : [
+                androidPlugin: "com.android.tools.build:gradle:$versions.androidPlugin",
+                kotlinPlugin : "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
+        ],
+        android: [
+                appcompat: "androidx.appcompat:appcompat:$versions.appcompat",
+                timber   : "com.jakewharton.timber:timber:$versions.timber",
+        ],
+        rx     : [
+                rxJava2  : "io.reactivex.rxjava2:rxjava:$versions.rxJava2",
+                rxAndroid: "io.reactivex.rxjava2:rxandroid:$versions.rxAndroid",
+        ],
+        test   : [
+                jUnit5: "org.junit.jupiter:junit-jupiter:$versions.jUnit5",
+        ]
+]
