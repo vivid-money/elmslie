@@ -3,9 +3,9 @@ package vivid.money.elmslie.android.screen
 import vivid.money.elmslie.core.store.Store
 
 /**
- * Required part of MVI implementation for each fragment
+ * Required part of ELM implementation for each fragment
  */
-interface MviDelegate<Event : Any, Effect : Any, State : Any, MviStore : Store<Event, Effect, State>> {
+interface ElmDelegate<Event : Any, Effect : Any, State : Any, MviStore : Store<Event, Effect, State>> {
 
     val initEvent: Event
     fun createStore(): MviStore

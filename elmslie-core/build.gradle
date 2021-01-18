@@ -6,5 +6,9 @@ dependencies {
     implementation("io.reactivex.rxjava2:rxjava:2.2.20")
 }
 
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
 apply from: "../gradle/junit-5.gradle"
 apply from: "../gradle/kotlin-publishing.gradle"
