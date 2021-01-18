@@ -42,3 +42,13 @@ allprojects {
 ## Publishing
 To publish the library add `github.api.token` with github api token with `repo` scope to `local.properties`  
 Then run `./sh/release.sh $NEXT_LIBRARY_VERSION`
+
+## Local development
+To quickly modify library sources alongside your project do this:
+Add library as git submodule
+- In terminal run `git submodule add {repo link.git} elmslie`
+Add this library as an included build
+- In `settings.gradle` add this line: `apply from: "gradle/elmslie_dev_mode.gradle"`
+Enable dev mode
+- In `local.properties` add this line: `elmslie.dev.mode=true`
+After this dependencies to Elmslie will be replaced with source code localed in `elmslie` directory
