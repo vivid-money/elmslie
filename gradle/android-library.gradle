@@ -1,0 +1,9 @@
+android {
+    compileSdkVersion 30
+
+    defaultConfig.minSdkVersion 15
+    defaultConfig.targetSdkVersion 30
+
+    compileOptions.sourceCompatibility = JavaVersion.VERSION_1_8
+    compileOptions.targetCompatibility = JavaVersion.VERSION_1_8
+}
