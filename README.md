@@ -23,6 +23,11 @@ This is a visual representation of the architecture:
 
 For more info head to the [wiki](https://github.com/vivid-money/elmslie/wiki)
 
+## Samples
+Samples are available [here](https://github.com/vivid-money/elmslie/tree/main/elmslie-samples)
+- Basic loader for android: [link](https://github.com/vivid-money/elmslie/tree/main/elmslie-samples/android-loader)
+- Pure kotlin calculator: [link](https://github.com/vivid-money/elmslie/tree/main/elmslie-samples/kotlin-calculator)
+
 ## Download
 Library is distributed through JitPack
 
