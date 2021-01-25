@@ -14,7 +14,14 @@ Named after [George Grant Elmslie](https://en.wikipedia.org/wiki/George_Grant_El
 - **UDF**: Say no to spaghetti code with Unidirectional Data Flow
 
 ## Documentation
-To get help head to the [wiki](https://github.com/vivid-money/elmslie/wiki)
+This is a visual representation of the architecture:
+<p>
+<img src="https://user-images.githubusercontent.com/16104123/105693941-68119e80-5f11-11eb-931f-1fcb79c0dfa4.png" width="500">
+</p>
+
+
+
+For more info head to the [wiki](https://github.com/vivid-money/elmslie/wiki)
 
 ## Download
 Library is distributed through JitPack
