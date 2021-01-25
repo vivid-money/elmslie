@@ -4,7 +4,7 @@
 [![](https://jitpack.io/v/vivid-money/elmslie.svg)](https://jitpack.io/#vivid-money/elmslie)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-Elmslie is a minimalistic reactive implementation of TEA/ELM written in kotlin.
+Elmslie is a minimalistic reactive implementation of TEA/ELM written in kotlin.  
 Named after [George Grant Elmslie](https://en.wikipedia.org/wiki/George_Grant_Elmslie), a Scottish-born architect.
 
 ## Why?
