@@ -60,7 +60,7 @@ To publish the library add `github.api.token` with github api token with `repo` 
 Then run `./sh/release.sh $NEXT_LIBRARY_VERSION`
 
 ## Local development
-To quickly modify library sources alongside your project do this:
+To quickly modify library sources alongside your project do this:  
 Add library as git submodule
 - In terminal run `git submodule add {repo link.git} elmslie`
 Add this library as an included build
