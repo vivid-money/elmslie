@@ -72,6 +72,8 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
         return this
     }
 
+    override fun stop() = disposables.clear()
+
     fun <ChildEvent : Any, ChildState : Any, ChildEffect : Any> addChildStore(
         store: Store<ChildEvent, ChildEffect, ChildState>,
         eventMapper: (parentEvent: Event) -> ChildEvent? = { null },

@@ -10,4 +10,5 @@ interface Store<Event, Effect, State> : Consumer<Event>, Disposable {
     val states: Observable<State>
     val effects: Observable<Effect>
     fun start(): Store<Event, Effect, State>
+    fun stop()
 }

@@ -65,7 +65,7 @@ class ElmScreen<Event : Any, Effect : Any, State : Any>(
         @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
         fun onDestroy() {
             if (isAllowedToRunMvi()) {
-                store.dispose()
+                store.stop()
             }
         }
     }
