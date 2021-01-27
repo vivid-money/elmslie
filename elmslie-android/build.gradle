@@ -7,7 +7,6 @@ dependencies {
     implementation(project(":elmslie-core"))
 
     implementation(deps.android.appcompat)
-    implementation(deps.android.timber)
 
     implementation(deps.rx.rxAndroid)
     implementation(deps.rx.rxJava2)
