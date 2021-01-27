@@ -52,7 +52,7 @@ createGithubRelease() {
     -X POST \
     -H "Authorization: token $TOKEN" \
     -H "Accept: application/vnd.github.v3+json" \
-    https://api.github.com/repos/diklimchuk/test/releases \
+    https://api.github.com/repos/vivid-money/elmslie/releases \
     -d "{\"tag_name\": \"$VERSION\"}"
 }
 
