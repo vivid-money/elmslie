@@ -13,6 +13,6 @@ fun ElmslieConfig.defaultReleaseLogger() = logger {
 
 fun ElmslieConfig.defaultDebugLogger() = logger {
     fatal(Crash)
-    nonfatal(AndroidLog)
-    debug(AndroidLog)
+    nonfatal(AndroidLog.E)
+    debug(AndroidLog.E)
 }
