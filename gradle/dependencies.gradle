@@ -1,6 +1,6 @@
 ext.versions = [
         kotlin       : "1.4.21",
-        androidPlugin: "4.0.1",
+        androidPlugin: "4.1.2",
         appcompat    : "1.1.0",
         rxJava2      : "2.2.20",
         rxAndroid    : "2.1.1",
