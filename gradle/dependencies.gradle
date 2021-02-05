@@ -9,6 +9,7 @@ ext.versions = [
         rxAndroid    : "3.0.0",
         jUnit5       : "5.7.0",
         kotest       : "4.4.0"
+        freemarker       : "2.3.29",
 ]
 
 ext.deps = [
@@ -30,6 +31,9 @@ ext.deps = [
                 jUnit5           : "org.junit.jupiter:junit-jupiter:$versions.jUnit5",
                 kotestJunitRunner: "io.kotest:kotest-runner-junit5-jvm:$versions.kotest",
                 kotestAssertions : "io.kotest:kotest-assertions-core:$versions.kotest",
-                kotestProperty   : "io.kotest:kotest-property:$versions.kotest",
+                kotestProperty   : "io.kotest:kotest-property:$versions.kotest"
+        ],
+        plugin : [
+                freemarker: "org.freemarker:freemarker:$versions.freemarker"
         ]
 ]

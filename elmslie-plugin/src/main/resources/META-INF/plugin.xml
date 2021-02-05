@@ -1,0 +1,35 @@
+<idea-plugin>
+    <id>vivid.money.elmslie.plugin</id>
+    <name>ELMSLIE GENERATOR</name>
+    <vendor email="support@vivid.money" url="https://vivid.money">Vivid money</vendor>
+
+    <description><![CDATA[
+    Plugin helps to generate presentation layer.
+    Elmslie architecture for android: https://github.com/vivid-money/elmslie
+    ]]></description>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.lang</depends>
+    <depends>org.jetbrains.kotlin</depends>
+    <depends>org.jetbrains.android</depends>
+
+    <actions>
+        <group id="vivid.money.elmslie.plugin.group" text="Elmslie" description="Create presentation layer">
+            <separator/>
+            <action id="vivid.money.elmslie.plugin.presentation.PresentationLayerAction"
+                    class="vivid.money.elmslie.plugin.presentation.PresentationLayerAction"
+                    text="Generate Presentation Layer">
+            </action>
+            <add-to-group group-id="NewGroup" anchor="last"/>
+        </group>
+    </actions>
+
+    <project-components>
+        <component>
+            <implementation-class>
+                vivid.money.elmslie.plugin.presentation.controller.PresentationLayerController
+            </implementation-class>
+        </component>
+    </project-components>
+</idea-plugin>

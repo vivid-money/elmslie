@@ -1,0 +1,27 @@
+plugins {
+    id 'org.jetbrains.intellij' version '0.6.5'
+    id("kotlin")
+}
+
+group 'vivid.money'
+version '1.0'
+
+dependencies {
+    api(deps.plugin.freemarker)
+}
+
+// See https://github.com/JetBrains/gradle-intellij-plugin/
+intellij {
+    version '2018.3'
+    updateSinceUntilBuild false
+    plugins = ['android', 'Kotlin']
+
+//    alternativeIdePath 'C://Program Files/Android/Android Studio' // for Windows
+    alternativeIdePath '/Applications/Android Studio.app' // for MacOS
+}
+
+patchPluginXml {
+    changeNotes """
+      Can create simple presentation layer<br>
+      """
+}
