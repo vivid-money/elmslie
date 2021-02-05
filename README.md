@@ -61,10 +61,12 @@ Then run `./sh/release.sh $NEXT_LIBRARY_VERSION`
 
 ## Local development
 To quickly modify library sources alongside your project do this:  
-Add library as git submodule
-- In terminal run `git submodule add git@github.com:vivid-money/elmslie.git elmslie`
-Add this library as an included build
-- In `settings.gradle` add this line: `apply from: "gradle/elmslie_dev_mode.gradle"`
-Enable dev mode
-- In `local.properties` add this line: `elmslie.dev.mode=true`
+
+- Add library as git submodule  
+In terminal run `git submodule add git@github.com:vivid-money/elmslie.git elmslie` 
+- Add this library as an included build  
+In `settings.gradle` add this line: `apply from: "gradle/elmslie_dev_mode.gradle"`  
+- Enable dev mode  
+In `local.properties` add this line: `elmslie.dev.mode=true`  
+
 After this dependencies to Elmslie will be replaced with source code localed in `elmslie` directory
