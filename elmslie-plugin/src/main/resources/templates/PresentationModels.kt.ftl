@@ -1,13 +1,7 @@
 package ${presentation_package_name}
 
-import vivid.money.elmslie.core.store.Store
-
-internal typealias ${domain_name}Store =
-        Store<${domain_name}Event, ${domain_name}Effect, ${domain_name}State>
-
 internal data class ${domain_name}State(
-    val isRefreshing: Boolean = false,
-    val isError: Boolean = false
+    // your code
 )
 
 internal sealed class ${domain_name}Effect {
@@ -19,6 +13,7 @@ internal sealed class ${domain_name}Command {
 }
 
 internal sealed class ${domain_name}Event {
+    <#if split_events>
     sealed class Internal : ${domain_name}Event() {
         // your code
     }
@@ -36,4 +31,7 @@ internal sealed class ${domain_name}Event {
             // your code
         }
     }
+    <#else>
+    // your code
+    </#if>
 }

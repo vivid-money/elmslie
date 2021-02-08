@@ -23,7 +23,8 @@ class PresentationLayerController(private val project: Project) {
 
         val properties = mutableMapOf<String, Any>(
             "presentation_package_name" to presentationPsiFolder.formPackageName(),
-            "domain_name" to model.className
+            "domain_name" to model.className,
+            "split_events" to model.addSplittingEvents
         )
 
         templates.forEach { templateData ->
@@ -57,13 +58,6 @@ class PresentationLayerController(private val project: Project) {
         FileTemplateData(
             templateFileName = TemplatesConstants.PRESENTATION_REDUCER_CLASS_TEMPLATE,
             outputFileName = "${model.className}${TemplatesConstants.PRESENTATION_REDUCER_CLASS_OUTPUT_SUFFIX}",
-            outputFileType = KotlinFileType.INSTANCE,
-            outputFilePsiDirectory = presentationPsiDirectory
-        ).let(templates::add)
-
-        FileTemplateData(
-            templateFileName = TemplatesConstants.PRESENTATION_STORE_FACTORY_CLASS_TEMPLATE,
-            outputFileName = "${model.className}${TemplatesConstants.PRESENTATION_STORE_FACTORY_CLASS_OUTPUT_SUFFIX}",
             outputFileType = KotlinFileType.INSTANCE,
             outputFilePsiDirectory = presentationPsiDirectory
         ).let(templates::add)

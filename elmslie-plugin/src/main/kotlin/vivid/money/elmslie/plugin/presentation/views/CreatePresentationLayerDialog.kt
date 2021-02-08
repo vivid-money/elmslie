@@ -4,16 +4,14 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.ValidationInfo
 import org.jdesktop.swingx.VerticalLayout
 import vivid.money.elmslie.plugin.presentation.model.PresentationLayerModel
-import javax.swing.JComponent
-import javax.swing.JLabel
-import javax.swing.JPanel
-import javax.swing.JTextField
+import javax.swing.*
 
 class CreatePresentationLayerDialog(
     private var okButtonClickListener: ((PresentationLayerModel) -> Unit)? = null
 ) : DialogWrapper(true) {
 
     private val classNameTextField = JTextField()
+    private val addSplittingEventsCheckBox = JCheckBox()
 
     init {
         super.init()
@@ -29,12 +27,16 @@ class CreatePresentationLayerDialog(
 
         dialogPanel.add(classNameTextField)
 
+        addSplittingEventsCheckBox.text = "Split Events to Ui/Internal events"
+        dialogPanel.add(addSplittingEventsCheckBox)
+
         return dialogPanel
     }
 
     override fun doOKAction() {
         val model = PresentationLayerModel(
-            className = classNameTextField.text
+            className = classNameTextField.text,
+            addSplittingEvents = addSplittingEventsCheckBox.isSelected
         )
         okButtonClickListener?.invoke(model)
         super.doOKAction()

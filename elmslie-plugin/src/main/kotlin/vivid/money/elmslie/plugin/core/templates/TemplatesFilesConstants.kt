@@ -11,8 +11,5 @@ object TemplatesConstants {
 
     const val PRESENTATION_REDUCER_CLASS_TEMPLATE = "PresentationReducer.kt.ftl"
     const val PRESENTATION_REDUCER_CLASS_OUTPUT_SUFFIX = "Reducer.kt"
-
-    const val PRESENTATION_STORE_FACTORY_CLASS_TEMPLATE = "PresentationStoreFactory.kt.ftl"
-    const val PRESENTATION_STORE_FACTORY_CLASS_OUTPUT_SUFFIX = "StoreFactory.kt"
     // endregion
 }

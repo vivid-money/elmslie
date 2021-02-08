@@ -8,14 +8,16 @@ ext.versions = [
         rxJava3      : "3.0.10",
         rxAndroid    : "3.0.0",
         jUnit5       : "5.7.0",
-        kotest       : "4.4.0"
-        freemarker       : "2.3.29",
+        kotest       : "4.4.0",
+        freemarker   : "2.3.29",
+        intellij     : "0.6.5",
 ]
 
 ext.deps = [
         gradle : [
                 androidPlugin: "com.android.tools.build:gradle:$versions.androidPlugin",
-                kotlinPlugin : "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
+                kotlinPlugin : "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin",
+                intellijPlugin : "org.jetbrains.intellij.plugins:gradle-intellij-plugin:$versions.intellij"
         ],
         android: [
                 appcompat: "androidx.appcompat:appcompat:$versions.appcompat",
