@@ -43,11 +43,11 @@ allprojects {
 #### Add required modules:
 - Core - for pure kotlin ELM implementation
 
-`implementation 'vivid.money.elmslie:elmslie-core:{latest-version}'`
+`implementation 'com.github.vivid-money.elmslie:elmslie-core:{latest-version}'`
 
 - Android - for android apps only, simplifies lifecycle handling  
 
-`implementation 'vivid.money.elmslie:elmslie-android:{latest-version}'`
+`implementation 'com.github.vivid-money.elmslie:elmslie-android:{latest-version}'`
 
 ## Related articles
 - [Why did we select ELM? (Russian)](https://habr.com/ru/company/vivid_money/blog/534386/)
