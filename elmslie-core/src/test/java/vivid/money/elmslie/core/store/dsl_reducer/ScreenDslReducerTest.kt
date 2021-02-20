@@ -4,17 +4,21 @@ import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
-object BasicScreenDslReducer : ScreenDslReducer<TestScreenEvent, TestScreenEvent.Ui, TestScreenEvent.Internal, TestState, TestEffect, TestCommand>(
-    TestScreenEvent.Ui::class,
-    TestScreenEvent.Internal::class
-) {
+object BasicScreenDslReducer :
+    ScreenDslReducer<TestScreenEvent, TestScreenEvent.Ui, TestScreenEvent.Internal, TestState, TestEffect, TestCommand>(
+        TestScreenEvent.Ui::class,
+        TestScreenEvent.Internal::class
+    ) {
 
     override fun Result.ui(event: TestScreenEvent.Ui) = when (event) {
-        is TestScreenEvent.Ui.One -> update { copy(one = 1, two = 2)}
+        is TestScreenEvent.Ui.One -> state { copy(one = 1, two = 2) }
     }
 
     override fun Result.internal(event: TestScreenEvent.Internal) = when (event) {
-        is TestScreenEvent.Internal.One -> commands += listOf(TestCommand.One, TestCommand.Two)
+        is TestScreenEvent.Internal.One -> commands {
+            +TestCommand.One
+            +TestCommand.Two
+        }
     }
 }
 
@@ -27,11 +31,14 @@ object PlainScreenDslReducer : DslReducer<TestScreenEvent, TestState, TestEffect
     }
 
     private fun Result.reduce(event: TestScreenEvent.Ui) = when (event) {
-        is TestScreenEvent.Ui.One -> update { copy(one = 1, two = 2)}
+        is TestScreenEvent.Ui.One -> state { copy(one = 1, two = 2) }
     }
 
     private fun Result.reduce(event: TestScreenEvent.Internal) = when (event) {
-        is TestScreenEvent.Internal.One -> commands += listOf(TestCommand.One, TestCommand.Two)
+        is TestScreenEvent.Internal.One -> commands {
+            +TestCommand.One
+            +TestCommand.Two
+        }
     }
 }
 

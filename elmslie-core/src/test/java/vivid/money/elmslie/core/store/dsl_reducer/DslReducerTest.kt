@@ -8,32 +8,32 @@ private object BasicDslReducer : DslReducer<TestEvent, TestState, TestEffect, Te
 
     override fun Result.reduce(event: TestEvent) = when (event) {
         is TestEvent.One -> {
-            update { copy(one = 1) }
-            update { copy(two = 2) }
+            state { copy(one = 1) }
+            state { copy(two = 2) }
         }
-        is TestEvent.Two -> effects(TestEffect.One)
-        is TestEvent.Three -> commands(
-            TestCommand.Two,
-            TestCommand.One
-        )
+        is TestEvent.Two -> effects { +TestEffect.One }
+        is TestEvent.Three -> commands {
+            +TestCommand.Two
+            +TestCommand.One
+        }
         is TestEvent.Four -> if (event.flag) {
-            update { copy(one = 1) }
-            commands(TestCommand.One)
-            effects(TestEffect.One)
+            state { copy(one = 1) }
+            commands { +TestCommand.One }
+            effects { +TestEffect.One }
         } else {
-            update { copy(one = state.two, two = state.one) }
-            effects(TestEffect.One)
+            state { copy(one = state.two, two = state.one) }
+            effects { +TestEffect.One }
         }
         is TestEvent.Five -> applyDiff()
         is TestEvent.Six -> {
-            commands(TestCommand.One.takeIf { event.flag })
+            commands { +TestCommand.One.takeIf { event.flag } }
         }
     }
 
     // Result editing can be done in a separate function
     private fun Result.applyDiff() {
-        update { copy(one = 0) }
-        update { copy(one = initialState.one + 3) }
+        state { copy(one = 0) }
+        state { copy(one = initialState.one + 3) }
     }
 }
 

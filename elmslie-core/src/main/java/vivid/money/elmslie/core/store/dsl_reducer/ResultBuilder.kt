@@ -7,15 +7,25 @@ open class ResultBuilder<State : Any, Effect : Any, Command : Any>(
 ) {
 
     private var currentState: State = initialState
+    private val commandsBuilder = OperationsBuilder<Command>()
+    private val effectsBuilder = OperationsBuilder<Effect>()
 
     val state: State
         get() = currentState
-    val commands = OperationsBuilder<Command>()
-    val effects = OperationsBuilder<Effect>()
 
-    fun update(update: State.() -> State) {
+    fun state(update: State.() -> State) {
         currentState = currentState.update()
     }
 
-    internal fun build() = Result(currentState, effects.build(), commands.build())
+    fun commands(update: OperationsBuilder<Command>.() -> Unit) {
+        commandsBuilder.update()
+    }
+
+    fun effects(update: OperationsBuilder<Effect>.() -> Unit) {
+        effectsBuilder.update()
+    }
+
+    internal fun build(): Result<State, Effect, Command> {
+        return Result(currentState, effectsBuilder.build(), commandsBuilder.build())
+    }
 }
