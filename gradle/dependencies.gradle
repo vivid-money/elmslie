@@ -5,6 +5,7 @@ ext.versions = [
         rxJava2      : "2.2.20",
         rxAndroid    : "2.1.1",
         jUnit5       : "5.7.0",
+        kotest       : "4.4.0"
 ]
 
 ext.deps = [
@@ -20,6 +21,9 @@ ext.deps = [
                 rxAndroid: "io.reactivex.rxjava2:rxandroid:$versions.rxAndroid",
         ],
         test   : [
-                jUnit5: "org.junit.jupiter:junit-jupiter:$versions.jUnit5",
+                jUnit5           : "org.junit.jupiter:junit-jupiter:$versions.jUnit5",
+                kotestJunitRunner: "io.kotest:kotest-runner-junit5-jvm:$versions.kotest",
+                kotestAssertions : "io.kotest:kotest-assertions-core:$versions.kotest",
+                kotestProperty   : "io.kotest:kotest-property:$versions.kotest",
         ]
 ]
