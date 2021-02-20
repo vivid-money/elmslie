@@ -11,22 +11,22 @@ private object BasicDslReducer : DslReducer<TestEvent, TestState, TestEffect, Te
             update { copy(one = 1) }
             update { copy(two = 2) }
         }
-        is TestEvent.Two -> effects += TestEffect.One
+        is TestEvent.Two -> effects(TestEffect.One)
         is TestEvent.Three -> commands(
             TestCommand.Two,
             TestCommand.One
         )
         is TestEvent.Four -> if (event.flag) {
             update { copy(one = 1) }
-            commands += TestCommand.One
-            effects += TestEffect.One
+            commands(TestCommand.One)
+            effects(TestEffect.One)
         } else {
             update { copy(one = state.two, two = state.one) }
-            effects += TestEffect.One
+            effects(TestEffect.One)
         }
         is TestEvent.Five -> applyDiff()
         is TestEvent.Six -> {
-            commands += TestCommand.One.takeIf { event.flag }
+            commands(TestCommand.One.takeIf { event.flag })
         }
     }
 
