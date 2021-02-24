@@ -1,3 +1,5 @@
+@file:JvmName("SwitcherExt")
+
 package vivid.money.elmslie.core.switcher
 
 import io.reactivex.Completable

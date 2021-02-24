@@ -1,3 +1,5 @@
+@file:JvmName("FastLazy")
+
 package vivid.money.elmslie.android.util
 
 /**

@@ -1,3 +1,5 @@
+@file:JvmName("DefaultLoggerConfigurations")
+
 package vivid.money.elmslie.android.logger
 
 import vivid.money.elmslie.android.logger.strategy.Crash
