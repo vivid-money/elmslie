@@ -10,9 +10,9 @@ abstract class ScreenDslReducer<Event : Any, Ui : Any, Internal : Any, State : A
 
     protected inner class Result(state: State) : ResultBuilder<State, Effect, Command>(state)
 
-    protected abstract fun Result.ui(event: Ui)
+    protected abstract fun Result.ui(event: Ui): Any?
 
-    protected abstract fun Result.internal(event: Internal)
+    protected abstract fun Result.internal(event: Internal): Any?
 
     final override fun reduce(
         event: Event,
