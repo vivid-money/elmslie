@@ -8,7 +8,6 @@ internal data class Option<T : Any>(
 ) {
 
     val isEmpty = value == null
-    val hasValue = !isEmpty
 
     companion object {
 

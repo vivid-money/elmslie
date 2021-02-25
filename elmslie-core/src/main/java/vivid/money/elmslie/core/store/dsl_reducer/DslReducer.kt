@@ -10,5 +10,5 @@ abstract class DslReducer<Event : Any, State : Any, Effect : Any, Command : Any>
 
     protected abstract fun Result.reduce(event: Event): Any
 
-    override fun reduce(event: Event, state: State) = Result(state).apply { reduce(event) }.build()
+    final override fun reduce(event: Event, state: State) = Result(state).apply { reduce(event) }.build()
 }
