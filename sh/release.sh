@@ -74,8 +74,8 @@ ensureMainBranch() {
 ensureMainBranch
 checkCleanWorkingDirectory || { echo "Can't release not committed changes" && exit 1; }
 OLD_VERSION=$(parseVersion)
-echo "Starting to publish release: $OLD_VERSION"
 NEW_VERSION=$1
+echo "Starting to publish release: $OLD_VERSION"
 validateVersionFormat $NEW_VERSION
 validateNewVersionIsGreater $OLD_VERSION $NEW_VERSION
 
