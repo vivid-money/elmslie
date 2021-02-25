@@ -12,8 +12,9 @@ object ProcessDeathDetector {
     var isRestoringAfterProcessDeath = false
         private set
 
-    fun init(app: Application) {
-        app.registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
+    internal fun init(app: Application) {
+        app.registerActivityLifecycleCallbacks(object : EmptyActivityLifecycleCallbacks {
+
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
                 if (!isRestoringAfterProcessDeath && isFirstStart && savedInstanceState != null) {
                     isRestoringAfterProcessDeath = true
@@ -24,16 +25,6 @@ object ProcessDeathDetector {
             override fun onActivityResumed(activity: Activity) {
                 isRestoringAfterProcessDeath = false
             }
-
-            override fun onActivityStarted(activity: Activity) = Unit
-
-            override fun onActivityPaused(activity: Activity) = Unit
-
-            override fun onActivityStopped(activity: Activity) = Unit
-
-            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) = Unit
-
-            override fun onActivityDestroyed(activity: Activity) = Unit
         })
     }
 }

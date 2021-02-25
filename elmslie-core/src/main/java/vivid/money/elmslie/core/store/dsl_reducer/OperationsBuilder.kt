@@ -1,7 +1,7 @@
 package vivid.money.elmslie.core.store.dsl_reducer
 
 @DslMarker
-annotation class OperationsBuilderDsl
+internal annotation class OperationsBuilderDsl
 
 @OperationsBuilderDsl
 class OperationsBuilder<T : Any> {

@@ -26,5 +26,5 @@ class ElmslieLogConfiguration {
         LogSeverity.values().forEach { strategies[it] = strategy }
     }
 
-    fun build() = ElmslieLogger(strategies)
+    internal fun build() = ElmslieLogger(strategies)
 }

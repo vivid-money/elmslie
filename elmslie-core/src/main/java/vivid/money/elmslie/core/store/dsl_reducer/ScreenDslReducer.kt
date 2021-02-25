@@ -14,12 +14,15 @@ abstract class ScreenDslReducer<Event : Any, Ui : Any, Internal : Any, State : A
 
     protected abstract fun Result.internal(event: Internal)
 
-    override fun reduce(event: Event, state: State): vivid.money.elmslie.core.store.Result<State, Effect, Command> {
+    final override fun reduce(
+        event: Event,
+        state: State
+    ): vivid.money.elmslie.core.store.Result<State, Effect, Command> {
         val body = Result(state)
         when {
             uiEventClass.java.isAssignableFrom(event.javaClass) -> body.ui(event as Ui)
             internalEventClass.java.isAssignableFrom(event.javaClass) -> body.internal(event as Internal)
-            else -> error("")
+            else -> error("Event ${event.javaClass} is neither UI nor Internal")
         }
         return body.build()
     }

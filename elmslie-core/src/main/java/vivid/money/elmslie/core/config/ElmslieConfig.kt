@@ -28,7 +28,7 @@ object ElmslieConfig {
      * }
      * ```
      */
-    fun logger(config: (ElmslieLogConfiguration.() -> Unit)): ElmslieLogger {
-        return ElmslieLogConfiguration().apply(config).build().also { loggerInternal = it }
+    fun logger(config: (ElmslieLogConfiguration.() -> Unit)) {
+        ElmslieLogConfiguration().apply(config).build().also { loggerInternal = it }
     }
 }
