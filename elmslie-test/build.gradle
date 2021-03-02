@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
     implementation(deps.test.jUnit5)
-    implementation(deps.rx.rxJava2)
+    implementation(deps.rx.rxJava3)
 }
 
 compileKotlin {

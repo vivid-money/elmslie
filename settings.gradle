@@ -1,4 +1,5 @@
 include ':elmslie-core'
+include ':elmslie-rxjava-2'
 include ':elmslie-android'
 include ':elmslie-test'
 include ':sample-kotlin-calculator'
