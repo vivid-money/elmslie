@@ -1,7 +1,7 @@
 package vivid.money.elmslie.core.store
 
-import io.reactivex.Observable
-import io.reactivex.schedulers.TestScheduler
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.schedulers.TestScheduler
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import vivid.money.elmslie.core.testutil.model.Command
@@ -20,18 +20,18 @@ class ElmStoreTest {
     val extension = TestSchedulerExtension(scheduler)
 
     @Test
-    fun `Disposing store works correctly`() {
+    fun `Stopping the store works correctly`() {
         val store = store(State())
 
         store.start()
         store.accept(Event())
-        store.dispose()
+        store.stop()
 
-        assert(store.isDisposed)
+        assert(!store.isStarted)
     }
 
     @Test
-    fun `Disposing store stops state`() {
+    fun `Stopping the store stops state`() {
         val store = store(
             State(),
             { _, state ->
@@ -43,7 +43,7 @@ class ElmStoreTest {
         val observer = store.states.test()
         store.accept(Event())
         scheduler.advanceTimeBy(6, TimeUnit.SECONDS)
-        store.dispose()
+        store.stop()
 
         observer.assertValues(
             State(0), // Initial
@@ -118,7 +118,7 @@ class ElmStoreTest {
 
         store.accept(Event(3))
         scheduler.triggerActions()
-        store.dispose()
+        store.stop()
 
         observer.assertValues(
             State(0), // Initial

@@ -1,6 +1,6 @@
 package vivid.money.elmslie.core.switcher
 
-import io.reactivex.Observable
+import io.reactivex.rxjava3.core.Observable
 
 @Deprecated("Please use instance methods", ReplaceWith("switcher.observable(delayMillis, action)"))
 fun <Event : Any> switchOn(

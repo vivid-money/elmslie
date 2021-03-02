@@ -1,7 +1,7 @@
 package vivid.money.elmslie.core.store
 
-import io.reactivex.Observable
-import io.reactivex.schedulers.TestScheduler
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.schedulers.TestScheduler
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import vivid.money.elmslie.core.testutil.model.*
@@ -108,15 +108,15 @@ class ElmStoreWithChildTest {
     }
 
     @Test
-    fun `Disposing parent disposes child`() {
+    fun `Stopping parent stoppes child`() {
         val parent = parentStore(ParentState())
         val child = childStore(ChildState())
         parent.addChildStore(child).start()
 
-        parent.dispose()
+        parent.stop()
 
-        assert(parent.isDisposed)
-        assert(child.isDisposed)
+        assert(!parent.isStarted)
+        assert(!child.isStarted)
     }
 
     @Test

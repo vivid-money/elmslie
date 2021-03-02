@@ -1,10 +1,10 @@
 package vivid.money.elmslie.core.switcher
 
 import vivid.money.elmslie.core.store.Actor
-import io.reactivex.Completable
-import io.reactivex.Observable
-import io.reactivex.Single
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 

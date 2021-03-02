@@ -1,9 +1,9 @@
 package vivid.money.elmslie.core.store
 
-import io.reactivex.Completable
-import io.reactivex.Maybe
-import io.reactivex.Observable
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Maybe
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
 import vivid.money.elmslie.core.config.ElmslieConfig
 
 @Suppress("ComplexInterface", "TooManyFunctions")
@@ -82,7 +82,7 @@ interface MappingActor<Event : Any> {
         failureEvent: Event
     ): Observable<Event> = this
         .map(successEventMapper)
-        .toSingle(completionEvent)
+        .defaultIfEmpty(completionEvent)
         .mapErrorEvent(failureEvent)
 
     fun <T : Any> Maybe<T>.mapEvents(
@@ -91,7 +91,7 @@ interface MappingActor<Event : Any> {
         failureEventMapper: (throwable: Throwable) -> Event
     ): Observable<Event> = this
         .map(successEventMapper)
-        .toSingle(completionEvent)
+        .defaultIfEmpty(completionEvent)
         .doOnSuccess { ElmslieConfig.logger.debug("Completed app state: $it") }
         .mapErrorEvent(failureEventMapper)
 

@@ -1,6 +1,6 @@
 package vivid.money.elmslie.core.store
 
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.subjects.PublishSubject
 import org.junit.jupiter.api.Test
 
 class EffectsBufferTest {
@@ -21,7 +21,7 @@ class EffectsBufferTest {
         }
 
         testObserver.assertValues(1, 2)
-        testObserver.cancel()
+        testObserver.dispose()
 
         // emitting items while detached
         with(dataObservable) {
@@ -64,7 +64,7 @@ class EffectsBufferTest {
         testObserver.assertValues(1, 2, 3, 4)
 
         // Send data after observer is unsubscribed
-        testObserver.cancel()
+        testObserver.dispose()
 
         with(dataObservable) {
             onNext(5)

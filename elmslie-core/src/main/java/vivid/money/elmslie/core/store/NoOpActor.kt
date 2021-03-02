@@ -1,6 +1,6 @@
 package vivid.money.elmslie.core.store
 
-import io.reactivex.Observable
+import io.reactivex.rxjava3.core.Observable
 
 /**
  * Actor that doesn't emit any events after receiving a command

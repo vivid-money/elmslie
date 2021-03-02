@@ -1,14 +1,14 @@
 package vivid.money.elmslie.test
 
-import io.reactivex.plugins.RxJavaPlugins
-import io.reactivex.schedulers.TestScheduler
+import io.reactivex.rxjava3.plugins.RxJavaPlugins
+import io.reactivex.rxjava3.schedulers.TestScheduler
 import org.junit.jupiter.api.extension.AfterEachCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 
 /**
  * Replaces all RxJava schedulers with a [TestScheduler].
- * NOTE: You need to intitialize object lazily to use this rule!
+ * NOTE: You need to initialize object lazily to use this rule!
  * Wrong usage example:
  * `
  * class Test {

@@ -1,6 +1,6 @@
 package vivid.money.elmslie.samples.calculator
 
-import io.reactivex.Observable
+import io.reactivex.rxjava3.core.Observable
 import vivid.money.elmslie.core.store.Actor
 import vivid.money.elmslie.core.store.ElmStore
 import vivid.money.elmslie.core.store.Result
