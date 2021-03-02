@@ -3,12 +3,10 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":elmslie-core"))
     implementation(deps.rx.rxJava3)
-
-    testRuntimeOnly(deps.test.kotestJunitRunner)
-    testImplementation(deps.test.kotestAssertions)
-    testImplementation(deps.test.kotestProperty)
-    testImplementation(project(":elmslie-test"))
+    implementation(deps.rx.rxJava3Bridge)
+    implementation(deps.rx.rxJava2)
 }
 
 compileKotlin {

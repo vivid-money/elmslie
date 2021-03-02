@@ -1,0 +1,18 @@
+package vivid.money.elmslie.core
+
+import io.reactivex.Observable
+
+/**
+ * Actor that supports event mappings for RxJava 2
+ */
+fun interface ActorCompat<Command : Any, Event : Any> : MappingActorCompat<Event> {
+
+    /**
+     * Executes a command.
+     *
+     * Contract for implementations:
+     * - Implementations don't have to call subscribeOn
+     * - By default subscription will be on the `io` scheduler
+     */
+    fun execute(command: Command): Observable<Event>
+}
