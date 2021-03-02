@@ -1,8 +1,8 @@
 package vivid.money.elmslie.core.store
 
-import io.reactivex.Observable
-import io.reactivex.disposables.Disposable
-import io.reactivex.functions.Consumer
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.functions.Consumer
 
 interface Store<Event, Effect, State> : Consumer<Event>, Disposable {
 

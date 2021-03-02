@@ -1,6 +1,6 @@
 package vivid.money.elmslie.core.store
 
-import io.reactivex.Observable
+import io.reactivex.rxjava3.core.Observable
 
 fun interface Actor<Command : Any, Event : Any> : MappingActor<Event> {
 

@@ -1,12 +1,12 @@
 package vivid.money.elmslie.core.store
 
-import io.reactivex.Observable
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.schedulers.Schedulers.io
-import io.reactivex.subjects.BehaviorSubject
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.schedulers.Schedulers.io
+import io.reactivex.rxjava3.subjects.BehaviorSubject
+import io.reactivex.rxjava3.subjects.PublishSubject
 import vivid.money.elmslie.core.config.ElmslieConfig
 
 class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
@@ -61,7 +61,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
                 logger.debug("Executing command: $command")
                 actor.execute(command)
                     .doOnError { logger.nonfatal(error = it) }
-                    .onErrorResumeNext(Observable.empty())
+                    .onErrorResumeNext { Observable.empty() }
                     .subscribeOn(io())
             }
             .subscribe(eventsInternal::onNext) {

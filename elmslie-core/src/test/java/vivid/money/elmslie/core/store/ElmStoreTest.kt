@@ -1,7 +1,7 @@
 package vivid.money.elmslie.core.store
 
-import io.reactivex.Observable
-import io.reactivex.schedulers.TestScheduler
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.schedulers.TestScheduler
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import vivid.money.elmslie.core.testutil.model.Command

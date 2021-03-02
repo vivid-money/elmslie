@@ -1,6 +1,6 @@
 package vivid.money.elmslie.core.store
 
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.subjects.PublishSubject
 import org.junit.jupiter.api.Test
 
 class EffectsBufferTest {
