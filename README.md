@@ -49,6 +49,11 @@ allprojects {
 
 `implementation 'com.github.vivid-money.elmslie:elmslie-android:{latest-version}'`
 
+- RxJava 2 - compatibility module (more info in the wiki [article](https://github.com/vivid-money/elmslie/wiki/RxJava-2-vs-3))
+
+`implementation 'com.github.vivid-money.elmslie:elmslie-android:{latest-version}'`  
+
+
 ## Related articles
 - [Why did we select ELM? (Russian)](https://habr.com/ru/company/vivid_money/blog/534386/)
 - [ELM. Pt1 (English)](https://proandroiddev.com/taming-state-in-android-with-elm-architecture-and-kotlin-part-1-566caae0f706)
