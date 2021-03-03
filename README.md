@@ -9,7 +9,7 @@ Named after [George Grant Elmslie](https://en.wikipedia.org/wiki/George_Grant_El
 
 ## Why?
 - **Scalable and Reusable**: Built-in support for nesting components
-- **Reactive**: Written with RxJava2
+- **Reactive**: Written with RxJava3, but has compatibility mode with RxJava2
 - **Single immutable state**: Simplify state management
 - **UDF**: Say no to spaghetti code with Unidirectional Data Flow
 
@@ -51,7 +51,7 @@ allprojects {
 
 - RxJava 2 - compatibility module (more info in the wiki [article](https://github.com/vivid-money/elmslie/wiki/RxJava-2-vs-3))
 
-`implementation 'com.github.vivid-money.elmslie:elmslie-android:{latest-version}'`  
+`implementation 'com.github.vivid-money.elmslie:elmslie-rxjava-2:{latest-version}'`  
 
 
 ## Related articles
