@@ -2,11 +2,13 @@ package vivid.money.elmslie.samples.android.loader.elm
 
 import io.reactivex.Observable
 import io.reactivex.Single
+import vivid.money.elmslie.core.ActorCompat
+import vivid.money.elmslie.core.ElmStoreCompat
 import vivid.money.elmslie.core.store.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class Actor : vivid.money.elmslie.core.store.Actor<Command, Event> {
+class Actor : ActorCompat<Command, Event> {
 
     private val random = Random()
 
@@ -31,7 +33,7 @@ class Reducer : StateReducer<Event, State, Effect, Command> {
     }
 }
 
-fun storeFactory() = ElmStore(
+fun storeFactory() = ElmStoreCompat(
     initialState = State(),
     reducer = Reducer(),
     actor = Actor()

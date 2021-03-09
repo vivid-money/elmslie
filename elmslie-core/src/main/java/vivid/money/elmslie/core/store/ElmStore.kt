@@ -1,12 +1,12 @@
 package vivid.money.elmslie.core.store
 
-import io.reactivex.Observable
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.schedulers.Schedulers.io
-import io.reactivex.subjects.BehaviorSubject
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.schedulers.Schedulers.io
+import io.reactivex.rxjava3.subjects.BehaviorSubject
+import io.reactivex.rxjava3.subjects.PublishSubject
 import vivid.money.elmslie.core.config.ElmslieConfig
 
 class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
@@ -32,6 +32,9 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     override val effects: Observable<Effect> = effectsBuffer.getBufferedObservable()
     override val states: Observable<State> = statesInternal.distinctUntilChanged()
     override val currentState: State get() = statesInternal.value!!
+    @Volatile
+    override var isStarted = false
+
     override fun accept(event: Event) = eventsInternal.onNext(event)
 
     override fun start(): Store<Event, Effect, State> {
@@ -61,7 +64,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
                 logger.debug("Executing command: $command")
                 actor.execute(command)
                     .doOnError { logger.nonfatal(error = it) }
-                    .onErrorResumeNext(Observable.empty())
+                    .onErrorResumeNext { Observable.empty() }
                     .subscribeOn(io())
             }
             .subscribe(eventsInternal::onNext) {
@@ -69,10 +72,14 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
             }
             .bind()
 
+        isStarted = true
         return this
     }
 
-    override fun stop() = disposables.clear()
+    override fun stop() {
+        isStarted = false
+        disposables.clear()
+    }
 
     fun <ChildEvent : Any, ChildState : Any, ChildEffect : Any> addChildStore(
         store: Store<ChildEvent, ChildEffect, ChildState>,
@@ -87,7 +94,10 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
             .bind()
 
         // We won't lose any state or effects since thy're cached
-        store.bind()
+        disposables.add(object : Disposable {
+            override fun dispose() = store.stop()
+            override fun isDisposed(): Boolean = !store.isStarted
+        })
         store.start()
 
         store
@@ -116,8 +126,4 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     }
 
     private fun Disposable.bind() = let(disposables::add)
-
-    override fun dispose() = disposables.dispose()
-
-    override fun isDisposed(): Boolean = disposables.isDisposed
 }

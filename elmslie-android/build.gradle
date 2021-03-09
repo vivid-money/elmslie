@@ -9,7 +9,7 @@ dependencies {
     implementation(deps.android.appcompat)
 
     implementation(deps.rx.rxAndroid)
-    implementation(deps.rx.rxJava2)
+    implementation(deps.rx.rxJava3)
 }
 
 apply from: "../gradle/junit-5.gradle"
