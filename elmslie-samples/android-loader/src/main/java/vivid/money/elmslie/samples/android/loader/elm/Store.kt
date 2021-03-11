@@ -1,35 +1,43 @@
 package vivid.money.elmslie.samples.android.loader.elm
 
 import io.reactivex.Observable
-import io.reactivex.Single
 import vivid.money.elmslie.core.ActorCompat
 import vivid.money.elmslie.core.ElmStoreCompat
-import vivid.money.elmslie.core.store.*
-import java.util.*
-import java.util.concurrent.TimeUnit
+import vivid.money.elmslie.core.store.dsl_reducer.ScreenDslReducer
+import vivid.money.elmslie.samples.android.loader.elm.Event.Internal
+import vivid.money.elmslie.samples.android.loader.elm.Event.Ui
+import vivid.money.elmslie.samples.android.loader.repository.ValueRepository
 
 class Actor : ActorCompat<Command, Event> {
 
-    private val random = Random()
-
     override fun execute(command: Command): Observable<Event> = when (command) {
-        is Command.LoadNewValue -> Single.timer(random.nextLong() % 2000 + 1000, TimeUnit.MILLISECONDS)
-            .map { random.nextInt() }
-            .doOnSuccess { if (it % 3 == 1) error("Simulate unexpected error") }
-            .mapEvents(Event::ValueLoaded, Event.ErrorLoadingValue)
+        is Command.LoadNewValue -> ValueRepository.getValue()
+            .mapEvents(Internal::ValueLoaded, Internal.ErrorLoadingValue)
     }
 }
 
-class Reducer : StateReducer<Event, State, Effect, Command> {
+class Reducer : ScreenDslReducer<Event, Ui, Internal, State, Effect, Command>(
+    Ui::class, Internal::class) {
 
-    override fun reduce(event: Event, state: State): Result<State, Effect, Command> = when (event) {
-        is Event.Init -> Result(state)
-        is Event.ValueLoaded -> Result(state.copy(isLoading = false, currentValue = event.value))
-        is Event.ErrorLoadingValue -> Result(state.copy(isLoading = false), effect = Effect.ShowError)
-        is Event.ClickReload -> Result(
-            state = state.copy(isLoading = true, currentValue = null),
-            command = Command.LoadNewValue
-        )
+    override fun Result.internal(event: Internal) = when (event) {
+        is Internal.ValueLoaded -> {
+            state { copy(isLoading = false, value = event.value) }
+        }
+        is Internal.ErrorLoadingValue -> {
+            state { copy(isLoading = false) }
+            effects { +Effect.ShowError }
+        }
+    }
+
+    override fun Result.ui(event: Ui) = when (event) {
+        is Ui.Init -> {
+            state { copy(isLoading = true) }
+            commands { +Command.LoadNewValue }
+        }
+        is Ui.ClickReload -> {
+            state { copy(isLoading = true, value = null) }
+            commands { +Command.LoadNewValue }
+        }
     }
 }
 

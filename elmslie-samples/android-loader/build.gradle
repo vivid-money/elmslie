@@ -9,6 +9,7 @@ dependencies {
     implementation(project(":elmslie-rxjava-2"))
 
     implementation(deps.android.appcompat)
+    implementation(deps.android.material)
     implementation(deps.rx.rxJava2)
 }
 

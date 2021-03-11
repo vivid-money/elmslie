@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -26,21 +27,5 @@
                 android:text="Reload" />
 
     </LinearLayout>
-
-    <FrameLayout
-            android:id="@+id/overlay"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#afff"
-            android:clickable="true"
-            android:elevation="8dp"
-            android:focusable="true">
-
-        <ProgressBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center" />
-
-    </FrameLayout>
 
 </FrameLayout>
