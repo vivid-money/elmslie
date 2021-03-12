@@ -8,9 +8,9 @@ import vivid.money.elmslie.samples.android.loader.elm.Event.Internal
 import vivid.money.elmslie.samples.android.loader.elm.Event.Ui
 import vivid.money.elmslie.samples.android.loader.repository.ValueRepository
 
-class Actor : ActorCompat<Command, Event> {
+class Actor : ActorCompat<Command, Internal> {
 
-    override fun execute(command: Command): Observable<Event> = when (command) {
+    override fun execute(command: Command): Observable<Internal> = when (command) {
         is Command.LoadNewValue -> ValueRepository.getValue()
             .mapEvents(Internal::ValueLoaded, Internal.ErrorLoadingValue)
     }
