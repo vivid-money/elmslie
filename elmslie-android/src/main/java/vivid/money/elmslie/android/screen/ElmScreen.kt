@@ -48,7 +48,7 @@ class ElmScreen<Event : Any, Effect : Any, State : Any>(
             statesDisposable = observeStates()
             val initialState = store.states.blockingFirst()
             delegate.render(initialState)
-            delegate.renderList(delegate.mapList(initialState))
+            delegate.renderList(initialState, delegate.mapList(initialState))
         }
 
         @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
@@ -94,7 +94,7 @@ class ElmScreen<Event : Any, Effect : Any, State : Any>(
             handler.post {
                 if (isScreenRenderable) {
                     delegate.render(state)
-                    delegate.renderList(list)
+                    delegate.renderList(state, list)
                 }
             }
         }
