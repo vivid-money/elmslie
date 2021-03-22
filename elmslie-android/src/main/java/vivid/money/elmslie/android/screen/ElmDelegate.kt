@@ -13,5 +13,5 @@ interface ElmDelegate<Event : Any, Effect : Any, State : Any> {
     fun handleEffect(effect: Effect) = Unit
 
     fun mapList(state: State): List<Any> = emptyList()
-    fun renderList(list: List<Any>) = Unit
+    fun renderList(state: State, list: List<Any>) = Unit
 }
