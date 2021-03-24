@@ -16,7 +16,7 @@ internal class ${domain_name}Actor @Inject constructor(
 
     override fun execute(
         command: ${domain_name}Command
-    ): Observable<${domain_name}Event> = when (command) {
+    ): Observable<<#if split_events>Internal<#else>${domain_name}Event</#if>> = when (command) {
         // your code
     }
 }

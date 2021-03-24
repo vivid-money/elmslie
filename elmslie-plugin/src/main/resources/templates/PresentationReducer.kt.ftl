@@ -1,7 +1,11 @@
 package ${presentation_package_name}
 
 import vivid.money.elmslie.core.store.Result
-import vivid.money.elmslie.core.store.StateReducer
+<#if split_events>
+import vivid.money.elmslie.core.store.dsl_reducer.DslReducer
+<#else>
+import vivid.money.elmslie.core.store.dsl_reducer.ScreenDslReducer
+</#if>
 import ${presentation_package_name}.${domain_name}Command.*
 <#if split_events>
 import ${presentation_package_name}.${domain_name}Event.Internal
@@ -10,7 +14,7 @@ import ${presentation_package_name}.${domain_name}Event.Ui
 import ${presentation_package_name}.${domain_name}Event.*
 </#if>
 
-internal object ${domain_name}Reducer : StateReducer<${domain_name}Event, ${domain_name}State,
+internal object ${domain_name}Reducer : <#if split_events>ScreenDslReducer<#else>DslReducer</#if><${domain_name}Event, ${domain_name}State,
         ${domain_name}Effect, ${domain_name}Command> {
 
     override fun reduce(
