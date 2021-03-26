@@ -50,7 +50,7 @@ internal class StoreKtTest {
     }
 
     @Test
-    fun `1 + 2 * 3 minus 4 div 5 = 1`() {
+    fun `1 + 2 times 3 minus 4 div 5 = 1`() {
         val calculator = Calculator()
         val errors = calculator.errors().test()
         val results = calculator.results().test()
