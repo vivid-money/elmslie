@@ -12,7 +12,7 @@ import vivid.money.elmslie.core.config.ElmslieConfig
 class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     initialState: State,
     private val reducer: StateReducer<Event, State, Effect, Command>,
-    private val actor: Actor<Command, Event>
+    private val actor: Actor<Command, out Event>
 ) : Store<Event, Effect, State> {
 
     private val logger = ElmslieConfig.logger
