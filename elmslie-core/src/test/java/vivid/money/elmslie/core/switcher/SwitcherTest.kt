@@ -20,7 +20,7 @@ class SwitcherTest {
     @Test
     fun `Switcher executes action`() {
         val switcher = Switcher()
-        val observer = switcher.switch { Observable.just(Event) }
+        val observer = switcher.observable(0) { Observable.just(Event) }
             .test()
         scheduler.triggerActions()
         observer.assertResult(Event)
@@ -29,8 +29,8 @@ class SwitcherTest {
     @Test
     fun `Switcher cancels previous request`() {
         val switcher = Switcher()
-        val observerOne = switcher.switch { Observable.timer(2, TimeUnit.SECONDS).map { Event } }.test()
-        val observerTwo = switcher.switch { Observable.just(Event) }.test()
+        val observerOne = switcher.observable(0) { Observable.timer(2, TimeUnit.SECONDS).map { Event } }.test()
+        val observerTwo = switcher.observable(0) { Observable.just(Event) }.test()
         scheduler.triggerActions()
         observerTwo.assertResult(Event)
         observerOne.assertResult()
@@ -39,9 +39,9 @@ class SwitcherTest {
     @Test
     fun `Switcher cancels multiple pending requests`() {
         val switcher = Switcher()
-        val firstObserver = switcher.switch { Observable.timer(2, TimeUnit.SECONDS).map { Event } }.test()
-        val secondObserver = switcher.switch { Observable.timer(2, TimeUnit.SECONDS).map { Event } }.test()
-        val thirdObserver = switcher.switch { Observable.just(Event) }.test()
+        val firstObserver = switcher.observable(0) { Observable.timer(2, TimeUnit.SECONDS).map { Event } }.test()
+        val secondObserver = switcher.observable(0) { Observable.timer(2, TimeUnit.SECONDS).map { Event } }.test()
+        val thirdObserver = switcher.observable(0) { Observable.just(Event) }.test()
         scheduler.advanceTimeBy(2, TimeUnit.SECONDS)
         thirdObserver.assertResult(Event)
         firstObserver.assertResult()
@@ -51,9 +51,9 @@ class SwitcherTest {
     @Test
     fun `Switcher executes sequential requests`() {
         val switcher = Switcher()
-        val firstObserver = switcher.switch { Observable.timer(2, TimeUnit.SECONDS).map { Event } }.test()
+        val firstObserver = switcher.observable(0) { Observable.timer(2, TimeUnit.SECONDS).map { Event } }.test()
         scheduler.advanceTimeBy(2, TimeUnit.SECONDS)
-        val secondObserver = switcher.switch { Observable.timer(2, TimeUnit.SECONDS).map { Event } }.test()
+        val secondObserver = switcher.observable(0) { Observable.timer(2, TimeUnit.SECONDS).map { Event } }.test()
         scheduler.advanceTimeBy(2, TimeUnit.SECONDS)
         firstObserver.assertResult(Event)
         secondObserver.assertResult(Event)
@@ -62,8 +62,8 @@ class SwitcherTest {
     @Test
     fun `Switcher cancels delayed request`() {
         val switcher = Switcher()
-        val firstObserver = switcher.switch(1000L) { Observable.just(1) }.map { Event }.test()
-        val secondObserver = switcher.switch(0L) { Observable.just(1) }.map { Event }.test()
+        val firstObserver = switcher.observable(1000L) { Observable.just(1) }.map { Event }.test()
+        val secondObserver = switcher.observable(0L) { Observable.just(1) }.map { Event }.test()
         scheduler.triggerActions()
         firstObserver.assertResult()
         secondObserver.assertResult(Event)
@@ -72,13 +72,13 @@ class SwitcherTest {
     @Test
     fun `Switcher cancels three consecutive requests`() {
         val switcher = Switcher()
-        val firstObserver = switcher.switch(300L) { Observable.just(1) }.map { Event }.test()
+        val firstObserver = switcher.observable(300L) { Observable.just(1) }.map { Event }.test()
         scheduler.advanceTimeBy(250, TimeUnit.MILLISECONDS)
-        val secondObserver = switcher.switch(300L) { Observable.just(1) }.map { Event }.test()
+        val secondObserver = switcher.observable(300L) { Observable.just(1) }.map { Event }.test()
         scheduler.advanceTimeBy(250, TimeUnit.MILLISECONDS)
-        val thirdObserver = switcher.switch(300L) { Observable.just(1) }.map { Event }.test()
+        val thirdObserver = switcher.observable(300L) { Observable.just(1) }.map { Event }.test()
         scheduler.advanceTimeBy(250, TimeUnit.MILLISECONDS)
-        val fourthObserver = switcher.switch(300L) { Observable.just(1) }.map { Event }.test()
+        val fourthObserver = switcher.observable(300L) { Observable.just(1) }.map { Event }.test()
         scheduler.advanceTimeBy(1000, TimeUnit.MILLISECONDS)
         firstObserver.assertResult()
         secondObserver.assertResult()
