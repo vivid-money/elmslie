@@ -1,0 +1,16 @@
+plugins {
+    id("java")
+}
+
+dependencies {
+    implementation("com.github.vivid-money.elmslie:elmslie-core:java-support-SNAPSHOT")
+//    implementation(project(":elmslie-core"))
+//    implementation(project(":elmslie-core")) {
+//        capabilities { requireCapability("vivid.money.elmslie:java") }
+//    }
+    implementation(deps.rx.rxJava3)
+
+    testImplementation(project(":elmslie-test"))
+}
+
+apply from: "../../gradle/junit-5.gradle"

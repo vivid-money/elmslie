@@ -15,3 +15,8 @@ dependencies {
 
 apply from: "../../gradle/junit-5.gradle"
 apply from: "../../gradle/android-library.gradle"
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.freeCompilerArgs = ['-Xjvm-default=all']
+}

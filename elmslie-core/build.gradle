@@ -2,8 +2,44 @@ plugins {
     id("kotlin")
 }
 
+//sourceSets {
+//    kotlin {
+//        java {
+//            srcDir 'src/kotlin/java'
+//        }
+//        compileClasspath += sourceSets.main.output
+//        runtimeClasspath += sourceSets.main.output
+//    }
+//    java {
+//        java {
+//            srcDir 'src/java/java'
+//        }
+//        compileClasspath += sourceSets.main.output
+//        runtimeClasspath += sourceSets.main.output
+//    }
+//}
+
+//java {
+//    registerFeature('kotlin') {
+//        usingSourceSet(sourceSets.kotlin)
+//        withJavadocJar()
+//        withSourcesJar()
+//        capability('vivid.money.elmslie', 'core', '1.0')
+//        capability('vivid.money.elmslie', 'kotlin', '1.0')
+//    }
+//    registerFeature('java') {
+//        usingSourceSet(sourceSets.java)
+//        withJavadocJar()
+//        withSourcesJar()
+//        capability('vivid.money.elmslie', 'core', '1.0')
+//        capability('vivid.money.elmslie', 'java', '1.0')
+//    }
+//}
+
 dependencies {
     implementation(deps.rx.rxJava3)
+//    javaImplementation(deps.rx.rxJava3)
+//    kotlinImplementation(deps.rx.rxJava3)
 
     testRuntimeOnly(deps.test.kotestJunitRunner)
     testImplementation(deps.test.kotestAssertions)
@@ -13,6 +49,7 @@ dependencies {
 
 compileKotlin {
     kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.freeCompilerArgs += ['-Xjvm-default=enable']
 }
 
 apply from: "../gradle/junit-5.gradle"
