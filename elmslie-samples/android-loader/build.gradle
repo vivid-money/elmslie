@@ -3,6 +3,12 @@ plugins {
     id("kotlin-android")
 }
 
+android {
+    buildFeatures {
+        buildConfig = true
+    }
+}
+
 dependencies {
     implementation(project(":elmslie-android"))
     implementation(project(":elmslie-core"))
