@@ -29,10 +29,6 @@ class ElmScreen<Event : Any, Effect : Any, State : Any>(
     private var statesDisposable: Disposable? = null
     private var isAfterProcessDeath: Boolean = false
 
-    /* Without this flag it's still possible that some delegate callback will be called after onStop */
-    @Volatile
-    private var isScreenRenderable = false
-
     private val lifecycleObserver: LifecycleObserver = object : LifecycleObserver {
         @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
         fun onCreate() {
@@ -44,7 +40,6 @@ class ElmScreen<Event : Any, Effect : Any, State : Any>(
 
         @OnLifecycleEvent(Lifecycle.Event.ON_START)
         fun onStart() {
-            isScreenRenderable = true
             statesDisposable = observeStates()
             val initialState = store.states.blockingFirst()
             delegate.render(initialState)
@@ -64,7 +59,6 @@ class ElmScreen<Event : Any, Effect : Any, State : Any>(
 
         @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
         fun onStop() {
-            isScreenRenderable = false
             statesDisposable?.dispose()
             effectsDisposable = null
         }
@@ -86,13 +80,13 @@ class ElmScreen<Event : Any, Effect : Any, State : Any>(
     private fun observeStates() = store.states
         .skip(1) // skipped first state, because we need to avoid rendering initial state twice
         .observeOn(Schedulers.computation())
-        .flatMapMaybe { if (isScreenRenderable) Maybe.just(it to delegate.mapList(it)) else Maybe.empty() }
+        .flatMapMaybe { if (statesDisposable?.isDisposed == false) Maybe.just(it to delegate.mapList(it)) else Maybe.empty() }
         .doOnError { logger.fatal("Crash while rendering state", it) }
         .retry()
         .subscribe { (state, list) ->
             handler.removeCallbacksAndMessages(null)
             handler.post {
-                if (isScreenRenderable) {
+                if (statesDisposable?.isDisposed == false) {
                     delegate.render(state)
                     delegate.renderList(state, list)
                 }
