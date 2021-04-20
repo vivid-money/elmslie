@@ -57,6 +57,7 @@ allprojects {
 ## Related articles
 - [Why did we select ELM? (Russian)](https://habr.com/ru/company/vivid_money/blog/534386/)
 - [What is ELM architecture? (Russian)](https://habr.com/ru/company/vivid_money/blog/550932/)
+- [How to use our library? (Russian)](https://habr.com/ru/company/vivid_money/blog/553232/)
 - [ELM. Pt1 (English)](https://proandroiddev.com/taming-state-in-android-with-elm-architecture-and-kotlin-part-1-566caae0f706)
 - [ELM. Pt2 (English)](https://proandroiddev.com/taming-state-in-android-with-elm-architecture-and-kotlin-part-2-c709f75f7596)
 - [ELM. Pt3 (English)](https://proandroiddev.com/taming-state-in-android-with-elm-architecture-and-kotlin-part-2-c709f75f7596)
