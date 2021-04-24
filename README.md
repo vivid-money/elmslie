@@ -16,7 +16,7 @@ Named after [George Grant Elmslie](https://en.wikipedia.org/wiki/George_Grant_El
 ## Documentation
 This is a visual representation of the architecture:
 <p>
-<img src="https://user-images.githubusercontent.com/16104123/105693941-68119e80-5f11-11eb-931f-1fcb79c0dfa4.png" width="500">
+<img src="https://user-images.githubusercontent.com/16104123/115949827-40b27980-a4e0-11eb-85dc-03a7073e3127.png" width="500">
 </p>
 
 
