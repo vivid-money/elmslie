@@ -17,3 +17,4 @@ compileKotlin {
 
 apply from: "../gradle/junit-5.gradle"
 apply from: "../gradle/kotlin-publishing.gradle"
+apply from: "../gradle/detekt.gradle"

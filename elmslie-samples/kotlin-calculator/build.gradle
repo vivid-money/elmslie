@@ -10,3 +10,4 @@ dependencies {
 }
 
 apply from: "../../gradle/junit-5.gradle"
+apply from: "../../gradle/detekt.gradle"

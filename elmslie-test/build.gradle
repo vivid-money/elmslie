@@ -10,3 +10,5 @@ dependencies {
 compileKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
+
+apply from: "../gradle/detekt.gradle"

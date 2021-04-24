@@ -25,3 +25,5 @@ patchPluginXml {
       Can create simple presentation layer<br>
       """
 }
+
+apply from: "../gradle/detekt.gradle"

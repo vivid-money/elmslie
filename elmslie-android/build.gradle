@@ -16,3 +16,4 @@ dependencies {
 apply from: "../gradle/junit-5.gradle"
 apply from: "../gradle/android-library.gradle"
 apply from: "../gradle/android-publishing.gradle"
+apply from: "../gradle/detekt.gradle"
