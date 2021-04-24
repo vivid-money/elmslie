@@ -15,6 +15,7 @@ class PresentationLayerAction : AnAction() {
 
     private val regex = Regex("(java|kotlin)")
 
+    @Suppress("TooGenericExceptionCaught")
     override fun actionPerformed(e: AnActionEvent) {
         e.project?.let { project ->
             val target = e.dataContext.getData(PlatformDataKeys.VIRTUAL_FILE) as VirtualFile

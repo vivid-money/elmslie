@@ -37,6 +37,10 @@ executeAndroidLint() {
   ./gradlew lint
 }
 
+executeDetekt() {
+  ./gradlew detekt
+}
+
 checkCleanWorkingDirectory() {
   # Return 0 - empty, 1 - with file changes
   [[ ! -n $(git status -s) ]]
@@ -88,6 +92,7 @@ validateGithubTokenFormat
 
 executeTests
 executeAndroidLint
+executeDetekt
 
 createGithubRelease "$NEW_VERSION"
 updateVersionProperty "$NEW_VERSION"
