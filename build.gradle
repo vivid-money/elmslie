@@ -12,6 +12,7 @@ buildscript {
         classpath deps.gradle.androidPlugin
         classpath deps.gradle.kotlinPlugin
         classpath deps.gradle.intellijPlugin
+        classpath deps.gradle.detektPlugin
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files

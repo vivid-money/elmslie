@@ -6,10 +6,12 @@ import vivid.money.elmslie.core.store.ElmStore
 import vivid.money.elmslie.core.store.Result
 import vivid.money.elmslie.core.store.StateReducer
 
+private const val MAX_INPUT_LENGTH = 9
+
 val Reducer = StateReducer { event: Event, state: State ->
     when (event) {
         is Event.EnterDigit -> when {
-            state.input.toString().length == 9 -> {
+            state.input.toString().length == MAX_INPUT_LENGTH -> {
                 Result(state, effect = Effect.NotifyError("Reached max input length"))
             }
             event.digit.isDigit() -> {

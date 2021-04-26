@@ -1,0 +1,29 @@
+apply plugin: "io.gitlab.arturbosch.detekt"
+
+import org.gradle.internal.os.OperatingSystem
+
+detekt {
+    toolVersion = versions.detekt
+    parallel = true
+    config = files("$rootProject.projectDir/detekt/detekt.yml")
+    reports {
+        html {
+            enabled = true
+            destination = file("$buildDir/reports/detekt-results-${name}.html")
+        }
+        xml.enabled = false
+        txt.enabled = false
+    }
+}
+
+def detektTaskProvider = tasks.named("detekt") { it.finalizedBy("openDetektHtmlReportInBrowser") }
+tasks.register("openDetektHtmlReportInBrowser", Exec).configure {
+    def detektTask = detektTaskProvider.get()
+    it.onlyIf { detektTask.state.failure != null && System.getenv()["CI"] == null }
+    def reportFile = detektTask.reports.html.destination
+    def currentOs = OperatingSystem.current()
+    if (currentOs.isMacOsX()) it.commandLine(["open", reportFile])
+    else if (currentOs.isLinux()) it.commandLine(["xdg-open", reportFile])
+    else if (currentOs.isWindows()) it.commandLine(["cmd", "/c", "start", reportFile])
+    else error("Unknown os $currentOs")
+}
