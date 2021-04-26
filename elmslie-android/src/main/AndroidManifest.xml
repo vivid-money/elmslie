@@ -1,11 +1,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         package="vivid.money.elmslie.android">
 
     <application>
         <provider
-                android:name=".logger.DefaultInitContentProvider"
-                android:authorities="${applicationId}.elmslie.initprovider"
+                android:name="androidx.startup.InitializationProvider"
+                android:authorities="${applicationId}.androidx-startup"
                 android:exported="false"
-                android:initOrder="900" />
+                tools:node="merge">
+            <meta-data
+                    android:name="vivid.money.elmslie.android.logger.DefaultLoggerInitializer"
+                    android:value="androidx.startup" />
+            <meta-data
+                    android:name="vivid.money.elmslie.android.processdeath.ProcessDeathDetectorInitializer"
+                    android:value="androidx.startup" />
+        </provider>
     </application>
 </manifest>
