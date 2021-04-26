@@ -3,7 +3,7 @@ package vivid.money.elmslie.core.store
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.schedulers.Schedulers.computation
 import io.reactivex.rxjava3.schedulers.Schedulers.io
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
@@ -17,7 +17,6 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
 
     private val logger = ElmslieConfig.logger
     private val disposables = CompositeDisposable()
-    private val scheduler = Schedulers.newThread() // TODO: Check if correct
 
     // We can't use subject to store state to keep it synchronized with children
     private val stateReferenceLock = Any()
@@ -41,7 +40,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
         effectsBuffer.init().bind()
 
         eventsInternal
-            .observeOn(scheduler)
+            .observeOn(computation())
             .flatMap { event ->
                 logger.debug("New event: $event")
                 val (effects, commands) = synchronized(stateReferenceLock) {
@@ -63,9 +62,9 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
             .flatMap { command ->
                 logger.debug("Executing command: $command")
                 actor.execute(command)
+                    .subscribeOn(io())
                     .doOnError { logger.nonfatal(error = it) }
                     .onErrorResumeNext { Observable.empty() }
-                    .subscribeOn(io())
             }
             .subscribe(eventsInternal::onNext) {
                 logger.fatal("Unexpected actor error", it)
@@ -88,7 +87,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
         stateReducer: (parentState: State, childState: ChildState) -> State = { parentState, _ -> parentState }
     ): Store<Event, Effect, State> {
         eventsInternal
-            .observeOn(scheduler)
+            .observeOn(computation())
             .flatMap { eventMapper(it)?.let { Observable.just(it) } ?: Observable.empty() }
             .subscribe(store::accept)
             .bind()
@@ -102,7 +101,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
 
         store
             .effects
-            .observeOn(scheduler)
+            .observeOn(computation())
             .flatMap { effect ->
                 effectMapper(statesInternal.value!!, effect)?.let { Observable.just(it) } ?: Observable.empty()
             }
@@ -111,7 +110,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
 
         store
             .states
-            .observeOn(scheduler)
+            .observeOn(computation())
             .map { childState ->
                 synchronized(stateReferenceLock) {
                     val parentState = statesInternal.value!!
