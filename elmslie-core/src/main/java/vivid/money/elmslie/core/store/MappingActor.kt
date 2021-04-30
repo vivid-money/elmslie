@@ -76,6 +76,18 @@ interface MappingActor<Event : Any> {
         .toObservable()
         .mapSuccessEvent { successEventMapper(it.value) }
 
+    fun <T : Any> Maybe<T>.mapOnlySuccessEvent(
+        successEventMapper: (T) -> Event
+    ): Observable<Event> = toObservable()
+        .mapSuccessEvent { successEventMapper(it) }
+
+    fun <T : Any> Maybe<T>.mapEvents(
+        successEventMapper: (T) -> Event,
+        completionEvent: Event
+    ): Observable<Event> = map(successEventMapper)
+        .defaultIfEmpty(completionEvent)
+        .toObservable()
+
     fun <T : Any> Maybe<T>.mapEvents(
         successEventMapper: (T) -> Event,
         completionEvent: Event,

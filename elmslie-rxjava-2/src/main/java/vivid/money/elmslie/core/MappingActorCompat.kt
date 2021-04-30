@@ -73,6 +73,15 @@ interface MappingActorCompat<Event : Any> : MappingActor<Event> {
         successEventMapper: (T?) -> Event
     ) = toV3().mapSuccessEvent(successEventMapper).toV2()
 
+    fun <T : Any> Maybe<T>.mapOnlySuccessEvent(
+        successEventMapper: (T) -> Event
+    ) = toV3().mapOnlySuccessEvent(successEventMapper).toV2()
+
+    fun <T : Any> Maybe<T>.mapEvents(
+        successEventMapper: (T) -> Event,
+        completionEvent: Event
+    ) = toV3().mapEvents(successEventMapper, completionEvent).toV2()
+
     fun <T : Any> Maybe<T>.mapEvents(
         successEventMapper: (T) -> Event,
         completionEvent: Event,
