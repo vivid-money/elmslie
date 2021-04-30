@@ -10,7 +10,7 @@ interface ElmDelegate<Event : Any, Effect : Any, State : Any> {
     val initEvent: Event
     fun createStore(): Store<Event, Effect, State>
     fun render(state: State)
-    fun handleEffect(effect: Effect) {}
+    fun handleEffect(effect: Effect): Unit? = Unit
 
     fun mapList(state: State): List<Any> = emptyList()
     fun renderList(state: State, list: List<Any>) {}
