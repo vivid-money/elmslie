@@ -10,5 +10,6 @@ include ':sample-android-loader'
 project(":sample-android-loader").projectDir = file("elmslie-samples/android-loader")
 include ':elmslie-plugin'
 project(":elmslie-plugin").projectDir = file("elmslie-plugin")
+include ':elmslie-store-persisting'
 
 rootProject.name = "Elmslie"
