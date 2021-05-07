@@ -45,4 +45,4 @@ fun storeFactory() = ElmStoreCompat(
     initialState = State(),
     reducer = Reducer(),
     actor = Actor()
-).start()
+)

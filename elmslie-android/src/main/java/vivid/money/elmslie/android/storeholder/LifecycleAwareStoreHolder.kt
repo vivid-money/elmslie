@@ -11,7 +11,7 @@ class LifecycleAwareStoreHolder<Event : Any, Effect : Any, State : Any>(
     storeProvider: () -> Store<Event, Effect, State>,
 ) : StoreHolder<Event, Effect, State> {
 
-    override val store by fastLazy { storeProvider() }
+    override val store by fastLazy { storeProvider().start() }
 
     private val lifecycleObserver: LifecycleObserver = object : LifecycleObserver {
         @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
