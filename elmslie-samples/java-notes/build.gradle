@@ -1,0 +1,12 @@
+plugins {
+    id("java")
+}
+
+dependencies {
+    implementation(project(":elmslie-core"))
+    implementation(deps.rx.rxJava3)
+
+    testImplementation(project(":elmslie-test"))
+}
+
+apply from: "../../gradle/junit-5.gradle"
