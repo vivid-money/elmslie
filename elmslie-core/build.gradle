@@ -11,9 +11,8 @@ dependencies {
     testImplementation(project(":elmslie-test"))
 }
 
-compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-}
+// TODO: Remove after updating kotlin version to at least 1.5.1. See: https://youtrack.jetbrains.com/issue/KT-46149
+compileKotlin.kotlinOptions.freeCompilerArgs += '-Xsam-conversions=class'
 
 apply from: "../gradle/junit-5.gradle"
 apply from: "../gradle/kotlin-publishing.gradle"
