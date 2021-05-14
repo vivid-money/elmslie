@@ -4,6 +4,8 @@ include ':elmslie-android'
 include ':elmslie-test'
 include ':sample-kotlin-calculator'
 project(":sample-kotlin-calculator").projectDir = file("elmslie-samples/kotlin-calculator")
+include ':sample-java-notes'
+project(":sample-java-notes").projectDir = file("elmslie-samples/java-notes")
 include ':sample-android-loader'
 project(":sample-android-loader").projectDir = file("elmslie-samples/android-loader")
 include ':elmslie-plugin'

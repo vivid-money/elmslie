@@ -6,13 +6,13 @@ package vivid.money.elmslie.core.store
 data class Result<State : Any, Effect : Any, Command : Any>(
     val state: State,
     val effects: List<Effect>,
-    val commands: List<Command>
+    val commands: List<Command>,
 ) {
 
     constructor(
         state: State,
         effect: Effect? = null,
-        command: Command? = null
+        command: Command? = null,
     ) : this(
         state,
         effect?.let(::listOf) ?: emptyList(),
@@ -21,10 +21,12 @@ data class Result<State : Any, Effect : Any, Command : Any>(
 
     constructor(
         state: State,
-        commands: List<Command>
+        commands: List<Command>,
     ) : this(
         state,
         emptyList(),
         commands
     )
+
+    constructor(state: State) : this(state, emptyList(), emptyList())
 }
