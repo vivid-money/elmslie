@@ -12,7 +12,6 @@ import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import vivid.money.elmslie.android.processdeath.ProcessDeathDetector
 import vivid.money.elmslie.android.processdeath.StopElmOnProcessDeath
-import vivid.money.elmslie.android.util.fastLazy
 import vivid.money.elmslie.core.config.ElmslieConfig
 
 class ElmScreen<Event : Any, Effect : Any, State : Any>(
@@ -23,7 +22,8 @@ class ElmScreen<Event : Any, Effect : Any, State : Any>(
 
     private val logger = ElmslieConfig.logger
     private val handler = Handler(Looper.getMainLooper())
-    val store by fastLazy { delegate.createStore() }
+    val store
+        get() = delegate.storeHolder.store
 
     private var effectsDisposable: Disposable? = null
     private var statesDisposable: Disposable? = null
@@ -42,9 +42,9 @@ class ElmScreen<Event : Any, Effect : Any, State : Any>(
         @OnLifecycleEvent(Lifecycle.Event.ON_START)
         fun onStart() {
             statesDisposable = observeStates()
-            val initialState = store.states.blockingFirst()
-            delegate.render(initialState)
-            delegate.renderList(initialState, delegate.mapList(initialState))
+            val lastState = store.states.blockingFirst()
+            delegate.render(lastState)
+            delegate.renderList(lastState, delegate.mapList(lastState))
         }
 
         @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
@@ -61,14 +61,7 @@ class ElmScreen<Event : Any, Effect : Any, State : Any>(
         @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
         fun onStop() {
             statesDisposable?.dispose()
-            effectsDisposable = null
-        }
-
-        @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-        fun onDestroy() {
-            if (isAllowedToRunMvi()) {
-                store.stop()
-            }
+            statesDisposable = null
         }
     }
 

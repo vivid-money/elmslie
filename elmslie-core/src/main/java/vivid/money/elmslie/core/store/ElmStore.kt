@@ -37,6 +37,9 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     override fun accept(event: Event) = eventsInternal.onNext(event)
 
     override fun start(): Store<Event, Effect, State> {
+        if (isStarted) {
+            logger.fatal("Store is already started. Usually, it happened inside StoreHolder.")
+        }
         effectsBuffer.init().bind()
 
         eventsInternal

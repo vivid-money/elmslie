@@ -42,4 +42,4 @@ fun createStore() = ElmStore(
     initialState = State(),
     reducer = Reducer,
     actor = Actor
-).start()
+)
