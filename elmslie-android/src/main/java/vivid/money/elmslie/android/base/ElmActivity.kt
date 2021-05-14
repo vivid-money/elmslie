@@ -9,7 +9,7 @@ import vivid.money.elmslie.android.storeholder.StoreHolder
 abstract class ElmActivity<Event : Any, Effect : Any, State : Any> :
     AppCompatActivity(), ElmDelegate<Event, Effect, State> {
 
-    @Suppress("LeakingThis")
+    @Suppress("LeakingThis", "UnusedPrivateMember")
     private val elm = ElmScreen(this, lifecycle) { this }
 
     protected val store

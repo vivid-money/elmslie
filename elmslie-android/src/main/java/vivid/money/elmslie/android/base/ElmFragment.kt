@@ -8,7 +8,7 @@ import vivid.money.elmslie.android.storeholder.StoreHolder
 
 abstract class ElmFragment<Event : Any, Effect : Any, State : Any> : Fragment(), ElmDelegate<Event, Effect, State> {
 
-    @Suppress("LeakingThis")
+    @Suppress("LeakingThis", "UnusedPrivateMember")
     private val elm = ElmScreen(this, lifecycle) { requireActivity() }
 
     protected val store
