@@ -29,12 +29,6 @@ afterEvaluate {
                 artifact javadocsJar
                 artifact sourcesJar
             }
-            debug(MavenPublication) {
-                from components.debug
-                artifactId = "$project.name-debug"
-                artifact javadocsJar
-                artifact sourcesJar
-            }
         }
     }
 }
