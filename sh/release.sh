@@ -94,7 +94,7 @@ executeTests
 executeAndroidLint
 executeDetekt
 
-createGithubRelease "$NEW_VERSION"
 updateVersionProperty "$NEW_VERSION"
 checkCleanWorkingDirectory && echo "Version was not updated" && exit 1
 commitAndPush "$NEW_VERSION"
+createGithubRelease "$NEW_VERSION"
