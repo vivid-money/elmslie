@@ -5,7 +5,7 @@ import android.content.pm.ApplicationInfo
 import androidx.startup.Initializer
 import vivid.money.elmslie.core.config.ElmslieConfig
 
-object DefaultLoggerInitializer : Initializer<Unit> {
+class DefaultLoggerInitializer : Initializer<Unit> {
 
     override fun create(context: Context) {
         val isDebug = 0 != context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE
