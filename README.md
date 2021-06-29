@@ -31,6 +31,9 @@ Samples are available [here](https://github.com/vivid-money/elmslie/tree/main/el
 - Pure java notes: [link](https://github.com/vivid-money/elmslie/tree/main/elmslie-samples/java-notes)
 - Paging with compose: [link](https://github.com/vivid-money/elmslie/tree/main/elmslie-samples/compose-paging)
 
+## Code generation plugin for Android Studio
+More info in the [wiki article](https://github.com/vivid-money/elmslie/wiki)
+
 ## Download
 Library is distributed through JitPack
 
