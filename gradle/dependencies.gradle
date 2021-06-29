@@ -8,10 +8,10 @@ ext.versions = [
         appStartup      : "1.0.0",
         rxJava2         : "2.2.21",
         rxJava3Bridge   : "3.0.0",
-        rxJava3         : "3.0.11",
+        rxJava3         : "3.0.13",
         rxAndroid       : "3.0.0",
-        jUnit5          : "5.7.1",
-        kotest          : "4.4.3",
+        jUnit5          : "5.7.2",
+        kotest          : "4.6.0",
         freemarker      : "2.3.31",
         intellij        : "0.6.5",
 ]
