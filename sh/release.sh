@@ -5,7 +5,8 @@ validateVersionFormat() {
 }
 
 validateGithubTokenFormat() {
-  EXPECTED='^[0-9a-z]{10,}$'
+  EXPECTED='^[0-9_a-zA-Z]{10,}$'
+  [[ -z $TOKEN ]] && echo "Github api token is not specified" && exit 1
   [[ ! $TOKEN =~ $EXPECTED ]] && echo "Invalid github api token format: $TOKEN" && exit 1
 }
 
@@ -39,6 +40,11 @@ executeAndroidLint() {
 
 executeDetekt() {
   ./gradlew detekt
+}
+
+validatePublishing() {
+  VERSION=$1
+  ./gradlew clean -Pgroup=com.github.vivid-money -Pversion=$VERSION -xtest -xlint build publishToMavenLocal
 }
 
 checkCleanWorkingDirectory() {
@@ -93,8 +99,9 @@ validateGithubTokenFormat
 executeTests
 executeAndroidLint
 executeDetekt
+validatePublishing "$NEW_VERSION"
 
-createGithubRelease "$NEW_VERSION"
 updateVersionProperty "$NEW_VERSION"
 checkCleanWorkingDirectory && echo "Version was not updated" && exit 1
 commitAndPush "$NEW_VERSION"
+createGithubRelease "$NEW_VERSION"

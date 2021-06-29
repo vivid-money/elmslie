@@ -4,7 +4,7 @@ import android.app.Application
 import android.content.Context
 import androidx.startup.Initializer
 
-object ProcessDeathDetectorInitializer : Initializer<Unit> {
+class ProcessDeathDetectorInitializer : Initializer<Unit> {
 
     override fun create(context: Context) {
         ProcessDeathDetector.init(context.applicationContext as Application)
