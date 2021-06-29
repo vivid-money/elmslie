@@ -12,16 +12,16 @@ dependencies {
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
-    version '2018.3'
-    updateSinceUntilBuild false
+    version = '2018.3'
+    updateSinceUntilBuild = false
     plugins = ['android', 'Kotlin']
 
-//    alternativeIdePath 'C://Program Files/Android/Android Studio' // for Windows
-    alternativeIdePath '/Applications/Android Studio.app' // for MacOS
 }
+// runIde.ideDir = layout.projectDirectory.dir('C://Program Files/Android/Android Studio') // for Windows
+runIde.ideDir = layout.projectDirectory.dir('/Applications/Android Studio.app') // for MacOS
 
 patchPluginXml {
-    changeNotes """
+    changeNotes = """
       Can create simple presentation layer<br>
       """
 }
