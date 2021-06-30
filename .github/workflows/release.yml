@@ -1,0 +1,75 @@
+name: Publish library release
+
+on:
+  workflow_dispatch:
+    inputs:
+      # TODO: Move to secrets
+      token:
+        description: 'Github api token'
+        required: true
+      version:
+        description: 'Release version'
+        required: true
+
+env:
+  NEW_VERSION: ${{ github.event.inputs.version }}
+  # TODO: use secrets for providing token
+  # GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+  GITHUB_TOKEN: ${{ github.event.inputs.token }}
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Ensure main branch
+        run: ./.github/sh/validate_main_branch.sh
+
+      - name: Validate token format
+        run: ./.github/sh/validate_github_token_format.sh "$GITHUB_TOKEN"
+
+      - name: Validate version
+        run: |
+          OLD_VERSION=$(./.github/sh/parse_library_version.sh)
+          ./.github/sh/validate_version_format.sh "$NEW_VERSION"
+          ./.github/sh/validate_version_increased.sh "$OLD_VERSION" "$NEW_VERSION"
+
+      - name: Validate jitpack publishing
+        run: |
+          ./gradlew \
+              -Pgroup=com.github.vivid-money \
+              -Pversion=$VERSION \
+              -xtest \
+              -xlint \
+              build \
+              publishToMavenLocal
+
+  release:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Update version property
+        run: ./.github/sh/update_version_property.sh "$NEW_VERSION"
+
+      - name: Validate version updated
+        run: ./.github/sh/validate_has_git_changes.sh
+
+      - name: Commit and push
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Bump release version to ${{ env.NEW_VERSION }}"
+          file_pattern: gradle.properties
+          skip_dirty_check: true
+
+      - name: Release
+        uses: ncipollo/release-action@v1
+        with:
+          token: "${{ env.GITHUB_TOKEN }}"
+          tag: "${{ env.NEW_VERSION }}"
+          body: This is an Elmslie release
+          artifacts: "elmslie-plugin/build/distributions/*.zip"
