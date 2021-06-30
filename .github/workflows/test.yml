@@ -1,0 +1,27 @@
+name: Test
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Run unit tests
+        run: ./gradlew test
+
+      - name: Run detekt
+        run: ./gradlew detekt
+
+      - name: Run android lint
+        run: ./gradlew lint
+
+      - name: Build project
+        run: ./gradlew build
+
