@@ -12,6 +12,10 @@ object Crash : LogStrategy {
     private val errorHandler = Handler(Looper.getMainLooper()) { throw it.obj as Throwable }
 
     override fun invoke(severity: LogSeverity, message: String, error: Throwable?) {
-        errorHandler.sendMessage(Message().also { it.obj = error ?: return })
+        errorHandler.sendMessage(
+            Message().apply {
+                obj = error ?: Exception(message)
+            }
+        )
     }
 }
