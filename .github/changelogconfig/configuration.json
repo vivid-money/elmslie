@@ -1,0 +1,32 @@
+{
+  "categories": [
+    {
+      "title": "### Notable Changes",
+      "labels": [
+        "enhancement"
+      ]
+    },
+    {
+      "title": "### Changelog",
+      "labels": [
+        "bug"
+      ]
+    },
+    {
+      "title": "### Dependency Updates",
+      "labels": [
+        "dependencies"
+      ]
+    },
+    {
+      "title": "### Housekeeping & Refactoring",
+      "labels": [
+        "housekeeping"
+      ]
+    }
+  ],
+  "sort": "ASC",
+  "template": "${{CHANGELOG}}\n\n<details>\n<summary>Uncategorized</summary>\n\n${{UNCATEGORIZED}}\n</details>",
+  "pr_template": "- ${{TITLE}}. See: #${{NUMBER}}",
+  "empty_template": "- No changes"
+}
