@@ -62,10 +62,20 @@ jobs:
       - name: Build plugin jar
         run: ./gradlew :elmslie-plugin:buildPlugin
 
+      - name: Build Changelog
+        id: github_release
+        uses: mikepenz/release-changelog-builder-action@v1
+        with:
+          toTag: HEAD
+          failOnError: true
+          configuration: .github/changelogconfig/configuration.json
+          owner: vivid-money
+          repo: elmslie
+
       - name: Release
         uses: ncipollo/release-action@v1
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
           tag: "${{ env.NEW_VERSION }}"
-          body: This is an Elmslie release
+          body: ${{ steps.github_release.outputs.changelog }}
           artifacts: "elmslie-plugin/build/distributions/*.zip"
