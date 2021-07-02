@@ -71,8 +71,8 @@ class Switcher {
     /**
      * Same as [observable], but for [Completable]
      */
-    fun <Event : Any> completable(
+    fun completable(
         delayMillis: Long = 0,
-        action: () -> Single<Event>,
+        action: () -> Completable,
     ): Completable = observable(delayMillis) { action().toObservable() }.ignoreElements()
 }
