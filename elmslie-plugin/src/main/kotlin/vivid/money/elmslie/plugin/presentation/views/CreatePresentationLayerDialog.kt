@@ -15,7 +15,7 @@ class CreatePresentationLayerDialog(
 
     init {
         super.init()
-        title = "Create presentation layer"
+        title = "Generate store"
     }
 
     override fun createCenterPanel(): JComponent? {
