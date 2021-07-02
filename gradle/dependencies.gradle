@@ -32,6 +32,7 @@ ext.deps = [
                 lifecycleViewModelSavedState: "androidx.lifecycle:lifecycle-viewmodel-savedstate:$versions.lifecycleVersion",
                 material                    : "com.google.android.material:material:$versions.material",
                 appStartup                  : "androidx.startup:startup-runtime:$versions.appStartup",
+                multidex                    : "androidx.multidex:multidex:2.0.1",
         ],
         rx     : [
                 rxJava2      : "io.reactivex.rxjava2:rxjava:$versions.rxJava2",
