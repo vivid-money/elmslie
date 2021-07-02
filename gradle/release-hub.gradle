@@ -5,11 +5,11 @@ releasesHub {
     dependenciesClassNames = ["dependencies.gradle"]
     pullRequestEnabled = true
     pullRequestLabels = ["dependencies"]
-//    pullRequestReviewers = ["diklimchuk"] // FIXME: Most likely can assign in vivid-money repo
+    pullRequestReviewers = ["diklimchuk"] // FIXME: Most likely can assign in vivid-money repo
     headBranchPrefix = "update_dependencies/"
     baseBranch = "main"
     gitHubUserEmail = "klimchuk.daniil@gmail.com"
-    gitHubRepositoryOwner = "diklimchuk" // FIXME: Change to "vivid-money"
+    gitHubRepositoryOwner = "vivid-money"
     gitHubRepositoryName = "elmslie"
     gitHubWriteToken = System.env.GITHUB_TOKEN
 }
