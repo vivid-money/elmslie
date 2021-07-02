@@ -4,9 +4,8 @@ plugins {
 }
 
 android {
-    buildFeatures {
-        buildConfig = true
-    }
+    buildFeatures.buildConfig = true
+    defaultConfig.multiDexEnabled true
 }
 
 dependencies {
@@ -16,6 +15,7 @@ dependencies {
 
     implementation(deps.android.appcompat)
     implementation(deps.android.material)
+    implementation(deps.android.multidex)
     implementation(deps.rx.rxJava2)
 }
 

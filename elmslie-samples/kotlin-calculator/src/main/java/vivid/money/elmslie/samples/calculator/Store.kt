@@ -1,10 +1,6 @@
 package vivid.money.elmslie.samples.calculator
 
-import io.reactivex.rxjava3.core.Observable
-import vivid.money.elmslie.core.store.Actor
-import vivid.money.elmslie.core.store.ElmStore
-import vivid.money.elmslie.core.store.Result
-import vivid.money.elmslie.core.store.StateReducer
+import vivid.money.elmslie.core.store.*
 
 private const val MAX_INPUT_LENGTH = 9
 
@@ -36,10 +32,8 @@ val Reducer = StateReducer { event: Event, state: State ->
     }
 }
 
-val Actor = Actor { _: Any -> Observable.empty<Event>() }
-
 fun createStore() = ElmStore(
     initialState = State(),
     reducer = Reducer,
-    actor = Actor
+    actor = NoOpActor()
 ).start()
