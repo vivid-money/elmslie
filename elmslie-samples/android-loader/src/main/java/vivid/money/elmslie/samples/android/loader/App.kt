@@ -1,10 +1,10 @@
 package vivid.money.elmslie.samples.android.loader
 
-import android.app.Application
+import androidx.multidex.MultiDexApplication
 import vivid.money.elmslie.core.config.ElmslieConfig
 import vivid.money.elmslie.core.logger.strategy.IgnoreLog
 
-class App : Application() {
+class App : MultiDexApplication() {
 
     override fun onCreate() {
         super.onCreate()
