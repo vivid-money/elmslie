@@ -1,8 +1,9 @@
 ![Elmslie](https://user-images.githubusercontent.com/16104123/104534649-b5defa80-5625-11eb-98b6-d761623f8964.jpeg)
 [![](https://jitpack.io/v/diklimchuk/test.svg)](https://jitpack.io/#diklimchuk/test)
 
-[![](https://jitpack.io/v/vivid-money/elmslie.svg)](https://jitpack.io/#vivid-money/elmslie)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Jitpack badge](https://jitpack.io/v/vivid-money/elmslie.svg)](https://jitpack.io/#vivid-money/elmslie)
+[![Code quality badge](https://github.com/vivid-money/elmslie/actions/workflows/codequality.yml/badge.svg?branch=main&event=push)](https://github.com/vivid-money/elmslie/actions/workflows/codequality.yml)
+[![License badge](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 Elmslie is a minimalistic reactive implementation of TEA/ELM written in kotlin with java support.  
 Named after [George Grant Elmslie](https://en.wikipedia.org/wiki/George_Grant_Elmslie), a Scottish-born architect.
