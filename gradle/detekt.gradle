@@ -3,7 +3,6 @@ apply plugin: "io.gitlab.arturbosch.detekt"
 import org.gradle.internal.os.OperatingSystem
 
 detekt {
-    toolVersion = versions.detekt
     parallel = true
     config = files("$rootProject.projectDir/detekt/detekt.yml")
     reports {
