@@ -1,0 +1,24 @@
+name: Update dependencies
+
+on:
+  schedule:
+    # min hour month_day month week_day
+    - cron: '0 0 3,18 * 6'
+
+jobs:
+  update_dependencies:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Configure git
+        run: |
+          git config user.name dklimchuk
+          git config user.email klimchuk.daniil@gmail.com
+
+      - name: Update dependencies
+        run: ./gradlew :upgradeDependencies
+
