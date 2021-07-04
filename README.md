@@ -32,6 +32,7 @@ Samples are available [here](https://github.com/vivid-money/elmslie/tree/main/el
 - Paging with compose: [link](https://github.com/vivid-money/elmslie/tree/main/elmslie-samples/compose-paging)
 
 ## Code generation plugin for Android Studio
+Plugin is available at the [Jetbrains plugin repository](https://plugins.jetbrains.com/plugin/17176-elmslie-generator/versions/stable/125661)
 More info in the [wiki article](https://github.com/vivid-money/elmslie/wiki)
 
 ## Download
