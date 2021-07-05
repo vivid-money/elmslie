@@ -7,6 +7,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers.computation
 import io.reactivex.rxjava3.schedulers.Schedulers.io
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
+import java.util.concurrent.atomic.AtomicBoolean
 import vivid.money.elmslie.core.config.ElmslieConfig
 
 class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
@@ -27,18 +28,23 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     private val effectsBuffer = EffectsBuffer(effectsInternal)
     private val eventsInternal = PublishSubject.create<Event>()
     private val commandsInternal = PublishSubject.create<Command>()
+    private val isStartedInternal = AtomicBoolean(false)
 
     override val effects: Observable<Effect> = effectsBuffer.getBufferedObservable()
     override val states: Observable<State> = statesInternal.distinctUntilChanged()
     override val currentState: State get() = statesInternal.value!!
-    @Volatile
-    override var isStarted = false
+
+    override val isStarted
+        get() = isStartedInternal.get()
 
     override fun accept(event: Event) = eventsInternal.onNext(event)
 
     override fun start(): Store<Event, Effect, State> {
-        if (isStarted) {
-            logger.fatal("Store is already started. Usually, it happened inside StoreHolder.")
+        if (!isStartedInternal.compareAndSet(false, true)) {
+            logger.fatal(
+                "Store start error",
+                Exception("Store is already started. Usually, it happened inside StoreHolder.")
+            )
         }
         effectsBuffer.init().bind()
 
@@ -74,12 +80,11 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
             }
             .bind()
 
-        isStarted = true
         return this
     }
 
     override fun stop() {
-        isStarted = false
+        isStartedInternal.set(false)
         disposables.clear()
     }
 
