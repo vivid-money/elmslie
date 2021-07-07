@@ -1,10 +1,10 @@
-name: Publish library release
+name: Publish plugin release
 
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Library release version'
+        description: 'Plugin release version'
         required: true
 
 env:
@@ -19,18 +19,8 @@ jobs:
       - name: Ensure main branch
         run: ./.github/sh/validate_main_branch.sh
 
-      - name: Validate library version update
-        run: ./.github/sh/validate_version_update.sh "libraryVersion" "$NEW_VERSION"
-
-      - name: Validate jitpack publishing
-        run: |
-          ./gradlew \
-              -Pgroup=com.github.vivid-money \
-              -Pversion=$VERSION \
-              -xtest \
-              -xlint \
-              build \
-              publishToMavenLocal
+      - name: Validate plugin version update
+        run: ./.github/sh/validate_version_update.sh "pluginVersion" "$NEW_VERSION"
 
   release:
     needs: validate
@@ -38,12 +28,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Update library version
-        run: ./.github/sh/update_release_version.sh "libraryVersion" "$NEW_VERSION"
+      - name: Update plugin version
+        run: ./.github/sh/update_release_version.sh "pluginVersion" "$NEW_VERSION"
 
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "Update library version to ${{ env.NEW_VERSION }}"
+          commit_message: "Update plugin version to ${{ env.NEW_VERSION }}"
           file_pattern: gradle.properties
           skip_dirty_check: true
 
@@ -53,13 +43,17 @@ jobs:
         with:
           toTag: HEAD
           failOnError: true
-          configuration: .github/changelogconfig/configuration.json
+          configuration: .github/changelogconfig/plugin-configuration.json
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish intellij plugin release
+        run: PLUGIN_UPLOAD_TOKEN=${{ secrets.PLUGIN_UPLOAD_TOKEN }} ./gradlew :elmslie-plugin:publishPlugin
 
       - name: Create github release
         uses: ncipollo/release-action@v1
         with:
+          name: "Plugin ${{ env.NEW_VERSION }}"
           token: "${{ secrets.GITHUB_TOKEN }}"
-          tag: "${{ env.NEW_VERSION }}"
+          tag: "plugin-${{ env.NEW_VERSION }}"
           body: ${{ steps.github_release.outputs.changelog }}
           artifacts: "elmslie-plugin/build/distributions/*.zip"

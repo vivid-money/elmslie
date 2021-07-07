@@ -1,0 +1,14 @@
+{
+  "categories": [
+    {
+      "title": "### Changelog",
+      "labels": [
+        "plugin"
+      ]
+    }
+  ],
+  "sort": "ASC",
+  "template": "${{CHANGELOG}}",
+  "pr_template": "- ${{TITLE}}. See: #${{NUMBER}}",
+  "empty_template": "- No changes"
+}
