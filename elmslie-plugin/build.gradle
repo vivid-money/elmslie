@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'vivid.money'
-version '1.0'
+version pluginVersion
 
 dependencies {
     api(deps.plugin.freemarker)
@@ -24,6 +24,11 @@ patchPluginXml {
     changeNotes = """
       Can create simple presentation layer<br>
       """
+}
+
+publishPlugin {
+    token = "$System.env.PLUGIN_UPLOAD_TOKEN"
+    channels = ["stable"]
 }
 
 apply from: "../gradle/detekt.gradle"
