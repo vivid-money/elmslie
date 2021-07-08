@@ -16,7 +16,7 @@ ext.versions = [
         freemarker         : "2.3.31",
         intellij           : "0.6.5",
         compose            : "1.0.0-beta09",
-        composeSwipeRefresh: "0.10.0",
+        composeSwipeRefresh: "0.12.0",
 ]
 
 ext.deps = [
@@ -33,6 +33,18 @@ ext.deps = [
                 material                    : "com.google.android.material:material:$versions.material",
                 appStartup                  : "androidx.startup:startup-runtime:$versions.appStartup",
                 multidex                    : "androidx.multidex:multidex:2.0.1",
+        ],
+        compose: [
+                activity      : "androidx.activity:activity-compose:1.3.0-beta02",
+                foundation    : "androidx.compose.foundation:foundation:$versions.compose",
+                iconsCore     : "androidx.compose.material:material-icons-core:$versions.compose",
+                iconsExtended : "androidx.compose.material:material-icons-extended:$versions.compose",
+                material      : "androidx.compose.material:material:$versions.compose",
+                runtimeRxJava2: "androidx.compose.runtime:runtime-rxjava2:$versions.compose",
+                runtimeRxJava3: "androidx.compose.runtime:runtime-rxjava3:$versions.compose",
+                swiperefresh  : "com.google.accompanist:accompanist-swiperefresh:$versions.composeSwipeRefresh",
+                tooling       : "androidx.compose.ui:ui-tooling:$versions.compose",
+                ui            : "androidx.compose.ui:ui:$versions.compose",
         ],
         rx     : [
                 rxJava2      : "io.reactivex.rxjava2:rxjava:$versions.rxJava2",

@@ -29,6 +29,7 @@ Samples are available [here](https://github.com/vivid-money/elmslie/tree/main/el
 - Basic loader for android: [link](https://github.com/vivid-money/elmslie/tree/main/elmslie-samples/android-loader)
 - Pure kotlin calculator: [link](https://github.com/vivid-money/elmslie/tree/main/elmslie-samples/kotlin-calculator)
 - Pure java notes: [link](https://github.com/vivid-money/elmslie/tree/main/elmslie-samples/java-notes)
+- Paging with compose: [link](https://github.com/vivid-money/elmslie/tree/main/elmslie-samples/compose-paging)
 
 ## Download
 Library is distributed through JitPack
@@ -54,6 +55,10 @@ allprojects {
 - RxJava 2 - compatibility module (more info in the wiki [article](https://github.com/vivid-money/elmslie/wiki/RxJava-2-vs-3))
 
 `implementation 'com.github.vivid-money.elmslie:elmslie-rxjava-2:{latest-version}'`  
+
+- Jetpack Compose - for android apps only, simplifies using jetpack compose (not required)
+
+`implementation 'com.github.vivid-money.elmslie:elmslie-compose:{latest-version}'`
 
 
 ## Related articles

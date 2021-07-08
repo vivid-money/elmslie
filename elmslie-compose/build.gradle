@@ -1,0 +1,31 @@
+plugins {
+    id("com.android.library")
+    id("kotlin-android")
+}
+
+android {
+    buildFeatures {
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerVersion = versions.kotlin
+        kotlinCompilerExtensionVersion = versions.compose
+    }
+}
+
+dependencies {
+    implementation(project(":elmslie-android"))
+    implementation(project(":elmslie-core"))
+
+    implementation(deps.android.appcompat)
+
+    implementation(deps.compose.foundation)
+    implementation(deps.compose.runtimeRxJava3)
+
+    implementation(deps.rx.rxJava3)
+}
+
+apply from: "../gradle/junit-5.gradle"
+apply from: "../gradle/android-library.gradle"
+apply from: "../gradle/android-publishing.gradle"
+apply from: "../gradle/detekt.gradle"
