@@ -5,6 +5,7 @@ import vivid.money.elmslie.android.screen.ElmDelegate
 import vivid.money.elmslie.android.screen.ElmScreen
 import vivid.money.elmslie.android.storeholder.LifecycleAwareStoreHolder
 import vivid.money.elmslie.android.storeholder.StoreHolder
+import vivid.money.elmslie.android.util.fastLazy
 
 abstract class ElmFragment<Event : Any, Effect : Any, State : Any> : Fragment(), ElmDelegate<Event, Effect, State> {
 
@@ -14,5 +15,7 @@ abstract class ElmFragment<Event : Any, Effect : Any, State : Any> : Fragment(),
     protected val store
         get() = storeHolder.store
 
-    override val storeHolder: StoreHolder<Event, Effect, State> = LifecycleAwareStoreHolder(lifecycle, ::createStore)
+    override val storeHolder: StoreHolder<Event, Effect, State> by fastLazy {
+        LifecycleAwareStoreHolder(lifecycle, ::createStore)
+    }
 }
