@@ -66,6 +66,7 @@ jobs:
         id: github_release
         uses: mikepenz/release-changelog-builder-action@v1
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           toTag: HEAD
           failOnError: true
           configuration: .github/changelogconfig/configuration.json
