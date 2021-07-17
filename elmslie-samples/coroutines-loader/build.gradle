@@ -1,0 +1,28 @@
+plugins {
+    id("com.android.application")
+    id("kotlin-android")
+}
+
+android {
+    buildFeatures.buildConfig = true
+    defaultConfig.multiDexEnabled true
+}
+
+dependencies {
+    implementation(project(":elmslie-android"))
+    implementation(project(":elmslie-core"))
+    implementation(project(":elmslie-coroutines"))
+
+    implementation(deps.android.appcompat)
+    implementation(deps.android.material)
+    implementation(deps.android.multidex)
+    implementation(deps.coroutines.core)
+    implementation(deps.rx.rxJava3)
+
+    testImplementation(project(":elmslie-test"))
+    testImplementation(deps.coroutines.test)
+}
+
+apply from: "../../gradle/junit-5.gradle"
+apply from: "../../gradle/android-library.gradle"
+apply from: "../../gradle/detekt.gradle"
