@@ -36,6 +36,13 @@ class Switcher {
     ) = observable(delayMillis, action)
 
     /**
+     * Cancels current action in switcher after [delayMillis]
+     *
+     * @param delayMillis Cancellation delay in milliseconds
+     */
+    fun cancel(delayMillis: Long = 0) = observable(delayMillis) { Observable.empty() }
+
+    /**
      * Executes [action] and cancels all previous requests scheduled on this [Switcher]
      *
      * @param delayMillis Operation delay in milliseconds. Can be used to debounce requests
