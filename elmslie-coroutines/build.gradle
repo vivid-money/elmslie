@@ -1,0 +1,14 @@
+plugins {
+    id("kotlin")
+}
+
+dependencies {
+    implementation(project(":elmslie-core"))
+    implementation(deps.coroutines.core)
+    implementation(deps.coroutines.rx3)
+    implementation(deps.rx.rxJava3)
+}
+
+apply from: "../gradle/junit-5.gradle"
+apply from: "../gradle/kotlin-publishing.gradle"
+apply from: "../gradle/detekt.gradle"

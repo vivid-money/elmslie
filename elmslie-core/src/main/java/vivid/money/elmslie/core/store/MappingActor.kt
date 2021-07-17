@@ -142,4 +142,6 @@ interface MappingActor<Event : Any> {
         ElmslieConfig.logger.nonfatal(error = error)
         failureEvent(error).also { ElmslieConfig.logger.debug("Failed app state: $it") }
     }
+
+    fun <T : Any> Observable<T>.ignoreEvents(): Observable<Event> = ignoreElements().ignoreEvents()
 }
