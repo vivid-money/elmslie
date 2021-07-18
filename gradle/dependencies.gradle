@@ -39,9 +39,9 @@ ext.deps = [
         ],
         test   : [
                 jUnit5           : "org.junit.jupiter:junit-jupiter:5.7.2",
-                kotestJunitRunner: "io.kotest:kotest-runner-junit5-jvm:4.6.0",
-                kotestAssertions : "io.kotest:kotest-assertions-core:4.6.0",
-                kotestProperty   : "io.kotest:kotest-property:4.6.0",
+                kotestJunitRunner: "io.kotest:kotest-runner-junit5-jvm:4.6.1",
+                kotestAssertions : "io.kotest:kotest-assertions-core:4.6.1",
+                kotestProperty   : "io.kotest:kotest-property:4.6.1",
         ],
         plugin : [
                 freemarker: "org.freemarker:freemarker:2.3.31",
