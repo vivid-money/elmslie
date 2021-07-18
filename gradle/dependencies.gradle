@@ -27,7 +27,7 @@ ext.deps = [
                 material      : "androidx.compose.material:material:1.0.0-beta09",
                 runtimeRxJava2: "androidx.compose.runtime:runtime-rxjava2:1.0.0-beta09",
                 runtimeRxJava3: "androidx.compose.runtime:runtime-rxjava3:1.0.0-beta09",
-                swiperefresh  : "com.google.accompanist:accompanist-swiperefresh:0.13.0",
+                swiperefresh  : "com.google.accompanist:accompanist-swiperefresh:0.14.0",
                 tooling       : "androidx.compose.ui:ui-tooling:1.0.0-beta09",
                 ui            : "androidx.compose.ui:ui:1.0.0-beta09",
         ],
