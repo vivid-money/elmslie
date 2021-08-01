@@ -10,13 +10,12 @@ import vivid.money.elmslie.samples.android.loader.elm.Event
 import vivid.money.elmslie.samples.android.loader.elm.State
 import vivid.money.elmslie.samples.android.loader.elm.storeFactory
 
-class MainActivity : ElmActivity<Event, Effect, State>() {
+class MainActivity : ElmActivity<Event, Effect, State>(R.layout.activity_main) {
 
     override val initEvent: Event = Event.Ui.Init
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
         findViewById<Button>(R.id.reload).setOnClickListener { store.accept(Event.Ui.ClickReload) }
     }
 
