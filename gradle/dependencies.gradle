@@ -20,7 +20,7 @@ ext.deps = [
                 multidex                    : "androidx.multidex:multidex:2.0.1",
         ],
         compose: [
-                activity      : "androidx.activity:activity-compose:1.3.0-beta02",
+                activity      : "androidx.activity:activity-compose:1.3.1",
                 foundation    : "androidx.compose.foundation:foundation:1.0.0",
                 iconsCore     : "androidx.compose.material:material-icons-core:1.0.0",
                 iconsExtended : "androidx.compose.material:material-icons-extended:1.0.0",
