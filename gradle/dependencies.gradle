@@ -1,5 +1,4 @@
 ext.versions = [
-        kotlin : "1.5.21",
         compose: "1.0.1",
 ]
 

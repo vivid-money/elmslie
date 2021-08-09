@@ -4,13 +4,8 @@ plugins {
 }
 
 android {
-    buildFeatures {
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerVersion = versions.kotlin
-        kotlinCompilerExtensionVersion = versions.compose
-    }
+    buildFeatures.compose = true
+    composeOptions.kotlinCompilerExtensionVersion = versions.compose
 }
 
 dependencies {
