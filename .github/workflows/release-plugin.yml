@@ -6,6 +6,9 @@ on:
       version:
         description: 'Plugin release version'
         required: true
+      plugin_upload_token:
+        description: 'Token for uploading plugin to jetbrains repository'
+        required: true
 
 env:
   NEW_VERSION: ${{ github.event.inputs.version }}
@@ -47,7 +50,8 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish intellij plugin release
-        run: PLUGIN_UPLOAD_TOKEN=${{ secrets.PLUGIN_UPLOAD_TOKEN }} ./gradlew :elmslie-plugin:publishPlugin
+        run: PLUGIN_UPLOAD_TOKEN=${{ github.event.inputs.version }} ./gradlew :elmslie-plugin:publishPlugin
+      # run: PLUGIN_UPLOAD_TOKEN=${{ secrets.PLUGIN_UPLOAD_TOKEN }} ./gradlew :elmslie-plugin:publishPlugin
 
       - name: Create github release
         uses: ncipollo/release-action@v1
