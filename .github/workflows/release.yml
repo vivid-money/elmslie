@@ -62,4 +62,3 @@ jobs:
           token: "${{ secrets.GITHUB_TOKEN }}"
           tag: "${{ env.NEW_VERSION }}"
           body: ${{ steps.github_release.outputs.changelog }}
-          artifacts: "elmslie-plugin/build/distributions/*.zip"
