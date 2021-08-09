@@ -1,23 +1,25 @@
 apply plugin: "maven-publish"
+apply plugin: "org.jetbrains.dokka"
 
 group = libraryGroup
 version = libraryVersion
 
+project.tasks.dokkaJavadoc.configure {
+    outputDirectory.set(new File("javadoc", buildDir))
+    moduleName = rootProject.name
+}
+
+task dokkaJar(type: Jar) {
+    group = JavaBasePlugin.DOCUMENTATION_GROUP
+    description = "Assembles Kotlin docs with Dokka"
+    archiveClassifier.set("javadoc")
+    from(tasks.dokkaJavadoc)
+    dependsOn(tasks.dokkaJavadoc)
+}
+
 task sourcesJar(type: Jar) {
     archiveClassifier.set("sources")
     from android.sourceSets.main.java.srcDirs
-}
-
-task javadocs(type: Javadoc) {
-    failOnError false
-    source = android.sourceSets.main.java.sourceFiles
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-    classpath += configurations.implementation
-}
-
-task javadocsJar(type: Jar, dependsOn: javadocs) {
-    archiveClassifier.set('javadoc')
-    from javadocs.destinationDir
 }
 
 afterEvaluate {
@@ -26,7 +28,7 @@ afterEvaluate {
             release(MavenPublication) {
                 from components.release
                 artifactId = project.name
-                artifact javadocsJar
+                artifact dokkaJar
                 artifact sourcesJar
             }
         }
