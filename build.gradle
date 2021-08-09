@@ -14,6 +14,7 @@ buildscript {
         classpath deps.gradle.intellijPlugin
         classpath deps.gradle.detektPlugin
         classpath deps.gradle.releasesHub
+        classpath deps.gradle.dokka
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
