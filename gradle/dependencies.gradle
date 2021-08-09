@@ -12,7 +12,7 @@ ext.deps = [
                 releasesHub   : "com.dipien:releases-hub-gradle-plugin:2.0.2",
         ],
         android: [
-                appcompat                   : "androidx.appcompat:appcompat:1.3.0",
+                appcompat                   : "androidx.appcompat:appcompat:1.3.1",
                 appStartup                  : "androidx.startup:startup-runtime:1.0.0",
                 lifecycleViewmodel          : "androidx.lifecycle:lifecycle-viewmodel:2.3.1",
                 lifecycleViewModelSavedState: "androidx.lifecycle:lifecycle-viewmodel-savedstate:2.3.1",
