@@ -23,7 +23,7 @@ class PresentationLayerAction : AnAction() {
             val dialog = CreatePresentationLayerDialog { model ->
                 project.runWriteAction {
                     try {
-                        project.getComponent(PresentationLayerController::class.java).generate(model, target)
+                        PresentationLayerController(project).generate(model, target)
                     } catch (error: Exception) {
                         val errorDialog = DialogBuilder()
                         errorDialog.setErrorText(ERROR_SOMETHING_WRONG + error.message)

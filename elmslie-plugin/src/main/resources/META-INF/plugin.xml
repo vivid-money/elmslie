@@ -1,11 +1,23 @@
 <idea-plugin>
-    <id>vivid.money.elmslie.plugin</id>
+    <id>vivid.money.elmslie.plugin.codegenerator</id>
     <name>ELMSLIE GENERATOR</name>
     <vendor email="support@vivid.money" url="https://vivid.money">Vivid money</vendor>
+    <idea-version since-build="193" />
 
     <description><![CDATA[
     Plugin helps to generate presentation layer.
+    <br />
     Elmslie architecture for android: https://github.com/vivid-money/elmslie
+    <br />
+    How to use:
+    <br />
+    <ul>
+        <li>Click on the package with your source code where you want the code to be generated (Inside the project view)</li>
+        <li>Go to Tools/Elmslie/Generate store</li>
+        <li>Enter you base class name (i.e. for SomeFeatureReducer enter just "SomeFeature")</li>
+        <li>(Optional) Select the checkbox if you want to use the reducer dsl for ui features</li>
+        <li>Click OK</li>
+    </ul>
     ]]></description>
 
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
@@ -15,21 +27,14 @@
     <depends>org.jetbrains.android</depends>
 
     <actions>
-        <group id="vivid.money.elmslie.plugin.group" text="Elmslie" description="Create presentation layer">
+        <group id="vivid.money.elmslie.plugin.group" text="Elmslie" description="Generate store" popup="true">
             <separator/>
             <action id="vivid.money.elmslie.plugin.presentation.PresentationLayerAction"
                     class="vivid.money.elmslie.plugin.presentation.PresentationLayerAction"
-                    text="Generate Presentation Layer">
+                    text="Generate Presentation Layer"
+                    description="Generate classes for presentation layer">
             </action>
-            <add-to-group group-id="NewGroup" anchor="last"/>
+            <add-to-group group-id="ToolsMenu" anchor="after" relative-to-action="org.intellij.sdk.action.PopupDialogAction"/>
         </group>
     </actions>
-
-    <project-components>
-        <component>
-            <implementation-class>
-                vivid.money.elmslie.plugin.presentation.controller.PresentationLayerController
-            </implementation-class>
-        </component>
-    </project-components>
 </idea-plugin>
