@@ -55,7 +55,6 @@ jobs:
           toTag: HEAD
           failOnError: true
           configuration: .github/changelogconfig/configuration.json
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create github release
         uses: ncipollo/release-action@v1
