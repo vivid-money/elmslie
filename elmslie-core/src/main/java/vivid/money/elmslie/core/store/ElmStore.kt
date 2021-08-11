@@ -93,7 +93,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
         eventMapper: (parentEvent: Event) -> ChildEvent? = { null },
         effectMapper: (parentState: State, childEffect: ChildEffect) -> Effect? = { _, _ -> null },
         stateReducer: (parentState: State, childState: ChildState) -> State = { parentState, _ -> parentState }
-    ): Store<Event, Effect, State> {
+    ): ElmStore<Event, State, Effect, Command> {
         eventsInternal
             .observeOn(computation())
             .flatMap { eventMapper(it)?.let { Observable.just(it) } ?: Observable.empty() }
