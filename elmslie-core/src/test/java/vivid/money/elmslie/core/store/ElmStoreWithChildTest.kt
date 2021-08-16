@@ -4,7 +4,14 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.TestScheduler
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
-import vivid.money.elmslie.core.testutil.model.*
+import vivid.money.elmslie.core.testutil.model.ChildCommand
+import vivid.money.elmslie.core.testutil.model.ChildEffect
+import vivid.money.elmslie.core.testutil.model.ChildEvent
+import vivid.money.elmslie.core.testutil.model.ChildState
+import vivid.money.elmslie.core.testutil.model.ParentCommand
+import vivid.money.elmslie.core.testutil.model.ParentEffect
+import vivid.money.elmslie.core.testutil.model.ParentEvent
+import vivid.money.elmslie.core.testutil.model.ParentState
 import vivid.money.elmslie.test.TestSchedulerExtension
 
 class ElmStoreWithChildTest {
@@ -157,11 +164,11 @@ class ElmStoreWithChildTest {
         state: ParentState,
         reducer: StateReducer<ParentEvent, ParentState, ParentEffect, ParentCommand> = NoOpReducer(),
         actor: Actor<ParentCommand, ParentEvent> = NoOpActor()
-    ) = ElmStore(state, reducer, actor)
+    ): Store<ParentEvent, ParentEffect, ParentState> = ElmStore(state, reducer, actor)
 
     private fun childStore(
         state: ChildState,
         reducer: StateReducer<ChildEvent, ChildState, ChildEffect, ChildCommand> = NoOpReducer(),
         actor: Actor<ChildCommand, ChildEvent> = NoOpActor()
-    ) = ElmStore(state, reducer, actor)
+    ): Store<ChildEvent, ChildEffect, ChildState> = ElmStore(state, reducer, actor)
 }

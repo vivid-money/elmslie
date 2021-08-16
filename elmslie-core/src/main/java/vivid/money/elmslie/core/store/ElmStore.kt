@@ -7,8 +7,8 @@ import io.reactivex.rxjava3.schedulers.Schedulers.computation
 import io.reactivex.rxjava3.schedulers.Schedulers.io
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
-import java.util.concurrent.atomic.AtomicBoolean
 import vivid.money.elmslie.core.config.ElmslieConfig
+import java.util.concurrent.atomic.AtomicBoolean
 
 class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     initialState: State,
@@ -88,12 +88,12 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
         disposables.clear()
     }
 
-    fun <ChildEvent : Any, ChildState : Any, ChildEffect : Any> addChildStore(
+    override fun <ChildEvent : Any, ChildState : Any, ChildEffect : Any> addChildStore(
         store: Store<ChildEvent, ChildEffect, ChildState>,
-        eventMapper: (parentEvent: Event) -> ChildEvent? = { null },
-        effectMapper: (parentState: State, childEffect: ChildEffect) -> Effect? = { _, _ -> null },
-        stateReducer: (parentState: State, childState: ChildState) -> State = { parentState, _ -> parentState }
-    ): ElmStore<Event, State, Effect, Command> {
+        eventMapper: (parentEvent: Event) -> ChildEvent?,
+        effectMapper: (parentState: State, childEffect: ChildEffect) -> Effect?,
+        stateReducer: (parentState: State, childState: ChildState) -> State
+    ): Store<Event, Effect, State> {
         eventsInternal
             .observeOn(computation())
             .flatMap { eventMapper(it)?.let { Observable.just(it) } ?: Observable.empty() }
