@@ -7,7 +7,7 @@ ext.deps = [
                 androidPlugin : "com.android.tools.build:gradle:7.0.0",
                 kotlinPlugin  : "org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.21",
                 intellijPlugin: "org.jetbrains.intellij.plugins:gradle-intellij-plugin:1.1.4",
-                detektPlugin  : "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.17.1",
+                detektPlugin  : "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.18.0",
                 releasesHub   : "com.dipien:releases-hub-gradle-plugin:2.0.2",
                 dokka         : "org.jetbrains.dokka:dokka-gradle-plugin:1.5.0",
         ],
