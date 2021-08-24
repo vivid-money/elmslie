@@ -2,6 +2,7 @@ package vivid.money.elmslie.android.base
 
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
+import vivid.money.elmslie.android.processdeath.StopElmOnProcessDeathController
 import vivid.money.elmslie.android.screen.ElmDelegate
 import vivid.money.elmslie.android.screen.ElmScreen
 import vivid.money.elmslie.android.storeholder.LifecycleAwareStoreHolder
@@ -17,6 +18,23 @@ abstract class ElmFragment<Event : Any, Effect : Any, State : Any> : Fragment,
 
     @Suppress("LeakingThis", "UnusedPrivateMember")
     private val elm = ElmScreen(this, lifecycle) { requireActivity() }
+
+    override val isAllowedToRunMvi: Boolean
+        get() {
+            var currentFragment: Fragment? = this
+            while (currentFragment != null) {
+                (currentFragment as? StopElmOnProcessDeathController)?.let {
+                    return it.isAllowedToRunMvi
+                }
+                currentFragment = currentFragment.parentFragment
+            }
+
+            (activity as? StopElmOnProcessDeathController)?.let {
+                return it.isAllowedToRunMvi
+            }
+
+            return true
+        }
 
     protected val store
         get() = storeHolder.store

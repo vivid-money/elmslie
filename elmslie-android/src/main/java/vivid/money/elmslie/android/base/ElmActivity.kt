@@ -18,6 +18,8 @@ abstract class ElmActivity<Event : Any, Effect : Any, State : Any> :
     @Suppress("LeakingThis", "UnusedPrivateMember")
     private val elm = ElmScreen(this, lifecycle) { this }
 
+    override var isAllowedToRunMvi: Boolean = true
+
     protected val store
         get() = storeHolder.store
 

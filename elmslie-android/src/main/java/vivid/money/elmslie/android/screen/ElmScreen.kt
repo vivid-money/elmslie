@@ -69,7 +69,8 @@ class ElmScreen<Event : Any, Effect : Any, State : Any>(
         screenLifecycle.addObserver(lifecycleObserver)
     }
 
-    private fun isAllowedToRunMvi() = !isAfterProcessDeath || activityProvider() !is StopElmOnProcessDeath
+    private fun isAllowedToRunMvi() =
+        delegate.isAllowedToRunMvi && (!isAfterProcessDeath || activityProvider() !is StopElmOnProcessDeath)
 
     private fun observeStates() = store.states
         .skip(1) // skipped first state, because we need to avoid rendering initial state twice

@@ -10,6 +10,7 @@ interface ElmDelegate<Event : Any, Effect : Any, State : Any> {
 
     val initEvent: Event
     val storeHolder: StoreHolder<Event, Effect, State>
+    val isAllowedToRunMvi: Boolean
 
     fun createStore(): Store<Event, Effect, State>
     fun render(state: State)

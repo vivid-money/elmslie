@@ -23,6 +23,8 @@ abstract class ElmComponentFragment<Event : Any, Effect : Any, State : Any> : Fr
 
     override val storeHolder = LifecycleAwareStoreHolder(lifecycle, ::createStore)
 
+    override var isAllowedToRunMvi = true
+
     final override fun render(state: State) = Unit
 
     @Composable
