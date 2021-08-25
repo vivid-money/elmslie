@@ -34,7 +34,7 @@ class ElmScreen<Event : Any, Effect : Any, State : Any>(
         @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
         fun onCreate() {
             isAfterProcessDeath = ProcessDeathDetector.isRestoringAfterProcessDeath
-            if (!store.isStarted && isAllowedToRunMvi()) {
+            if (!delegate.storeHolder.isStarted && isAllowedToRunMvi()) {
                 store.accept(delegate.initEvent)
             }
         }

@@ -7,7 +7,9 @@ internal class ClearableStoreHolder<Event : Any, Effect : Any, State : Any>(
     storeProvider: () -> Store<Event, Effect, State>,
 ) : StoreHolder<Event, Effect, State> {
 
-    override val store: Store<Event, Effect, State> = storeProvider().start()
+    override var isStarted = false
+
+    override val store by lazy { storeProvider().start().also { isStarted = true } }
 
     fun clear() {
         store.stop()
