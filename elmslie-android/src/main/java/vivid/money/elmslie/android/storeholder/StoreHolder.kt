@@ -10,5 +10,6 @@ import vivid.money.elmslie.core.store.Store
  **/
 interface StoreHolder<Event : Any, Effect : Any, State : Any> {
 
+    val isStarted: Boolean
     val store: Store<Event, Effect, State>
 }
