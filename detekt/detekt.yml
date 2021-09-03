@@ -108,7 +108,7 @@ complexity:
     active: false
     ignoredLabels: []
   LargeClass:
-    active: false
+    active: true
     threshold: 600
   LongMethod:
     active: true
@@ -180,7 +180,7 @@ empty-blocks:
   EmptyForBlock:
     active: true
   EmptyFunctionBlock:
-    active: false
+    active: true
     ignoreOverridden: false
   EmptyIfBlock:
     active: true
@@ -237,7 +237,6 @@ exceptions:
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**']
     exceptions:
       - 'ArrayIndexOutOfBoundsException'
-      - 'Error'
       - 'Exception'
       - 'IllegalArgumentException'
       - 'IllegalMonitorStateException'
@@ -352,7 +351,7 @@ formatting:
     active: true
     autoCorrect: true
   NoWildcardImports:
-    active: false
+    active: true
   PackageName:
     active: true
     autoCorrect: true
