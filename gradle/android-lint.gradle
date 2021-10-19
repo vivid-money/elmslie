@@ -1,0 +1,17 @@
+if (!plugins.hasPlugin("com.android.application") && !plugins.hasPlugin("com.android.library")) {
+    plugins.apply("com.android.lint")
+}
+
+def lintOptions = hasProperty("android") ? android.lintOptions : lintOptions
+def configure = {
+    checkDependencies = true
+    ignoreTestSources = true
+
+    abortOnError = true
+    warningsAsErrors = true
+
+    htmlReport = true
+    xmlReport = false
+}
+configure.delegate = lintOptions
+configure()
