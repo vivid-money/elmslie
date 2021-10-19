@@ -1,15 +1,15 @@
 apply plugin: "com.dipien.releaseshub.gradle.plugin"
 
 releasesHub {
-    dependenciesBasePath = "gradle"
-    dependenciesClassNames = ["dependencies.gradle"]
+    dependenciesPaths = [
+            "gradle/dependencies.gradle"
+    ]
     pullRequestEnabled = true
     pullRequestLabels = ["dependencies"]
     pullRequestReviewers = ["diklimchuk"]
     headBranchPrefix = "update_dependencies/"
     baseBranch = "main"
-    gitHubUserEmail = "klimchuk.daniil@gmail.com"
-    gitHubRepositoryOwner = "vivid-money"
-    gitHubRepositoryName = "elmslie"
+    gitUserEmail = "klimchuk.daniil@gmail.com"
+    gitHubRepository = "vivid-money/elmslie"
     gitHubWriteToken = System.env.GITHUB_TOKEN
 }
