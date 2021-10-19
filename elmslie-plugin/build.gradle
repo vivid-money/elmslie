@@ -18,7 +18,7 @@ intellij {
 
 }
 // runIde.ideDir = layout.projectDirectory.dir('C://Program Files/Android/Android Studio') // for Windows
-runIde.ideDir = layout.projectDirectory.dir('/Applications/Android Studio.app') // for MacOS
+runIde.ideDir = layout.projectDirectory.dir('/Applications/Android Studio.app').getAsFile() // for MacOS
 
 patchPluginXml {
     changeNotes = """
