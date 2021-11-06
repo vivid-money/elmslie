@@ -3,9 +3,7 @@ package vivid.money.elmslie.android.screen
 import android.app.Activity
 import android.os.Handler
 import android.os.Looper
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.*
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.disposables.Disposable
@@ -30,36 +28,32 @@ class ElmScreen<Event : Any, Effect : Any, State : Any>(
     private var isAfterProcessDeath: Boolean = false
     private val isScreenRenderable: Boolean get() = statesDisposable?.isDisposed == false
 
-    private val lifecycleObserver: LifecycleObserver = object : LifecycleObserver {
-        @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-        fun onCreate() {
+    private val lifecycleObserver: LifecycleObserver = object : DefaultLifecycleObserver {
+
+        override fun onCreate(owner: LifecycleOwner) {
             isAfterProcessDeath = ProcessDeathDetector.isRestoringAfterProcessDeath
             if (!delegate.storeHolder.isStarted && isAllowedToRunMvi()) {
                 store.accept(delegate.initEvent)
             }
         }
 
-        @OnLifecycleEvent(Lifecycle.Event.ON_START)
-        fun onStart() {
+        override fun onStart(owner: LifecycleOwner) {
             statesDisposable = observeStates()
             val lastState = store.states.blockingFirst()
             delegate.render(lastState)
             delegate.renderList(lastState, delegate.mapList(lastState))
         }
 
-        @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-        fun onResume() {
+        override fun onResume(owner: LifecycleOwner) {
             effectsDisposable = observeEffects()
         }
 
-        @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-        fun onPause() {
+        override fun onPause(owner: LifecycleOwner) {
             effectsDisposable?.dispose()
             effectsDisposable = null
         }
 
-        @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-        fun onStop() {
+        override fun onStop(owner: LifecycleOwner) {
             statesDisposable?.dispose()
             statesDisposable = null
         }
