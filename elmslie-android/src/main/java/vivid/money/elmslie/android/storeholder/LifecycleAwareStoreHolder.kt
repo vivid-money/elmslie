@@ -1,8 +1,6 @@
 package vivid.money.elmslie.android.storeholder
 
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.*
 import vivid.money.elmslie.android.util.fastLazy
 import vivid.money.elmslie.core.store.Store
 
@@ -15,9 +13,8 @@ class LifecycleAwareStoreHolder<Event : Any, Effect : Any, State : Any>(
 
     override val store by fastLazy { storeProvider().start().also { isStarted = true } }
 
-    private val lifecycleObserver: LifecycleObserver = object : LifecycleObserver {
-        @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-        fun onDestroy() {
+    private val lifecycleObserver = object : DefaultLifecycleObserver {
+        override fun onDestroy(owner: LifecycleOwner) {
             store.stop()
         }
     }

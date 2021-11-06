@@ -8,6 +8,7 @@ dependencies {
 
     implementation(deps.android.appcompat)
     implementation(deps.android.appStartup)
+    implementation(deps.android.lifecycle)
 
     implementation(deps.rx.rxAndroid)
     implementation(deps.rx.rxJava3)
