@@ -1,43 +1,77 @@
 package vivid.money.elmslie.core
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.rx3.asFlow
-import kotlinx.coroutines.rx3.asObservable
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onEach
 import vivid.money.elmslie.core.store.MappingActor
 
+/**
+ * Contains internal event mapping helpers for coroutines
+ */
 @Suppress("ComplexInterface", "TooManyFunctions")
 interface MappingActorCompat<Event : Any> : MappingActor<Event> {
 
     fun <T : Any> Flow<T>.mapEvents(
+        eventMapper: (T) -> Event? = { null },
+        errorMapper: (error: Throwable) -> Event? = { null }
+    ) = mapNotNull { eventMapper(it) }
+        .onEach { it.logSuccessEvent() }
+        .catch { it.logErrorEvent(errorMapper)?.let { emit(it) } ?: throw it }
+
+    @Deprecated(
+        "Use mapEvents with mapping",
+        ReplaceWith("this.mapEvents({ successEvent }, { errorEvent })")
+    )
+    fun <T : Any> Flow<T>.mapEvents(
         successEvent: Event,
-        failureEvent: Event
-    ) = asObservable().mapEvents(successEvent, failureEvent).asFlow()
+        errorEvent: Event
+    ) = mapEvents({ successEvent }, { errorEvent })
 
+    @Deprecated(
+        "Use mapEvents with mapping",
+        ReplaceWith("this.mapEvents(eventMapper, { errorEvent })")
+    )
     fun <T : Any> Flow<T>.mapEvents(
-        successEventMapper: (T) -> Event,
-        failureEvent: Event
-    ) = asObservable().mapEvents(successEventMapper, failureEvent).asFlow()
+        eventMapper: (T) -> Event,
+        errorEvent: Event
+    ) = mapEvents(eventMapper, { errorEvent })
 
-    fun <T : Any> Flow<T>.mapEvents(
-        successEventMapper: (T) -> Event,
-        failureEventMapper: (throwable: Throwable) -> Event
-    ) = asObservable().mapEvents(successEventMapper, failureEventMapper).asFlow()
-
+    @Deprecated(
+        "Use mapEvents with mapping",
+        ReplaceWith("this.mapEvents { successEvent }")
+    )
     fun <T : Any> Flow<T>.mapSuccessEvent(
         successEvent: Event
-    ) = asObservable().mapSuccessEvent(successEvent).asFlow()
+    ) = mapEvents({ successEvent })
 
+    @Deprecated(
+        "Use mapEvents with mapping",
+        ReplaceWith("this.mapEvents(eventMapper)")
+    )
     fun <T : Any> Flow<T>.mapSuccessEvent(
-        successEventMapper: (T) -> Event
-    ) = asObservable().mapSuccessEvent(successEventMapper).asFlow()
+        eventMapper: (T) -> Event
+    ) = mapEvents(eventMapper)
 
+    @Deprecated(
+        "Use mapEvents with mapping",
+        ReplaceWith("this.mapEvents(errorMapper = { errorEvent })")
+    )
+    fun <T : Any> Flow<T>.mapErrorEvent(
+        errorEvent: Event
+    ) = mapEvents(errorMapper = { errorEvent })
+
+    @Deprecated(
+        "Use mapEvents with mapping",
+        ReplaceWith("this.mapEvents(errorMapper = errorMapper)")
+    )
     fun Flow<Event>.mapErrorEvent(
-        failureEvent: Event
-    ) = asObservable().mapErrorEvent(failureEvent).asFlow()
+        errorMapper: (Throwable) -> Event
+    ) = mapEvents(errorMapper = errorMapper)
 
-    fun Flow<Event>.mapErrorEvent(
-        failureEvent: (Throwable) -> Event
-    ) = asObservable().mapErrorEvent(failureEvent).asFlow()
-
-    fun <T : Any> Flow<T>.ignoreEvents() = asObservable().ignoreEvents().asFlow()
+    @Deprecated(
+        "Use mapEvents with mapping",
+        ReplaceWith("this.mapEvents()")
+    )
+    fun <T : Any> Flow<T>.ignoreEvents() = mapEvents()
 }

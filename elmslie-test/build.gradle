@@ -3,6 +3,8 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":elmslie-core"))
+
     implementation(deps.test.jUnit5)
     implementation(deps.rx.rxJava3)
 }

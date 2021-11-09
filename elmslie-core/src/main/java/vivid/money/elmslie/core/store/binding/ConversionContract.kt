@@ -1,12 +1,11 @@
 package vivid.money.elmslie.core.store.binding
 
-import io.reactivex.rxjava3.core.Maybe
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.disposables.CompositeDisposable
+import vivid.money.elmslie.core.disposable.CompositeDisposable
+import vivid.money.elmslie.core.disposable.Disposable
 import vivid.money.elmslie.core.store.Store
 
 /**
- * A contract for data exchange between stores
+ * A contract for data exchange between stores.
  */
 class ConversionContract<InitiatorEvent, InitiatorEffect, InitiatorState,
         ResponderEvent, ResponderEffect, ResponderState>(
@@ -15,60 +14,62 @@ class ConversionContract<InitiatorEvent, InitiatorEffect, InitiatorState,
 ) {
 
     private val disposable = CompositeDisposable()
-    private val contracts = mutableSetOf<() -> Unit>()
+    private val contracts = mutableSetOf<() -> Disposable>()
 
     /**
-     * Defines full state conversion between stores
+     * Defines full direct state conversion between stores.
      */
     fun states(
         conversion: InitiatorState.() -> ResponderEvent? = { null }
     ) = states({ this }, conversion)
 
     /**
-     * Defines full effect conversion between stores
+     * Defines full direct effect conversion between stores.
      */
     fun effects(
         conversion: InitiatorEffect.() -> ResponderEvent? = { null }
     ) = effects({ this }, conversion)
 
     /**
-     * Defines encrypted state conversion between stores
+     * Defines partial encrypted state conversion between stores.
      */
     fun <EncryptedState> states(
-        cypher: Observable<InitiatorState>.() -> Observable<EncryptedState>,
+        cypher: InitiatorState.() -> EncryptedState?,
         conversion: EncryptedState.() -> ResponderEvent? = { null }
-    ) {
-        initiator.states.cypher() to responder with conversion
-    }
+    ) = contract(initiator::states, cypher, conversion)
 
     /**
-     * Defines encrypted effect conversion between stores
+     * Defines partial encrypted effect conversion between stores.
      */
     fun <EncryptedEffect> effects(
-        cypher: Observable<InitiatorEffect>.() -> Observable<EncryptedEffect>,
+        cypher: InitiatorEffect.() -> EncryptedEffect?,
         conversion: EncryptedEffect.() -> ResponderEvent? = { null }
-    ) {
-        initiator.effects.cypher() to responder with conversion
-    }
+    ) = contract(initiator::effects, cypher, conversion)
 
     /**
-     * Defines conversion before passing to another store
+     * Defines common conversion contract for data passing.
      *
-     * Sample: `manager.states to employee using conversion`
+     * Example:
+     * ```
+     * contract(store::states, cypher, conversion)
+     * ```
      */
-    private infix fun <T, Result> Pair<Observable<T>, Store<Result, *, *>>.with(
-        conversion: (T) -> Result?
+    private fun <Value, EncryptedValue> contract(
+        valueProvider: ((Value) -> Unit) -> Disposable,
+        cypher: Value.() -> EncryptedValue?,
+        conversion: EncryptedValue.() -> ResponderEvent?
     ) {
         contracts += {
-            first
-                .flatMapMaybe { Maybe.fromCallable<Result> { conversion(it) } }
-                .subscribe(second::accept)
-                .let(disposable::add)
+            valueProvider { value ->
+                cypher(value)
+                    ?.let { encrypted -> conversion(encrypted) }
+                    ?.let(responder::accept)
+            }
         }
     }
 
     /**
-     * Starts the conversion between stores
+     * Starts conversion between stores by applying contracts.
      */
     fun apply() {
         check(initiator.isStarted)
@@ -77,7 +78,7 @@ class ConversionContract<InitiatorEvent, InitiatorEffect, InitiatorState,
     }
 
     /**
-     * Stops the conversion between stores
+     * Stops conversion between stores by revoking contracts.
      */
     fun revoke() {
         disposable.clear()

@@ -6,122 +6,221 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import vivid.money.elmslie.core.store.MappingActor
 
+/**
+ * Contains internal event mapping helpers for RxJava2
+ */
 @Suppress("ComplexInterface", "TooManyFunctions")
 interface MappingActorCompat<Event : Any> : MappingActor<Event> {
 
     fun Completable.mapEvents(
-        successEvent: Event,
-        failureEvent: Event
-    ) = toV3().mapEvents(successEvent, failureEvent).toV2()
+        completionEvent: Event? = null,
+        errorMapper: (Throwable) -> Event? = { null }
+    ): Observable<Event> = toObservable<Event>().mapEvents({ null }, errorMapper, completionEvent)
 
+    fun <T : Any> Single<T>.mapEvents(
+        eventMapper: (T) -> Event? = { null },
+        errorMapper: (Throwable) -> Event? = { null },
+        completionEvent: Event? = null,
+    ): Observable<Event> = toObservable().mapEvents(eventMapper, errorMapper, completionEvent)
+
+    fun <T : Any> Maybe<T>.mapEvents(
+        eventMapper: (T) -> Event? = { null },
+        errorMapper: (throwable: Throwable) -> Event? = { null },
+        completionEvent: Event? = null,
+    ): Observable<Event> = toObservable().mapEvents(eventMapper, errorMapper, completionEvent)
+
+    fun <T : Any> Observable<T>.mapEvents(
+        eventMapper: (T) -> Event? = { null },
+        errorMapper: (throwable: Throwable) -> Event? = { null },
+        completionEvent: Event? = null,
+    ): Observable<Event> = flatMapMaybe { Maybe.fromCallable<Event> { eventMapper(it) } }
+        .switchIfEmpty(Maybe.fromCallable<Event> { completionEvent }.toObservable())
+        .doOnNext { it.logSuccessEvent() }
+        .onErrorResumeNext { t: Throwable ->
+            Maybe.fromCallable { t.logErrorEvent(errorMapper) }.toObservable()
+        }
+
+
+    @Deprecated(
+        "Please, use the default mapEvents method",
+        ReplaceWith("mapEvents(successEvent, { errorEvent })")
+    )
     fun Completable.mapEvents(
         successEvent: Event,
-        failureEventMapper: (Throwable) -> Event
-    ) = toV3().mapEvents(successEvent, failureEventMapper).toV2()
+        errorEvent: Event
+    ): Observable<Event> = mapEvents(successEvent, { errorEvent })
 
-    fun Completable.ignoreEvents() = toV3().ignoreEvents().toV2()
-
+    @Deprecated(
+        "Please, use the default mapEvents method",
+        ReplaceWith("mapEvents(successEvent)")
+    )
     fun Completable.mapSuccessEvent(
         successEvent: Event
-    ) = toV3().mapSuccessEvent(successEvent).toV2()
+    ): Observable<Event> = mapEvents(successEvent)
 
+    @Deprecated(
+        "Please, use the default mapEvents method",
+        ReplaceWith("mapEvents(errorMapper = { errorEvent })")
+    )
     fun Completable.mapErrorEvent(
-        failureEvent: Event
-    ) = toV3().mapErrorEvent(failureEvent).toV2()
+        errorEvent: Event
+    ): Observable<Event> = mapEvents(errorMapper = { errorEvent })
 
+    @Deprecated(
+        "Please, use the default mapEvents method",
+        ReplaceWith("mapEvents(errorMapper = errorMapper)")
+    )
     fun Completable.mapErrorEvent(
-        failureEventMapper: (Throwable) -> Event
-    ) = toV3().mapErrorEvent(failureEventMapper).toV2()
+        errorMapper: (Throwable) -> Event
+    ): Observable<Event> = mapEvents(errorMapper = errorMapper)
 
+    @Deprecated(
+        "Please, use the default mapEvents method",
+        ReplaceWith("mapEvents()")
+    )
+    fun Completable.ignoreEvents(): Observable<Event> = mapEvents()
+
+
+    @Deprecated(
+        "Please, use the default mapEvents method",
+        ReplaceWith("mapEvents({ successEvent }, { failureEvent })")
+    )
     fun <T : Any> Single<T>.mapEvents(
         successEvent: Event,
         failureEvent: Event
-    ) = toV3().mapEvents(successEvent, failureEvent).toV2()
+    ): Observable<Event> = mapEvents({ successEvent }, { failureEvent })
 
+    @Deprecated(
+        "Please, use the default mapEvents method",
+        ReplaceWith("mapEvents({ successEvent }, errorMapper)")
+    )
     fun <T : Any> Single<T>.mapEvents(
         successEvent: Event,
-        failureEventMapper: (Throwable) -> Event
-    ) = toV3().mapEvents(successEvent, failureEventMapper).toV2()
+        errorMapper: (Throwable) -> Event
+    ): Observable<Event> = mapEvents({ successEvent }, errorMapper)
 
+    @Deprecated(
+        "Please, use the default mapEvents method",
+        ReplaceWith("mapEvents(eventMapper, { errorMapper })")
+    )
     fun <T : Any> Single<T>.mapEvents(
-        successEventMapper: (T) -> Event,
-        failureEvent: Event
-    ) = toV3().mapEvents(successEventMapper, failureEvent).toV2()
+        eventMapper: (T) -> Event?,
+        errorEvent: Event
+    ): Observable<Event> = mapEvents(eventMapper, { errorEvent })
 
-    fun <T : Any> Single<T>.mapEvents(
-        successEventMapper: (T) -> Event,
-        failureEventMapper: (Throwable) -> Event
-    ) = toV3().mapEvents(successEventMapper, failureEventMapper).toV2()
-
+    @Deprecated(
+        "Please, use the default mapEvents method",
+        ReplaceWith("mapEvents({ successEvent })")
+    )
     fun <T : Any> Single<T>.mapSuccessEvent(
         successEvent: Event
-    ) = toV3().mapSuccessEvent(successEvent).toV2()
+    ): Observable<Event> = mapEvents({ successEvent })
 
+    @Deprecated(
+        "Please, use the default mapEvents method",
+        ReplaceWith("mapEvents(eventMapper)")
+    )
     fun <T : Any> Single<T>.mapSuccessEvent(
-        successEventMapper: (T) -> Event
-    ) = toV3().mapSuccessEvent(successEventMapper).toV2()
+        eventMapper: (T) -> Event
+    ): Observable<Event> = mapEvents(eventMapper)
 
+    @Deprecated(
+        "Please, use the default mapEvents method",
+        ReplaceWith("mapEvents(errorMapper = { errorEvent })")
+    )
     fun Single<Event>.mapErrorEvent(
-        failureEvent: Event
-    ) = toV3().mapErrorEvent(failureEvent).toV2()
+        errorEvent: Event
+    ): Observable<Event> = mapEvents(errorMapper = { errorEvent })
 
+    @Deprecated(
+        "Please, use the default mapEvents method",
+        ReplaceWith("mapEvents(errorMapper = errorMapper)")
+    )
     fun Single<Event>.mapErrorEvent(
-        failureEvent: (Throwable) -> Event
-    ) = toV3().mapErrorEvent(failureEvent).toV2()
+        errorMapper: (Throwable) -> Event
+    ): Observable<Event> = mapEvents(errorMapper = errorMapper)
 
-    fun <T> Maybe<T>.mapSuccessEvent(
-        successEventMapper: (T?) -> Event
-    ) = toV3().mapSuccessEvent(successEventMapper).toV2()
 
+    @Deprecated(
+        "Please, use the default mapEvents method",
+        ReplaceWith("mapEvents(eventMapper, completionEvent = eventMapper(null)")
+    )
+    fun <T : Any> Maybe<T>.mapSuccessEvent(
+        eventMapper: (T?) -> Event
+    ): Observable<Event> = mapEvents(eventMapper, completionEvent = eventMapper(null))
+
+    @Deprecated(
+        "Please, use the default mapEvents method",
+        ReplaceWith("mapEvents(eventMapper, eventMapper(null)")
+    )
     fun <T : Any> Maybe<T>.mapOnlySuccessEvent(
-        successEventMapper: (T) -> Event
-    ) = toV3().mapOnlySuccessEvent(successEventMapper).toV2()
+        eventMapper: (T) -> Event
+    ): Observable<Event> = mapEvents(eventMapper)
 
-    fun <T : Any> Maybe<T>.mapEvents(
-        successEventMapper: (T) -> Event,
-        completionEvent: Event
-    ) = toV3().mapEvents(successEventMapper, completionEvent).toV2()
 
+    @Deprecated(
+        "Please, use the default mapEvents method",
+        ReplaceWith("mapEvents(eventMapper, { errorEvent }, completionEvent)")
+    )
     fun <T : Any> Maybe<T>.mapEvents(
-        successEventMapper: (T) -> Event,
+        eventMapper: (T) -> Event,
         completionEvent: Event,
-        failureEvent: Event
-    ) = toV3().mapEvents(successEventMapper, completionEvent, failureEvent).toV2()
+        errorEvent: Event
+    ): Observable<Event> = mapEvents(eventMapper, { errorEvent }, completionEvent)
 
-    fun <T : Any> Maybe<T>.mapEvents(
-        successEventMapper: (T) -> Event,
-        completionEvent: Event,
-        failureEventMapper: (throwable: Throwable) -> Event
-    ) = toV3().mapEvents(successEventMapper, completionEvent, failureEventMapper).toV2()
-
+    @Deprecated(
+        "Please, use the default mapEvents method",
+        ReplaceWith("mapEvents(successEvent, errorMapper = { failureEvent )")
+    )
     fun <T : Any> Observable<T>.mapEvents(
         successEvent: Event,
-        failureEvent: Event
-    ) = toV3().mapEvents(successEvent, failureEvent).toV2()
+        errorEvent: Event
+    ): Observable<Event> = mapEvents({ successEvent }, { errorEvent })
 
+    @Deprecated(
+        "Please, use the default mapEvents method",
+        ReplaceWith("mapEvents(eventMapper, errorMapper = { errorEvent )")
+    )
     fun <T : Any> Observable<T>.mapEvents(
-        successEventMapper: (T) -> Event,
-        failureEvent: Event
-    ) = toV3().mapEvents(successEventMapper, failureEvent).toV2()
+        eventMapper: (T) -> Event,
+        errorEvent: Event
+    ): Observable<Event> = mapEvents(eventMapper, { errorEvent })
 
-    fun <T : Any> Observable<T>.mapEvents(
-        successEventMapper: (T) -> Event,
-        failureEventMapper: (throwable: Throwable) -> Event
-    ) = toV3().mapEvents(successEventMapper, failureEventMapper).toV2()
-
+    @Deprecated(
+        "Please, use the default mapEvents method",
+        ReplaceWith("mapEvents({ successEvent })")
+    )
     fun <T : Any> Observable<T>.mapSuccessEvent(
         successEvent: Event
-    ) = toV3().mapSuccessEvent(successEvent).toV2()
+    ): Observable<Event> = mapEvents({ successEvent })
 
+    @Deprecated(
+        "Please, use the default mapEvents method",
+        ReplaceWith("mapEvents(eventMapper)")
+    )
     fun <T : Any> Observable<T>.mapSuccessEvent(
-        successEventMapper: (T) -> Event
-    ) = toV3().mapSuccessEvent(successEventMapper).toV2()
+        eventMapper: (T) -> Event
+    ): Observable<Event> = mapEvents(eventMapper)
 
+    @Deprecated(
+        "Please, use the default mapEvents method",
+        ReplaceWith("mapEvents(errorMapper = { errorEvent })")
+    )
     fun Observable<Event>.mapErrorEvent(
-        failureEvent: Event
-    ) = toV3().mapErrorEvent(failureEvent).toV2()
+        errorEvent: Event
+    ): Observable<Event> = mapEvents(errorMapper = { errorEvent })
 
+    @Deprecated(
+        "Please, use the default mapEvents method",
+        ReplaceWith("mapEvents(errorMapper = errorMapper)")
+    )
     fun Observable<Event>.mapErrorEvent(
-        failureEvent: (Throwable) -> Event
-    ) = toV3().mapErrorEvent(failureEvent).toV2()
+        errorMapper: (Throwable) -> Event
+    ): Observable<Event> = mapEvents(errorMapper = errorMapper)
+
+    @Deprecated(
+        "Please, use the default mapEvents method",
+        ReplaceWith("mapEvents()")
+    )
+    fun <T : Any> Observable<T>.ignoreEvents(): Observable<Event> = mapEvents()
 }
