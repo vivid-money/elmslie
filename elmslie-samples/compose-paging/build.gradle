@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":elmslie-android"))
     implementation(project(":elmslie-compose"))
     implementation(project(":elmslie-core"))
+    implementation(project(":elmslie-rxjava-3"))
 
     implementation(deps.android.appcompat)
     implementation(deps.android.material)
@@ -21,7 +22,6 @@ dependencies {
     implementation(deps.compose.iconsCore)
     implementation(deps.compose.iconsExtended)
     implementation(deps.compose.material)
-    implementation(deps.compose.runtimeRxJava3)
     implementation(deps.compose.swiperefresh)
     implementation(deps.compose.tooling)
     implementation(deps.compose.ui)

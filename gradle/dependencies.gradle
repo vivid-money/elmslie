@@ -11,7 +11,7 @@ ext.deps = [
                 releasesHub   : "com.dipien:releases-hub-gradle-plugin:3.1.0",
                 dokka         : "org.jetbrains.dokka:dokka-gradle-plugin:1.6.0",
         ],
-        android: [
+        android   : [
                 appcompat                   : "androidx.appcompat:appcompat:1.4.0",
                 appStartup                  : "androidx.startup:startup-runtime:1.1.0",
                 lifecycle                   : "androidx.lifecycle:lifecycle-common:2.4.0",
@@ -40,7 +40,6 @@ ext.deps = [
         ],
         coroutines: [
                 core: "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0",
-                rx3 : "org.jetbrains.kotlinx:kotlinx-coroutines-rx3:1.5.0",
                 test: "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.0",
         ],
         test      : [

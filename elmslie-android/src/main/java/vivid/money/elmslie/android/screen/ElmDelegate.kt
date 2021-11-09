@@ -11,7 +11,8 @@ interface ElmDelegate<Event : Any, Effect : Any, State : Any> {
     val initEvent: Event
     val storeHolder: StoreHolder<Event, Effect, State>
 
-    fun createStore(): Store<Event, Effect, State>
+    @Deprecated("Use storeHolder property instead")
+    fun createStore(): Store<Event, Effect, State>? = null
     fun render(state: State)
     fun handleEffect(effect: Effect): Unit? = Unit
 

@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 /**
  * Actor that supports event mappings for coroutines
  */
-fun interface ActorCompat<Command : Any, Event : Any> : MappingActorCompat<Event> {
+fun interface Actor<Command : Any, Event : Any> : MappingActorCompat<Event> {
 
     /**
      * Executes a command.

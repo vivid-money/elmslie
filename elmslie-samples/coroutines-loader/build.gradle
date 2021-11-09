@@ -5,7 +5,6 @@ plugins {
 
 android {
     buildFeatures.buildConfig = true
-    defaultConfig.multiDexEnabled true
 }
 
 dependencies {
@@ -15,9 +14,7 @@ dependencies {
 
     implementation(deps.android.appcompat)
     implementation(deps.android.material)
-    implementation(deps.android.multidex)
     implementation(deps.coroutines.core)
-    implementation(deps.rx.rxJava3)
 
     testImplementation(project(":elmslie-test"))
     testImplementation(deps.coroutines.test)

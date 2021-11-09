@@ -13,13 +13,12 @@ import vivid.money.elmslie.samples.coroutines.timer.elm.Event
 import vivid.money.elmslie.samples.coroutines.timer.elm.State
 import vivid.money.elmslie.samples.coroutines.timer.elm.storeFactory
 
-internal class MainActivity : ElmActivity<Event, Effect, State>() {
+internal class MainActivity : ElmActivity<Event, Effect, State>(R.layout.activity_main) {
 
     override val initEvent: Event = Event.Init
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
         findViewById<Button>(R.id.start).setOnClickListener { store.accept(Event.Start) }
         findViewById<Button>(R.id.stop).setOnClickListener { store.accept(Event.Stop) }
     }

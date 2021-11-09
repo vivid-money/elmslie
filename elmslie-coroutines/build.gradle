@@ -5,8 +5,14 @@ plugins {
 dependencies {
     implementation(project(":elmslie-core"))
     implementation(deps.coroutines.core)
-    implementation(deps.coroutines.rx3)
-    implementation(deps.rx.rxJava3)
+}
+
+// Enable channel flow and delicate apis.
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions.freeCompilerArgs += [
+            "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi",
+            "-Xuse-experimental=kotlinx.coroutines.DelicateCoroutinesApi"
+    ]
 }
 
 apply from: "../gradle/junit-5.gradle"

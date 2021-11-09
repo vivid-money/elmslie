@@ -1,27 +1,59 @@
 package vivid.money.elmslie.core
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.rx3.asFlow
-import kotlinx.coroutines.rx3.asObservable
-import vivid.money.elmslie.core.store.Actor
-import vivid.money.elmslie.core.store.ElmStore
+import kotlinx.coroutines.launch
+import vivid.money.elmslie.core.disposable.Disposable
+import vivid.money.elmslie.core.store.DefaultActor
 import vivid.money.elmslie.core.store.StateReducer
+import vivid.money.elmslie.core.store.ElmStore
 import vivid.money.elmslie.core.store.Store
 
+/**
+ * Compatibility [Store] implementation applying coroutines for multithreading.
+ */
 class ElmStoreCompat<Event : Any, State : Any, Effect : Any, Command : Any>(
     initialState: State,
     reducer: StateReducer<Event, State, Effect, Command>,
-    actor: ActorCompat<Command, out Event>
+    actor: Actor<Command, out Event>
 ) : Store<Event, Effect, State> by ElmStore(
     initialState = initialState,
     reducer = reducer,
     actor = actor.toActor()
 )
 
-private fun <Command : Any, Event : Any> ActorCompat<Command, Event>.toActor() =
-    Actor<Command, Event> { execute(it).flowOn(Dispatchers.IO).asObservable() }
+@Suppress("TooGenericExceptionCaught")
+private fun <Command : Any, Event : Any> Actor<Command, Event>.toActor() =
+    DefaultActor<Command, Event> { command, onEvent, onError ->
+        val job = GlobalScope.launch(Dispatchers.Unconfined) {
+            try {
+                execute(command).flowOn(Dispatchers.IO).collect { event -> onEvent(event) }
+            } catch (t: Throwable) {
+                onError(t)
+            }
+        }
+        Disposable { job.cancel() }
+    }
 
-val <Event : Any, Effect : Any, State : Any> Store<Event, Effect, State>.state: Flow<State>
-    get() = states.asFlow()
+/**
+ * Extension for accessing [Store] states as a [Flow].
+ */
+val <Event : Any, Effect : Any, State : Any> Store<Event, Effect, State>.states: Flow<State>
+    get() = callbackFlow {
+        val disposable = states { state -> channel.trySend(state) }
+        awaitClose(disposable::dispose)
+    }
+
+/**
+ * Extension for accessing [Store] effects as a [Flow].
+ */
+val <Event : Any, Effect : Any, State : Any> Store<Event, Effect, State>.effects: Flow<Effect>
+    get() = callbackFlow {
+        val disposable = effects { effect -> channel.trySend(effect) }
+        awaitClose(disposable::dispose)
+    }

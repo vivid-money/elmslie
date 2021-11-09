@@ -3,6 +3,7 @@ package vivid.money.elmslie.samples.calculator
 import io.reactivex.rxjava3.schedulers.TestScheduler
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import vivid.money.elmslie.test.background.executor.MockBackgroundExecutorExtension
 import vivid.money.elmslie.test.TestSchedulerExtension
 
 internal class StoreKtTest {
@@ -11,7 +12,11 @@ internal class StoreKtTest {
 
     @JvmField
     @RegisterExtension
-    val extension = TestSchedulerExtension(scheduler)
+    val schedulerExtension = TestSchedulerExtension(scheduler)
+
+    @JvmField
+    @RegisterExtension
+    val executorExtension = MockBackgroundExecutorExtension()
 
     @Test
     fun `1 + 1 = 2`() {

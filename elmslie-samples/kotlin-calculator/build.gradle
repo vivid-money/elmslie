@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     implementation(project(":elmslie-core"))
+    implementation(project(":elmslie-rxjava-3"))
     implementation(deps.rx.rxJava3)
 
     testImplementation(project(":elmslie-test"))

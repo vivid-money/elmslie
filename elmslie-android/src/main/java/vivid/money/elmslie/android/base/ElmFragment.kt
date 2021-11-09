@@ -22,6 +22,6 @@ abstract class ElmFragment<Event : Any, Effect : Any, State : Any> : Fragment,
         get() = storeHolder.store
 
     override val storeHolder: StoreHolder<Event, Effect, State> by fastLazy {
-        LifecycleAwareStoreHolder(lifecycle, ::createStore)
+        LifecycleAwareStoreHolder(lifecycle) { createStore()!! }
     }
 }
