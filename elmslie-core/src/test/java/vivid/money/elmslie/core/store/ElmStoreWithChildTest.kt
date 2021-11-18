@@ -4,6 +4,7 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.TestScheduler
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import vivid.money.elmslie.core.store.binding.coordinates
 import vivid.money.elmslie.core.testutil.model.ChildCommand
 import vivid.money.elmslie.core.testutil.model.ChildEffect
 import vivid.money.elmslie.core.testutil.model.ChildEvent
@@ -26,21 +27,33 @@ class ElmStoreWithChildTest {
     fun `Parent event is propagated to child and state update is received afterwards`() {
         val parent = parentStore(
             ParentState(),
-            { _, state -> Result(state = state.copy(value = 10)) }
+            { event, state ->
+                when (event) {
+                    is ParentEvent.Plain ->
+                        Result(state = state.copy(value = 10), effect = ParentEffect)
+                    is ParentEvent.ChildUpdated ->
+                        Result(state = state.copy(childValue = event.state.value))
+                }
+            }
         )
         val child = childStore(
             ChildState(),
             { _, state -> Result(state.copy(value = 100), effect = ChildEffect) }
         )
-        parent.addChildStore(
+        parent.coordinates(
             child,
-            eventMapper = { ChildEvent.First },
-            stateReducer = { parentState, childState -> parentState.copy(childValue = childState.value) }
+            dispatching = {
+                states { ChildEvent.First }
+            },
+            receiving = {
+                states { ParentEvent.ChildUpdated(this) }
+                effects { ParentEvent.Plain }
+            }
         ).start()
 
         val observer = parent.states.test()
 
-        parent.accept(ParentEvent)
+        parent.accept(ParentEvent.Plain)
 
         scheduler.triggerActions()
 
@@ -52,36 +65,42 @@ class ElmStoreWithChildTest {
     }
 
     @Test
-    fun `Parent event is propagated to child and effect is received afterwards`() {
+    fun `Parent effect is propagated to child and effect is received afterwards`() {
         val parent = parentStore(
             ParentState(),
-            { _, state -> Result(state = state.copy(value = 10)) }
+            { _, state -> Result(state, effect = ParentEffect) }
         )
         val child = childStore(
             ChildState(),
             { _, state -> Result(state.copy(value = 100), effect = ChildEffect) }
         )
-        parent.addChildStore(
+        parent.coordinates(
             child,
-            eventMapper = { ChildEvent.First },
-            effectMapper = { _, _ -> ParentEffect },
-            stateReducer = { parentState, _ -> parentState }
+            dispatching = {
+                effects { ChildEvent.First }
+            }
         ).start()
 
-        val observer = parent.effects.test()
+        val observer = child.effects.test()
 
-        parent.accept(ParentEvent)
+        parent.accept(ParentEvent.Plain)
 
         scheduler.triggerActions()
 
-        observer.assertValues(ParentEffect)
+        observer.assertValues(ChildEffect)
     }
 
     @Test
     fun `Child state update after action is propagated to the parent`() {
         val parent = parentStore(
             ParentState(),
-            { _, state -> Result(state = state.copy(value = 10)) }
+            { event, state ->
+                if (event is ParentEvent.ChildUpdated) {
+                    Result(state = state.copy(childValue = event.state.value))
+                } else {
+                    Result(state = state.copy(value = 10), effect = ParentEffect)
+                }
+            }
         )
         val child = childStore(
             ChildState(),
@@ -94,15 +113,19 @@ class ElmStoreWithChildTest {
             },
             { Observable.just(ChildEvent.Second) }
         )
-        parent.addChildStore(
+        parent.coordinates(
             child,
-            eventMapper = { ChildEvent.First },
-            stateReducer = { parentState, childState -> parentState.copy(childValue = childState.value) }
+            dispatching = {
+                effects { ChildEvent.First }
+            },
+            receiving = {
+                states { ParentEvent.ChildUpdated(this) }
+            }
         ).start()
 
         val observer = parent.states.test()
 
-        parent.accept(ParentEvent)
+        parent.accept(ParentEvent.Plain)
 
         scheduler.triggerActions()
 
@@ -115,12 +138,12 @@ class ElmStoreWithChildTest {
     }
 
     @Test
-    fun `Stopping parent stoppes child`() {
+    fun `Stopping the binding stops both parent and child`() {
         val parent = parentStore(ParentState())
         val child = childStore(ChildState())
-        parent.addChildStore(child).start()
+        val binding = parent.coordinates(child).start()
 
-        parent.stop()
+        binding.stop()
 
         assert(!parent.isStarted)
         assert(!child.isStarted)
@@ -128,7 +151,16 @@ class ElmStoreWithChildTest {
 
     @Test
     fun `Child command results are received by parents consecutively`() {
-        val parent = parentStore(ParentState())
+        val parent = parentStore(
+            ParentState(),
+            { event, state ->
+                if (event is ParentEvent.ChildUpdated) {
+                    Result(state = state.copy(childValue = event.state.value))
+                } else {
+                    Result(state = state, effect = ParentEffect)
+                }
+            }
+        )
         val child = childStore(
             ChildState(),
             { event, state ->
@@ -140,15 +172,19 @@ class ElmStoreWithChildTest {
             },
             { Observable.just(ChildEvent.Second, ChildEvent.Third) }
         )
-        parent.addChildStore(
+        parent.coordinates(
             child,
-            eventMapper = { ChildEvent.First },
-            stateReducer = { parentState, childState -> parentState.copy(childValue = childState.value) }
+            dispatching = {
+                effects { ChildEvent.First }
+            },
+            receiving = {
+                states { ParentEvent.ChildUpdated(this) }
+            }
         ).start()
 
         val observer = parent.states.test()
 
-        parent.accept(ParentEvent)
+        parent.accept(ParentEvent.Plain)
 
         scheduler.triggerActions()
 
