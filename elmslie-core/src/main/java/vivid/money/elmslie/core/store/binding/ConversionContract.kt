@@ -18,17 +18,37 @@ class ConversionContract<InitiatorEvent, InitiatorEffect, InitiatorState,
     private val contracts = mutableSetOf<() -> Unit>()
 
     /**
-     * Defines state conversion between stores
+     * Defines full state conversion between stores
      */
-    fun states(conversion: InitiatorState.() -> ResponderEvent? = { null }) {
-        initiator.states to responder with conversion
+    fun states(
+        conversion: InitiatorState.() -> ResponderEvent? = { null }
+    ) = states({ this }, conversion)
+
+    /**
+     * Defines full effect conversion between stores
+     */
+    fun effects(
+        conversion: InitiatorEffect.() -> ResponderEvent? = { null }
+    ) = effects({ this }, conversion)
+
+    /**
+     * Defines encrypted state conversion between stores
+     */
+    fun <EncryptedState> states(
+        cypher: Observable<InitiatorState>.() -> Observable<EncryptedState>,
+        conversion: EncryptedState.() -> ResponderEvent? = { null }
+    ) {
+        initiator.states.cypher() to responder with conversion
     }
 
     /**
-     * Defines effect conversion between stores
+     * Defines encrypted effect conversion between stores
      */
-    fun effects(conversion: InitiatorEffect.() -> ResponderEvent? = { null }) {
-        initiator.effects to responder with conversion
+    fun <EncryptedEffect> effects(
+        cypher: Observable<InitiatorEffect>.() -> Observable<EncryptedEffect>,
+        conversion: EncryptedEffect.() -> ResponderEvent? = { null }
+    ) {
+        initiator.effects.cypher() to responder with conversion
     }
 
     /**

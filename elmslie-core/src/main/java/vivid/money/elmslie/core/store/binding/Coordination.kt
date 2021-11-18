@@ -70,9 +70,6 @@ import vivid.money.elmslie.core.store.Store
  *         states { EmployeeEvent.ImprovementPossibilities(this) }
  *         effects { EmployeeEvent.ResponsibilityExpansion }
  *     }
- *     parent.effects with parent.states to child using { effect, state ->
- *         ChildEvent.First(effect, state)
- *     }
  * }.start()
  * ```
  *

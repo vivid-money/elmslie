@@ -43,7 +43,7 @@ class ElmStoreWithChildTest {
         parent.coordinates(
             child,
             dispatching = {
-                states { ChildEvent.First }
+                states({ filter { true }.map { Any() } }, { ChildEvent.First })
             },
             receiving = {
                 states { ParentEvent.ChildUpdated(this) }
