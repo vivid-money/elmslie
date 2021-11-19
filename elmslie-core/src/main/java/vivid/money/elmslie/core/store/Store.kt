@@ -14,6 +14,7 @@ interface Store<Event, Effect, State> {
     fun start(): Store<Event, Effect, State>
     fun stop()
 
+    @Deprecated("Please, use store coordination instead. This approach will be removed in future.")
     fun <ChildEvent : Any, ChildState : Any, ChildEffect : Any> addChildStore(
         store: Store<ChildEvent, ChildEffect, ChildState>,
         eventMapper: (parentEvent: Event) -> ChildEvent? = { null },
