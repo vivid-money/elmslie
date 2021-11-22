@@ -14,20 +14,26 @@ import vivid.money.elmslie.core.switcher.Switcher
  *
  * @param delayMillis Cancellation delay measured with milliseconds.
  */
-fun Switcher.cancel(delayMillis: Long = 0) = this.switch(delayMillis) { flowOf() }
+fun Switcher.cancel(delayMillis: Long = 0) = switch(delayMillis) { flowOf() }
 
 /**
  * @see [Switcher]
  */
+@Suppress("TooGenericExceptionCaught")
 fun <Event : Any> Switcher.switch(
     delayMillis: Long = 0,
     action: () -> Flow<Event>,
-) = channelFlow {
-    val disposable = switchInternal(delayMillis) {
-        val job = GlobalScope.launch(Dispatchers.Unconfined) {
-            action().collect { trySend(it) }
+): Flow<Event> = channelFlow {
+    try {
+        val disposable = switchInternal(delayMillis) {
+            val job = launch {
+                action().collect { trySend(it) }
+            }
+            Disposable(job::cancel)
         }
-        Disposable { job.cancel() }
+        awaitClose(disposable::dispose)
+    } catch (t: Throwable) {
+        // Next action cancelled this before starting. Or some error happened while running action.
+        close(t)
     }
-    awaitClose { disposable.dispose() }
 }

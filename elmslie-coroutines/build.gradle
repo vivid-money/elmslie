@@ -11,7 +11,7 @@ dependencies {
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions.freeCompilerArgs += [
             "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi",
-            "-Xuse-experimental=kotlinx.coroutines.DelicateCoroutinesApi"
+            "-Xuse-experimental=kotlinx.coroutines.DelicateCoroutinesApi",
     ]
 }
 

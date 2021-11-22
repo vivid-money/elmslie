@@ -20,9 +20,10 @@ internal object TimerActor : Actor<Command, Event> {
 
     @Suppress("MagicNumber")
     private fun secondsFlow() = flow {
-        generateSequence(0) { it + 1 }.forEach {
+        repeat(10) {
             delay(1000)
-            emit(it)
+            emit(0)
         }
+        error("Test error")
     }
 }
