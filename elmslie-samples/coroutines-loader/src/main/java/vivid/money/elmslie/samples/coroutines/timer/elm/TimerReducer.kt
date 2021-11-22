@@ -14,7 +14,12 @@ internal object TimerReducer : DslReducer<Event, State, Effect, Command>() {
             state { copy(isStarted = false) }
             commands { +Command.Stop }
         }
-        is Event.OnTimeTick -> state { copy(secondsPassed = secondsPassed + 1) }
-        is Event.OnTimeError -> effects { +Effect.Error(event.throwable) }
+        is Event.OnTimeTick -> {
+            state { copy(secondsPassed = secondsPassed + 1) }
+        }
+        is Event.OnTimeError -> {
+            state { copy(isStarted = false) }
+            effects { +Effect.Error(event.throwable) }
+        }
     }
 }

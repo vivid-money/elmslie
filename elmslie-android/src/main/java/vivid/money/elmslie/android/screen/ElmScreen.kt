@@ -21,7 +21,8 @@ class ElmScreen<Event : Any, Effect : Any, State : Any>(
 
     val store get() = delegate.storeHolder.store
 
-    private val handler = Handler(Looper.getMainLooper())
+    private val stateHandler = Handler(Looper.getMainLooper())
+    private val effectHandler = Handler(Looper.getMainLooper())
     private val logger = ElmslieConfig.logger
     private var isAfterProcessDeath = false
     private val isRenderable get() = screenLifecycle.currentState.isAtLeast(STARTED)
@@ -35,11 +36,17 @@ class ElmScreen<Event : Any, Effect : Any, State : Any>(
         }
     }
 
-    private fun observeEffects() = store.effects { catchEffectErrors { delegate.handleEffect(it) } }
+    private fun observeEffects() = store.effects {
+        effectHandler.postSingle {
+            catchEffectErrors {
+                delegate.handleEffect(it)
+            }
+        }
+    }
 
     private fun observeStates() = store.states {
         val list = catchStateErrors { if (isRenderable) delegate.mapList(it) else null }
-        handler.postSingle {
+        stateHandler.postSingle {
             catchStateErrors {
                 if (isRenderable) {
                     delegate.renderList(it, list ?: emptyList())
