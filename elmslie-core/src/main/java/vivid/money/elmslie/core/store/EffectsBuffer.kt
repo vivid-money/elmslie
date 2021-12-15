@@ -4,6 +4,7 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.subjects.PublishSubject
 import io.reactivex.rxjava3.subjects.ReplaySubject
+import io.reactivex.rxjava3.subjects.Subject
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 
@@ -15,7 +16,7 @@ internal class EffectsBuffer<T>(
 ) : AtomicBoolean(), Disposable {
 
     private val disposableRef = AtomicReference<Disposable>()
-    private val bufferRef = AtomicReference<ReplaySubject<T>>()
+    private val bufferRef = AtomicReference<Subject<T>>()
 
     fun init(): Disposable {
         startBuffering()
@@ -37,7 +38,7 @@ internal class EffectsBuffer<T>(
     }
 
     private fun startBuffering() {
-        val buffer = ReplaySubject.create<T>()
+        val buffer = ReplaySubject.create<T>().toSerialized()
         bufferRef.set(buffer)
         disposableRef.set(source.subscribe { buffer.onNext(it) })
     }
