@@ -4,7 +4,7 @@ ext.versions = [
 
 ext.deps = [
         gradle : [
-                androidPlugin : "com.android.tools.build:gradle:7.0.3",
+                androidPlugin : "com.android.tools.build:gradle:7.0.4",
                 kotlinPlugin  : "org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.31",
                 intellijPlugin: "org.jetbrains.intellij.plugins:gradle-intellij-plugin:1.3.0",
                 detektPlugin  : "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.18.1",
