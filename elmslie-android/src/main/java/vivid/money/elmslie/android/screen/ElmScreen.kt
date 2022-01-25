@@ -45,14 +45,18 @@ class ElmScreen<Event : Any, Effect : Any, State : Any>(
     }
 
     private fun observeStates() = store.states {
-        val list = catchStateErrors { if (isRenderable) delegate.mapList(it) else null }
-        stateHandler.postSingle {
-            catchStateErrors {
-                if (isRenderable) {
-                    delegate.renderList(it, list ?: emptyList())
-                    delegate.render(it)
-                }
-            }
+        val list = mapListItems(it)
+        stateHandler.postSingle { renderListItems(it, list) }
+    }
+
+    private fun mapListItems(state: State) = catchStateErrors {
+        delegate.mapList(state)
+    } ?: emptyList()
+
+    private fun renderListItems(state: State, list: List<Any>) = catchStateErrors {
+        if (isRenderable) {
+            delegate.renderList(state, list)
+            delegate.render(state)
         }
     }
 

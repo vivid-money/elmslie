@@ -5,13 +5,12 @@ package vivid.money.elmslie.core.disposable
  */
 class CompositeDisposable {
 
-    private var isDisposed = false
     private val disposables = mutableListOf<Disposable>()
 
     operator fun plusAssign(disposable: Disposable) = add(disposable)
 
     fun add(disposable: Disposable) = synchronized(this) {
-        if (!isDisposed) disposables += disposable
+        disposables += disposable
     }
 
     fun addAll(vararg disposables: Disposable) = disposables.forEach(::add)

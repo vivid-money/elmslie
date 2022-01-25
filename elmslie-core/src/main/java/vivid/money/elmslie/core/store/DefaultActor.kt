@@ -5,7 +5,8 @@ import vivid.money.elmslie.core.disposable.Disposable
 fun interface DefaultActor<Command : Any, Event : Any> {
 
     /**
-     * Executes a command. This method is always called on a background thread.
+     * Executes a command. This method is always called in ElmslieConfig.backgroundExecutor.
+     * Usually background thread.
      */
     fun execute(
         command: Command,
