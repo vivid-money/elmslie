@@ -41,7 +41,7 @@ ext.deps = [
         test   : [
                 jUnit5           : "org.junit.jupiter:junit-jupiter:5.8.2",
                 kotestJunitRunner: "io.kotest:kotest-runner-junit5-jvm:4.6.2",
-                kotestAssertions : "io.kotest:kotest-assertions-core:4.6.2",
+                kotestAssertions : "io.kotest:kotest-assertions-core:5.1.0",
                 kotestProperty   : "io.kotest:kotest-property:4.6.2",
         ],
         plugin : [
