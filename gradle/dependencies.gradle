@@ -1,5 +1,5 @@
 ext.versions = [
-        compose: "1.0.5",
+        compose: "1.1.1",
 ]
 
 ext.deps = [
