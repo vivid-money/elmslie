@@ -5,14 +5,7 @@ import io.reactivex.rxjava3.schedulers.TestScheduler
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import vivid.money.elmslie.core.store.binding.coordinates
-import vivid.money.elmslie.core.testutil.model.ChildCommand
-import vivid.money.elmslie.core.testutil.model.ChildEffect
-import vivid.money.elmslie.core.testutil.model.ChildEvent
-import vivid.money.elmslie.core.testutil.model.ChildState
-import vivid.money.elmslie.core.testutil.model.ParentCommand
-import vivid.money.elmslie.core.testutil.model.ParentEffect
-import vivid.money.elmslie.core.testutil.model.ParentEvent
-import vivid.money.elmslie.core.testutil.model.ParentState
+import vivid.money.elmslie.core.testutil.model.*
 import vivid.money.elmslie.test.TestSchedulerExtension
 
 class ElmStoreWithChildTest {
@@ -30,7 +23,7 @@ class ElmStoreWithChildTest {
             { event, state ->
                 when (event) {
                     is ParentEvent.Plain ->
-                        Result(state = state.copy(value = 10), effect = ParentEffect)
+                        Result(state = state.copy(value = 10), effect = ParentEffect.ToParent)
                     is ParentEvent.ChildUpdated ->
                         Result(state = state.copy(childValue = event.state.value))
                 }
@@ -68,7 +61,7 @@ class ElmStoreWithChildTest {
     fun `Parent effect is propagated to child and effect is received afterwards`() {
         val parent = parentStore(
             ParentState(),
-            { _, state -> Result(state, effect = ParentEffect) }
+            { _, state -> Result(state, effect = ParentEffect.ToParent) }
         )
         val child = childStore(
             ChildState(),
@@ -98,7 +91,7 @@ class ElmStoreWithChildTest {
                 if (event is ParentEvent.ChildUpdated) {
                     Result(state = state.copy(childValue = event.state.value))
                 } else {
-                    Result(state = state.copy(value = 10), effect = ParentEffect)
+                    Result(state = state.copy(value = 10), effect = ParentEffect.ToParent)
                 }
             }
         )
@@ -157,7 +150,7 @@ class ElmStoreWithChildTest {
                 if (event is ParentEvent.ChildUpdated) {
                     Result(state = state.copy(childValue = event.state.value))
                 } else {
-                    Result(state = state, effect = ParentEffect)
+                    Result(state = state, effect = ParentEffect.ToParent)
                 }
             }
         )
@@ -193,6 +186,71 @@ class ElmStoreWithChildTest {
             ParentState(0, 100),
             ParentState(0, 200),
             ParentState(0, 300)
+        )
+    }
+
+    @Test
+    fun `Parent Effect is delivered when it's effect observation started`() {
+        val parent = parentStore(
+            ParentState(),
+            { event, state ->
+                if (event is ParentEvent.ChildUpdated) {
+                    Result(state = state.copy(childValue = event.state.value))
+                } else {
+                    Result(
+                        state = state.copy(value = 10),
+                        commands = emptyList(),
+                        effects = listOf(
+                            ParentEffect.ToParent,
+                            ParentEffect.ToChild(ChildEvent.First)
+                        )
+                    )
+                }
+            }
+        )
+        val child = childStore(
+            ChildState(),
+            { event, state ->
+                when (event) {
+                    ChildEvent.First -> Result(state.copy(value = 100))
+                    ChildEvent.Second -> Result(state)
+                    ChildEvent.Third -> Result(state)
+                }
+            }
+        )
+        val combined = parent.coordinates(
+            child,
+            dispatching = {
+                effects { (this as? ParentEffect.ToChild)?.childEvent }
+            },
+            receiving = {
+                states { ParentEvent.ChildUpdated(this) }
+            }
+        ).start()
+
+        combined.startEffectsBuffering()
+
+        val parentStates = parent.states.test()
+
+        parent.accept(ParentEvent.Plain)
+
+        scheduler.triggerActions()
+
+        parentStates.assertValues(
+            ParentState(value = 0, childValue = 0),
+            ParentState(value = 10, childValue = 0),
+            ParentState(value = 10, childValue = 100),
+        )
+
+        // start observing effects later, simulating effects observing in onResume
+        combined.stopEffectsBuffering()
+        val parentEffects = parent.effects.test()
+
+        scheduler.triggerActions()
+
+        parentEffects.assertValues(
+            ParentEffect.ToParent,
+            ParentEffect.ToChild(ChildEvent.First),
         )
     }
 

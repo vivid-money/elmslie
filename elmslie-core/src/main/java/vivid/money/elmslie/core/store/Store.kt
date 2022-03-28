@@ -12,6 +12,8 @@ interface Store<Event, Effect, State> {
 
     val isStarted: Boolean
     fun start(): Store<Event, Effect, State>
+    fun startEffectsBuffering()
+    fun stopEffectsBuffering()
     fun stop()
 
     @Deprecated("Please, use store coordination instead. This approach will be removed in future.")
