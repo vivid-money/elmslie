@@ -26,8 +26,6 @@ internal class EffectsBuffer<T>(
     fun getBufferedObservable(): Observable<T> {
         return getBuffer() // Get buffered events
             .concatWith(source) // And then start observing the source
-            .doFinally { startBuffering() } // Start buffering again to not lose events from source
-            .doOnSubscribe { stopBuffering() } // Stop buffering since we're getting events from source
     }
 
     override fun isDisposed(): Boolean = get()
@@ -37,13 +35,13 @@ internal class EffectsBuffer<T>(
         stopBuffering()
     }
 
-    private fun startBuffering() {
+    fun startBuffering() {
         val buffer = ReplaySubject.create<T>().toSerialized()
         bufferRef.set(buffer)
         disposableRef.set(source.subscribe { buffer.onNext(it) })
     }
 
-    private fun stopBuffering() {
+    fun stopBuffering() {
         bufferRef.get()?.onComplete()
         disposableRef.get()?.dispose()
     }

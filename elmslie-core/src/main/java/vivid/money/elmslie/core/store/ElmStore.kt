@@ -132,5 +132,13 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
         return this
     }
 
+    override fun startEffectsBuffering() {
+        effectsBuffer.startBuffering()
+    }
+
+    override fun stopEffectsBuffering() {
+        effectsBuffer.stopBuffering()
+    }
+
     private fun Disposable.bind() = let(disposables::add)
 }

@@ -10,9 +10,11 @@ class EffectsBufferTest {
 
         val dataObservable = PublishSubject.create<Int>()
 
-        val buffer = EffectsBuffer(dataObservable).apply { init() }.getBufferedObservable()
+        val buffer = EffectsBuffer(dataObservable).apply { init() }
+        val bufferObservable = buffer.getBufferedObservable()
 
-        val testObserver = buffer.test()
+        buffer.stopBuffering()
+        val testObserver = bufferObservable.test()
 
         // emitting items while subscribed
         with(dataObservable) {
@@ -21,6 +23,7 @@ class EffectsBufferTest {
         }
 
         testObserver.assertValues(1, 2)
+        buffer.startBuffering()
         testObserver.dispose()
 
         // emitting items while detached
@@ -29,7 +32,8 @@ class EffectsBufferTest {
             onNext(4)
         }
 
-        val anotherObserver = buffer.test()
+        val anotherObserver = bufferObservable.test()
+        buffer.stopBuffering()
         anotherObserver.assertValues(3, 4)
 
         // emitting item when attached with having items in buffer

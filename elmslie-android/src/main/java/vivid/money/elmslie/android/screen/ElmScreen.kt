@@ -46,9 +46,11 @@ class ElmScreen<Event : Any, Effect : Any, State : Any>(
 
         override fun onResume(owner: LifecycleOwner) {
             effectsDisposable = observeEffects()
+            store.stopEffectsBuffering()
         }
 
         override fun onPause(owner: LifecycleOwner) {
+            store.startEffectsBuffering()
             effectsDisposable?.dispose()
             effectsDisposable = null
         }
