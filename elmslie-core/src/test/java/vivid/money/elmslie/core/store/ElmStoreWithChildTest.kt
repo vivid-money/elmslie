@@ -251,7 +251,7 @@ class ElmStoreWithChildTest {
             }
         ).start()
 
-        combined.startEffectsBuffering()
+        combined.effects { /*Ignore*/ }
 
         val values = mutableListOf<ParentState>()
         parent.states(values::add)
@@ -268,7 +268,6 @@ class ElmStoreWithChildTest {
         )
 
         // start observing effects later, simulating effects observing in onResume
-        combined.stopEffectsBuffering()
         val parentEffects = mutableListOf<ParentEffect>()
         parent.effects(parentEffects::add)
 
