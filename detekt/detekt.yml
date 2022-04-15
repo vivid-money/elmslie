@@ -114,6 +114,7 @@ complexity:
     active: true
     threshold: 60
     ignoreAnnotated: []
+    excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**']
   LongParameterList:
     active: true
     functionThreshold: 6

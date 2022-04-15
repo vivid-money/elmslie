@@ -19,7 +19,7 @@ fun Switcher.cancel(delayMillis: Long = 0) = switch(delayMillis) { flowOf() }
 /**
  * @see [Switcher]
  */
-@Suppress("TooGenericExceptionCaught")
+@Suppress("TooGenericExceptionCaught", "RethrowCaughtException")
 fun <Event : Any> Switcher.switch(
     delayMillis: Long = 0,
     action: () -> Flow<Event>,
@@ -32,6 +32,8 @@ fun <Event : Any> Switcher.switch(
             Disposable(job::cancel)
         }
         awaitClose(disposable::dispose)
+    } catch (t: CancellationException) {
+        throw t
     } catch (t: Throwable) {
         // Next action cancelled this before starting. Or some error happened while running action.
         close(t)

@@ -1,13 +1,12 @@
 package vivid.money.elmslie.core
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.launch
+import vivid.money.elmslie.core.config.ElmslieConfig
 import vivid.money.elmslie.core.disposable.Disposable
 import vivid.money.elmslie.core.store.DefaultActor
 import vivid.money.elmslie.core.store.StateReducer
@@ -27,12 +26,16 @@ class ElmStoreCompat<Event : Any, State : Any, Effect : Any, Command : Any>(
     actor = actor.toActor()
 )
 
-@Suppress("TooGenericExceptionCaught")
+@Suppress("TooGenericExceptionCaught", "RethrowCaughtException")
 private fun <Command : Any, Event : Any> Actor<Command, Event>.toActor() =
     DefaultActor<Command, Event> { command, onEvent, onError ->
         val job = GlobalScope.launch(Dispatchers.Unconfined) {
             try {
-                execute(command).flowOn(Dispatchers.IO).collect { event -> onEvent(event) }
+                execute(command)
+                    .flowOn(ElmslieConfig.backgroundExecutor.asCoroutineDispatcher())
+                    .collect { event -> onEvent(event) }
+            } catch (t: CancellationException) {
+                throw t
             } catch (t: Throwable) {
                 onError(t)
             }
