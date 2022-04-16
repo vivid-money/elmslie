@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Ensure main branch
-        run: ./.github/sh/validate_main_branch.sh
+        run: ./.github/sh/validate_publishing_branch.sh
 
       - name: Validate library version update
         run: ./.github/sh/validate_version_update.sh "libraryVersion" "$NEW_VERSION"
