@@ -28,7 +28,7 @@ class ElmStoreWithChildTest {
             { event, state ->
                 when (event) {
                     is ParentEvent.Plain ->
-                        Result(state = state.copy(value = 10), effect = ParentEffect.ToParent)
+                        Result(state = state.copy(value = 10), effect = ParentEffect.ToChild(ChildEvent.First))
                     is ParentEvent.ChildUpdated ->
                         Result(state = state.copy(childValue = event.state.value))
                 }
