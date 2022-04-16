@@ -64,6 +64,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
         effectListeners += onEffectEmission
         return Disposable {
             effectListeners -= onEffectEmission
+            effectBuffer.clear()
             if (isStarted && effectListeners.isEmpty()) stopBuffering()
         }
     }
