@@ -3,8 +3,8 @@ package vivid.money.elmslie.samples.calculator
 import io.reactivex.rxjava3.schedulers.TestScheduler
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
-import vivid.money.elmslie.test.background.executor.MockBackgroundExecutorExtension
 import vivid.money.elmslie.test.TestSchedulerExtension
+import vivid.money.elmslie.test.background.executor.MockBackgroundExecutorExtension
 
 internal class StoreKtTest {
 

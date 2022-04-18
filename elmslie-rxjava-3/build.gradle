@@ -6,7 +6,7 @@ dependencies {
     implementation(project(":elmslie-core"))
     implementation(deps.rx.rxJava3)
 
-    testImplementation(project(":elmslie-test"))
+    testImplementation(project(":elmslie-test-rxjava-3"))
 }
 
 apply from: "../gradle/junit-5.gradle"

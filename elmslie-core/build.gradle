@@ -3,8 +3,6 @@ plugins {
 }
 
 dependencies {
-    implementation(deps.rx.rxJava3)
-
     testImplementation(project(":elmslie-test"))
     testImplementation(deps.test.kotestAssertions)
     testImplementation(deps.test.kotestProperty)

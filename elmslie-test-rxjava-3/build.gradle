@@ -1,0 +1,13 @@
+plugins {
+    id("kotlin")
+}
+
+dependencies {
+    implementation(project(":elmslie-core"))
+
+    implementation(deps.test.jUnit5)
+    implementation(deps.rx.rxJava3)
+}
+
+apply from: "../gradle/android-lint.gradle"
+apply from: "../gradle/detekt.gradle"
