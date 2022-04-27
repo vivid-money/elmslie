@@ -5,10 +5,11 @@
     <application
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
+        android:dataExtractionRules="@xml/disable_backup"
         android:label="@string/app_name"
         android:supportsRtl="false"
         android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning"
+        tools:ignore="DataExtractionRules,GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:supportsRtl">
 
         <activity
