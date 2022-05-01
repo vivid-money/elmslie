@@ -26,16 +26,20 @@ allprojects {
         google()
         mavenCentral()
     }
+
+    tasks.withType(JavaCompile) {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+        kotlinOptions {
+            jvmTarget = "11"
+        }
+    }
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
-}
-
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-    kotlinOptions {
-        jvmTarget = "11"
-    }
 }
 
 apply from: 'gradle/release-hub.gradle'

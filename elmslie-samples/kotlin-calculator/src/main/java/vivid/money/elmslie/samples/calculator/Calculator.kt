@@ -1,5 +1,8 @@
 package vivid.money.elmslie.samples.calculator
 
+import io.reactivex.rxjava3.core.Observable
+import vivid.money.elmslie.core.effects
+
 class Calculator {
 
     private val store = createStore()
@@ -13,6 +16,12 @@ class Calculator {
     private fun operation(operation: Operation) = store.accept(Event.PerformOperation(operation))
 
     fun evaluate() = store.accept(Event.Evaluate)
-    fun errors() = store.effects.filter { it is Effect.NotifyError }.map { it as Effect.NotifyError }
-    fun results() = store.effects.filter { it is Effect.NotifyNewResult }.map { it as Effect.NotifyNewResult }
+
+    fun errors(): Observable<Effect.NotifyError> = store.effects
+        .filter { it is Effect.NotifyError }
+        .map { it as Effect.NotifyError }
+
+    fun results(): Observable<Effect.NotifyNewResult> = store.effects
+        .filter { it is Effect.NotifyNewResult }
+        .map { it as Effect.NotifyNewResult }
 }

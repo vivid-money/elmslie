@@ -1,20 +1,25 @@
 package vivid.money.elmslie.core.store
 
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.schedulers.TestScheduler
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import vivid.money.elmslie.core.store.binding.coordinates
-import vivid.money.elmslie.core.testutil.model.*
-import vivid.money.elmslie.test.TestSchedulerExtension
+import vivid.money.elmslie.core.testutil.model.ChildCommand
+import vivid.money.elmslie.core.testutil.model.ChildEffect
+import vivid.money.elmslie.core.testutil.model.ChildEvent
+import vivid.money.elmslie.core.testutil.model.ChildState
+import vivid.money.elmslie.core.testutil.model.ParentCommand
+import vivid.money.elmslie.core.testutil.model.ParentEffect
+import vivid.money.elmslie.core.testutil.model.ParentEvent
+import vivid.money.elmslie.core.testutil.model.ParentState
+import vivid.money.elmslie.core.disposable.Disposable
+import vivid.money.elmslie.test.background.executor.MockBackgroundExecutorExtension
 
 class ElmStoreWithChildTest {
 
-    private val scheduler = TestScheduler()
-
     @JvmField
     @RegisterExtension
-    val extension = TestSchedulerExtension(scheduler)
+    val executorExtension = MockBackgroundExecutorExtension()
 
     @Test
     fun `Parent event is propagated to child and state update is received afterwards`() {
@@ -23,7 +28,7 @@ class ElmStoreWithChildTest {
             { event, state ->
                 when (event) {
                     is ParentEvent.Plain ->
-                        Result(state = state.copy(value = 10), effect = ParentEffect.ToParent)
+                        Result(state = state.copy(value = 10), effect = ParentEffect.ToChild(ChildEvent.First))
                     is ParentEvent.ChildUpdated ->
                         Result(state = state.copy(childValue = event.state.value))
                 }
@@ -31,29 +36,34 @@ class ElmStoreWithChildTest {
         )
         val child = childStore(
             ChildState(),
-            { _, state -> Result(state.copy(value = 100), effect = ChildEffect) }
+            { _, state ->
+                Result(state.copy(value = 100), effect = ChildEffect)
+            }
         )
-        parent.coordinates(
+        val coordination = parent.coordinates(
             child,
             dispatching = {
-                states({ filter { true }.map { Any() } }, { ChildEvent.First })
+                states { ChildEvent.First }
             },
             receiving = {
                 states { ParentEvent.ChildUpdated(this) }
                 effects { ParentEvent.Plain }
             }
-        ).start()
+        )
 
-        val observer = parent.states.test()
+        val values = mutableListOf<ParentState>()
+        parent.states { values.add(it) }
 
+        coordination.start()
         parent.accept(ParentEvent.Plain)
 
-        scheduler.triggerActions()
-
-        observer.assertValues(
-            ParentState(0, 0),
-            ParentState(10, 0),
-            ParentState(10, 100)
+        assertEquals(
+            mutableListOf(
+                ParentState(0, 0),
+                ParentState(0, 100),
+                ParentState(10, 100)
+            ),
+            values
         )
     }
 
@@ -74,13 +84,15 @@ class ElmStoreWithChildTest {
             }
         ).start()
 
-        val observer = child.effects.test()
+        val values = mutableListOf<ChildEffect>()
+        child.effects(values::add)
 
         parent.accept(ParentEvent.Plain)
 
-        scheduler.triggerActions()
-
-        observer.assertValues(ChildEffect)
+        assertEquals(
+            mutableListOf(ChildEffect),
+            values,
+        )
     }
 
     @Test
@@ -104,7 +116,10 @@ class ElmStoreWithChildTest {
                     Result(state.copy(value = 200))
                 }
             },
-            { Observable.just(ChildEvent.Second) }
+            { command, onEvent, onError ->
+                onEvent(ChildEvent.Second)
+                Disposable {}
+            }
         )
         parent.coordinates(
             child,
@@ -116,17 +131,19 @@ class ElmStoreWithChildTest {
             }
         ).start()
 
-        val observer = parent.states.test()
+        val values = mutableListOf<ParentState>()
+        parent.states { values.add(it) }
 
         parent.accept(ParentEvent.Plain)
 
-        scheduler.triggerActions()
-
-        observer.assertValues(
-            ParentState(0, 0),
-            ParentState(10, 0),
-            ParentState(10, 100),
-            ParentState(10, 200)
+        assertEquals(
+            mutableListOf(
+                ParentState(0, 0),
+                ParentState(10, 0),
+                ParentState(10, 100),
+                ParentState(10, 200)
+            ),
+            values,
         )
     }
 
@@ -163,7 +180,11 @@ class ElmStoreWithChildTest {
                     ChildEvent.Third -> Result(state.copy(value = 300))
                 }
             },
-            { Observable.just(ChildEvent.Second, ChildEvent.Third) }
+            { _, onEvent, _ ->
+                onEvent(ChildEvent.Second)
+                onEvent(ChildEvent.Third)
+                Disposable { }
+            }
         )
         parent.coordinates(
             child,
@@ -175,17 +196,19 @@ class ElmStoreWithChildTest {
             }
         ).start()
 
-        val observer = parent.states.test()
+        val values = mutableListOf<ParentState>()
+        parent.states(values::add)
 
         parent.accept(ParentEvent.Plain)
 
-        scheduler.triggerActions()
-
-        observer.assertValues(
-            ParentState(0, 0),
-            ParentState(0, 100),
-            ParentState(0, 200),
-            ParentState(0, 300)
+        assertEquals(
+            mutableListOf(
+                ParentState(0, 0),
+                ParentState(0, 100),
+                ParentState(0, 200),
+                ParentState(0, 300)
+            ),
+            values,
         )
     }
 
@@ -228,41 +251,44 @@ class ElmStoreWithChildTest {
             }
         ).start()
 
-        combined.startEffectsBuffering()
+        combined.effects { /*Ignore*/ }
 
-        val parentStates = parent.states.test()
+        val values = mutableListOf<ParentState>()
+        parent.states(values::add)
 
         parent.accept(ParentEvent.Plain)
 
-        scheduler.triggerActions()
-
-        parentStates.assertValues(
-            ParentState(value = 0, childValue = 0),
-            ParentState(value = 10, childValue = 0),
-            ParentState(value = 10, childValue = 100),
+        assertEquals(
+            mutableListOf(
+                ParentState(value = 0, childValue = 0),
+                ParentState(value = 10, childValue = 0),
+                ParentState(value = 10, childValue = 100),
+            ),
+            values,
         )
 
         // start observing effects later, simulating effects observing in onResume
-        combined.stopEffectsBuffering()
-        val parentEffects = parent.effects.test()
+        val parentEffects = mutableListOf<ParentEffect>()
+        parent.effects(parentEffects::add)
 
-        scheduler.triggerActions()
-
-        parentEffects.assertValues(
-            ParentEffect.ToParent,
-            ParentEffect.ToChild(ChildEvent.First),
+        assertEquals(
+            mutableListOf(
+                ParentEffect.ToParent,
+                ParentEffect.ToChild(ChildEvent.First),
+            ),
+            parentEffects
         )
     }
 
     private fun parentStore(
         state: ParentState,
         reducer: StateReducer<ParentEvent, ParentState, ParentEffect, ParentCommand> = NoOpReducer(),
-        actor: Actor<ParentCommand, ParentEvent> = NoOpActor()
+        actor: DefaultActor<ParentCommand, ParentEvent> = NoOpActor()
     ): Store<ParentEvent, ParentEffect, ParentState> = ElmStore(state, reducer, actor)
 
     private fun childStore(
         state: ChildState,
         reducer: StateReducer<ChildEvent, ChildState, ChildEffect, ChildCommand> = NoOpReducer(),
-        actor: Actor<ChildCommand, ChildEvent> = NoOpActor()
+        actor: DefaultActor<ChildCommand, ChildEvent> = NoOpActor()
     ): Store<ChildEvent, ChildEffect, ChildState> = ElmStore(state, reducer, actor)
 }

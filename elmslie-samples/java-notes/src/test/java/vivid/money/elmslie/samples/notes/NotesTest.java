@@ -1,21 +1,21 @@
 package vivid.money.elmslie.samples.notes;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.Extension;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.util.Collections;
 
-import io.reactivex.rxjava3.schedulers.TestScheduler;
-import vivid.money.elmslie.test.TestSchedulerExtension;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import kotlin.jvm.JvmField;
+import vivid.money.elmslie.test.background.executor.MockBackgroundExecutorExtension;
 
 public class NotesTest {
 
-    private static final TestScheduler scheduler = new TestScheduler();
-
+    @JvmField
     @RegisterExtension
-    static final TestSchedulerExtension extension = new TestSchedulerExtension(scheduler);
+    public Extension extension = new MockBackgroundExecutorExtension();
 
     @Test
     public void notesAreEmptyInitially() {
@@ -27,7 +27,6 @@ public class NotesTest {
     public void addingNoteWorks() {
         Notes notes = new Notes();
         notes.add("note");
-        scheduler.triggerActions();
         assertEquals(Collections.singletonList("note"), notes.getAll());
     }
 
@@ -36,7 +35,6 @@ public class NotesTest {
         Notes notes = new Notes();
         notes.add("note");
         notes.clear();
-        scheduler.triggerActions();
         assertEquals(Collections.emptyList(), notes.getAll());
     }
 }

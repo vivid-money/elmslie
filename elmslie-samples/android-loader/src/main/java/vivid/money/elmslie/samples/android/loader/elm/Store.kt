@@ -1,14 +1,14 @@
 package vivid.money.elmslie.samples.android.loader.elm
 
 import io.reactivex.Observable
-import vivid.money.elmslie.core.ActorCompat
+import vivid.money.elmslie.core.Actor
 import vivid.money.elmslie.core.ElmStoreCompat
 import vivid.money.elmslie.core.store.dsl_reducer.ScreenDslReducer
 import vivid.money.elmslie.samples.android.loader.elm.Event.Internal
 import vivid.money.elmslie.samples.android.loader.elm.Event.Ui
 import vivid.money.elmslie.samples.android.loader.repository.ValueRepository
 
-class Actor : ActorCompat<Command, Internal> {
+class Actor : Actor<Command, Internal> {
 
     override fun execute(command: Command): Observable<Internal> = when (command) {
         is Command.LoadNewValue -> ValueRepository.getValue()

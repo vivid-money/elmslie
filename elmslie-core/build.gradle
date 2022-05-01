@@ -3,12 +3,10 @@ plugins {
 }
 
 dependencies {
-    implementation(deps.rx.rxJava3)
-
-    testRuntimeOnly(deps.test.kotestJunitRunner)
+    testImplementation(project(":elmslie-test"))
     testImplementation(deps.test.kotestAssertions)
     testImplementation(deps.test.kotestProperty)
-    testImplementation(project(":elmslie-test"))
+    testRuntimeOnly(deps.test.kotestJunitRunner)
 }
 
 apply from: "../gradle/junit-5.gradle"

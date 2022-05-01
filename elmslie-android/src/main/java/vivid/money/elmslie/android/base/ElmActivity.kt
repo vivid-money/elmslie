@@ -22,6 +22,6 @@ abstract class ElmActivity<Event : Any, Effect : Any, State : Any> :
         get() = storeHolder.store
 
     override val storeHolder: StoreHolder<Event, Effect, State> by fastLazy {
-        LifecycleAwareStoreHolder(lifecycle, ::createStore)
+        LifecycleAwareStoreHolder(lifecycle) { createStore()!! }
     }
 }

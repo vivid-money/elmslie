@@ -1,11 +1,11 @@
 package vivid.money.elmslie.core
 
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
 
 /**
- * Actor that supports event mappings for RxJava 2
+ * Actor that supports event mappings for coroutines
  */
-fun interface ActorCompat<Command : Any, Event : Any> : MappingActorCompat<Event> {
+fun interface Actor<Command : Any, Event : Any> : MappingActorCompat<Event> {
 
     /**
      * Executes a command.
@@ -14,5 +14,5 @@ fun interface ActorCompat<Command : Any, Event : Any> : MappingActorCompat<Event
      * - Implementations don't have to call subscribeOn
      * - By default subscription will be on the `io` scheduler
      */
-    fun execute(command: Command): Observable<Event>
+    fun execute(command: Command): Flow<Event>
 }

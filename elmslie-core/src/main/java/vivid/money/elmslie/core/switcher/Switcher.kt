@@ -1,24 +1,23 @@
 package vivid.money.elmslie.core.switcher
 
-import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Maybe
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.subjects.PublishSubject
-import vivid.money.elmslie.core.store.Actor
+import vivid.money.elmslie.core.config.ElmslieConfig
+import vivid.money.elmslie.core.disposable.CompositeDisposable
+import vivid.money.elmslie.core.disposable.Disposable
+import vivid.money.elmslie.core.store.DefaultActor
+import java.util.concurrent.CancellationException
+import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.atomic.AtomicInteger
 
 /**
- * Allows to execute requests in [Actor] in a switching manner.
- * Each request will cancel a previous one.
+ * Allows to execute requests for [DefaultActor] implementations in a switching manner.
+ * Each request will cancel the previous one.
  *
- * Usage:
+ * Example:
  * ```
- * private val switcher = Switcher<Event>()
+ * private val switcher = Switcher()
  *
- * override fun execute(command: Command): Observable<Event> = when (command) {
- *    is MyCommand -> switchOn(switcher) {
+ * override fun execute(command: Command) = when (command) {
+ *    is MyCommand -> switcher.switchInternal() {
  *        Observable.just(123)
  *    }
  * }
@@ -26,53 +25,47 @@ import java.util.concurrent.atomic.AtomicInteger
  */
 class Switcher {
 
-    private val nextRequestId = AtomicInteger(0)
-    private val requests = PublishSubject.create<Int>()
-
-    @Deprecated("Please, use property methods", ReplaceWith("observable(delayMillis, action)"))
-    fun <Event : Any> switch(
-        delayMillis: Long = 0,
-        action: () -> Observable<Event>,
-    ) = observable(delayMillis, action)
+    private val disposable = CompositeDisposable()
+    private val tasks = mutableSetOf<ScheduledFuture<*>>()
+    private val service = ElmslieConfig.backgroundExecutor
 
     /**
-     * Executes [action] and cancels all previous requests scheduled on this [Switcher]
+     * Executes [action] and cancels all previous requests scheduled on this [Switcher].
      *
-     * @param delayMillis Operation delay in milliseconds. Can be used to debounce requests
-     * @param action Operation to be executed
+     * @param delayMillis Operation delay measured with milliseconds.
+     *                    Can be specified to debounce existing requests.
+     * @param action New operation to be executed.
      */
-    fun <Event : Any> observable(
+    fun switchInternal(
         delayMillis: Long = 0,
-        action: () -> Observable<Event>,
-    ): Observable<Event> {
-        val requestId = nextRequestId.getAndIncrement()
-        requests.onNext(requestId)
-        return Completable.timer(delayMillis, TimeUnit.MILLISECONDS)
-            .andThen(action())
-            .takeUntil(requests.filter { it > requestId })
+        action: () -> Disposable,
+    ): Disposable {
+        disposable.clear()
+        synchronized(tasks) {
+            tasks.onEach { task -> task.cancel(true) }.clear()
+        }
+        val future = service.schedule(
+            { disposable.add(action()) },
+            delayMillis,
+            TimeUnit.MILLISECONDS
+        )
+        synchronized(tasks) {
+            tasks.add(future)
+        }
+        return Disposable { future.cancel(true) }
     }
 
     /**
-     * Same as [observable], but for [Single]
+     * Awaits completion of all scheduled background tasks.
      */
-    fun <Event : Any> single(
-        delayMillis: Long = 0,
-        action: () -> Single<Event>,
-    ): Single<Event> = observable(delayMillis) { action().toObservable() }.firstOrError()
-
-    /**
-     * Same as [observable], but for [Maybe]
-     */
-    fun <Event : Any> maybe(
-        delayMillis: Long = 0,
-        action: () -> Maybe<Event>,
-    ): Maybe<Event> = observable(delayMillis) { action().toObservable() }.firstElement()
-
-    /**
-     * Same as [observable], but for [Completable]
-     */
-    fun completable(
-        delayMillis: Long = 0,
-        action: () -> Completable,
-    ): Completable = observable(delayMillis) { action().toObservable() }.ignoreElements()
+    fun await(
+        delay: Long = 1,
+        timeUnit: TimeUnit = TimeUnit.DAYS
+    ) = tasks.forEach { task ->
+        try {
+            task.get(delay, timeUnit)
+        } catch (_: CancellationException) {
+            // Expected state
+        }
+    }
 }

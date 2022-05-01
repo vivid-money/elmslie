@@ -32,19 +32,23 @@ ext.deps = [
                 tooling       : "androidx.compose.ui:ui-tooling:1.0.5",
                 ui            : "androidx.compose.ui:ui:1.0.5",
         ],
-        rx     : [
+        rx        : [
                 rxJava2      : "io.reactivex.rxjava2:rxjava:2.2.21",
                 rxJava3      : "io.reactivex.rxjava3:rxjava:3.1.4",
                 rxJava3Bridge: "com.github.akarnokd:rxjava3-bridge:3.0.2",
                 rxAndroid    : "io.reactivex.rxjava3:rxandroid:3.0.0",
         ],
-        test   : [
+        coroutines: [
+                core: "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0",
+                test: "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.0",
+        ],
+        test      : [
                 jUnit5           : "org.junit.jupiter:junit-jupiter:5.8.2",
                 kotestJunitRunner: "io.kotest:kotest-runner-junit5-jvm:5.1.0",
                 kotestAssertions : "io.kotest:kotest-assertions-core:5.1.0",
                 kotestProperty   : "io.kotest:kotest-property:5.1.0",
         ],
-        plugin : [
+        plugin    : [
                 freemarker: "org.freemarker:freemarker:2.3.31",
         ]
 ]

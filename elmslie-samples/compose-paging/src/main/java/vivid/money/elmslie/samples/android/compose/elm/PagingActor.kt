@@ -1,6 +1,7 @@
 package vivid.money.elmslie.samples.android.compose.elm
 
-import vivid.money.elmslie.core.store.Actor
+import vivid.money.elmslie.core.Actor
+import vivid.money.elmslie.core.switcher.completable
 import vivid.money.elmslie.core.switcher.Switcher
 import vivid.money.elmslie.samples.android.compose.elm.PagingEvent.Internal
 import vivid.money.elmslie.samples.android.compose.repository.PagingRepository
@@ -19,6 +20,6 @@ class PagingActor(
             .completable { repository.refreshPages() }
             .mapEvents(Internal.RefreshSuccess, Internal::RefreshError)
         is PagingCommand.ObserveAllPages -> repository.observePages()
-            .mapSuccessEvent(Internal::ObserveSuccess)
+            .mapEvents(Internal::ObserveSuccess)
     }
 }

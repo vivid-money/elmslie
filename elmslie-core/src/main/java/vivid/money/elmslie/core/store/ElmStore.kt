@@ -1,144 +1,138 @@
 package vivid.money.elmslie.core.store
 
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.schedulers.Schedulers.computation
-import io.reactivex.rxjava3.schedulers.Schedulers.io
-import io.reactivex.rxjava3.subjects.BehaviorSubject
-import io.reactivex.rxjava3.subjects.PublishSubject
 import vivid.money.elmslie.core.config.ElmslieConfig
+import vivid.money.elmslie.core.util.distinctUntilChanged
+import vivid.money.elmslie.core.store.exception.StoreAlreadyStartedException
+import vivid.money.elmslie.core.disposable.CompositeDisposable
+import vivid.money.elmslie.core.disposable.Disposable
+import vivid.money.elmslie.core.util.ConcurrentHashSet
+import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicReference
 
+@Suppress("TooManyFunctions", "TooGenericExceptionCaught")
 class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     initialState: State,
     private val reducer: StateReducer<Event, State, Effect, Command>,
-    private val actor: Actor<Command, out Event>
+    private val actor: DefaultActor<Command, out Event>
 ) : Store<Event, Effect, State> {
 
-    private val logger = ElmslieConfig.logger
+    companion object {
+        private val logger = ElmslieConfig.logger
+        private val executor = ElmslieConfig.backgroundExecutor
+    }
+
     private val disposables = CompositeDisposable()
 
-    // We can't use subject to store state to keep it synchronized with children
-    private val stateReferenceLock = Any()
-
-    // Only to emit states to subscribers
-    private val statesInternal = BehaviorSubject.createDefault(initialState)
-    private val effectsInternal = PublishSubject.create<Effect>()
-    private val effectsBuffer = EffectsBuffer(effectsInternal)
-    private val eventsInternal = PublishSubject.create<Event>()
-    private val commandsInternal = PublishSubject.create<Command>()
     private val isStartedInternal = AtomicBoolean(false)
+    override val isStarted: Boolean get() = isStartedInternal.get()
 
-    override val effects: Observable<Effect> = effectsBuffer.getBufferedObservable()
-    override val states: Observable<State> = statesInternal.distinctUntilChanged()
-    override val currentState: State get() = statesInternal.value!!
+    private val effectBuffer = ConcurrentLinkedQueue<Effect>()
+    private val effectBufferingListener = effectBuffer::add
+    private val effectListeners = ConcurrentHashSet<(Effect) -> Any?>()
+    private val eventListeners = ConcurrentHashSet<(Event) -> Any?>()
+    private val stateListeners = ConcurrentHashSet<(State) -> Any?>()
+    private val stateInternal = AtomicReference(initialState)
+    override val currentState: State get() = stateInternal.get()
 
-    override val isStarted
-        get() = isStartedInternal.get()
+    // We can't use subject to store state to keep it synchronized with children
+    private val stateLock = Any()
 
-    override fun accept(event: Event) = eventsInternal.onNext(event)
+    override fun accept(event: Event) = dispatchEvent(event)
 
-    override fun start(): Store<Event, Effect, State> {
-        if (!isStartedInternal.compareAndSet(false, true)) {
-            logger.fatal(
-                "Store start error",
-                Exception("Store is already started. Usually, it happened inside StoreHolder.")
-            )
-        }
-        effectsBuffer.init().bind()
-
-        eventsInternal
-            .observeOn(computation())
-            .flatMap { event ->
-                logger.debug("New event: $event")
-                val (effects, commands) = synchronized(stateReferenceLock) {
-                    val state = statesInternal.value!!
-                    val result = reducer.reduce(event, state)
-                    statesInternal.onNext(result.state)
-                    result.effects to result.commands
-                }
-                effects.forEach { logger.debug("New effect: $it") }
-                effects.forEach(effectsInternal::onNext)
-                Observable.fromIterable(commands)
-            }
-            .subscribe(commandsInternal::onNext) {
-                logger.fatal("You must handle all errors inside reducer", it)
-            }
-            .bind()
-
-        commandsInternal
-            .flatMap { command ->
-                logger.debug("Executing command: $command")
-                actor.execute(command)
-                    .subscribeOn(io())
-                    .doOnError { logger.nonfatal(error = it) }
-                    .onErrorResumeNext { Observable.empty() }
-            }
-            .subscribe(eventsInternal::onNext) {
-                logger.fatal("Unexpected actor error", it)
-            }
-            .bind()
-
-        return this
+    override fun start() = this.also {
+        requireNotStarted()
+        stopBuffering()
     }
 
     override fun stop() {
         isStartedInternal.set(false)
         disposables.clear()
+        startBuffering()
+    }
+
+    override fun states(onStateChange: (State) -> Unit): Disposable {
+        val callback = onStateChange.distinctUntilChanged()
+        stateListeners += callback
+        dispatchState(currentState)
+        return Disposable { stateListeners -= callback }
+    }
+
+    override fun effects(onEffectEmission: (Effect) -> Unit): Disposable {
+        dispatchBuffer(onEffectEmission)
+        startBuffering()
+        effectListeners += onEffectEmission
+        return Disposable {
+            effectListeners -= onEffectEmission
+            effectBuffer.clear()
+            if (isStarted && effectListeners.isEmpty()) stopBuffering()
+        }
+    }
+
+    private fun events(onEventTriggering: (Event) -> Unit): Disposable {
+        eventListeners += onEventTriggering
+        return Disposable { eventListeners -= onEventTriggering }
     }
 
     override fun <ChildEvent : Any, ChildState : Any, ChildEffect : Any> addChildStore(
-        store: Store<ChildEvent, ChildEffect, ChildState>,
+        childStore: Store<ChildEvent, ChildEffect, ChildState>,
         eventMapper: (parentEvent: Event) -> ChildEvent?,
         effectMapper: (parentState: State, childEffect: ChildEffect) -> Effect?,
         stateReducer: (parentState: State, childState: ChildState) -> State
     ): Store<Event, Effect, State> {
-        eventsInternal
-            .observeOn(computation())
-            .flatMap { eventMapper(it)?.let { Observable.just(it) } ?: Observable.empty() }
-            .subscribe(store::accept)
-            .bind()
-
-        // We won't lose any state or effects since thy're cached
-        disposables.add(object : Disposable {
-            override fun dispose() = store.stop()
-            override fun isDisposed(): Boolean = !store.isStarted
-        })
-        store.start()
-
-        store
-            .effects
-            .observeOn(computation())
-            .flatMap { effect ->
-                effectMapper(statesInternal.value!!, effect)?.let { Observable.just(it) } ?: Observable.empty()
-            }
-            .subscribe(effectsInternal::onNext)
-            .bind()
-
-        store
-            .states
-            .observeOn(computation())
-            .map { childState ->
-                synchronized(stateReferenceLock) {
-                    val parentState = statesInternal.value!!
-                    val newState = stateReducer(parentState, childState)
-                    statesInternal.onNext(newState)
-                }
-            }
-            .subscribe()
-            .bind()
-
+        disposables.addAll(
+            // We won't lose any state or effects since they're cached
+            { childStore.stop() },
+            events { eventMapper(it)?.let(childStore::accept) },
+            childStore.effects { effectMapper(currentState, it)?.let(::dispatchEffect) },
+            childStore.states { dispatchState(stateReducer(currentState, it)) },
+        )
+        childStore.start()
         return this
     }
 
-    override fun startEffectsBuffering() {
-        effectsBuffer.startBuffering()
+    private fun dispatchState(state: State) = synchronized(stateLock) {
+        stateInternal.set(state)
+        stateListeners.forEach { it(state) }
     }
 
-    override fun stopEffectsBuffering() {
-        effectsBuffer.stopBuffering()
+    private fun dispatchEffect(effect: Effect) {
+        logger.debug("New effect: $effect")
+        effectListeners.forEach { it(effect) }
     }
 
-    private fun Disposable.bind() = let(disposables::add)
+    private fun dispatchEvent(event: Event) {
+        executor.submit {
+            try {
+                logger.debug("New event: $event")
+                val result = reducer.reduce(event, currentState)
+                dispatchState(result.state)
+                result.effects.forEach(::dispatchEffect)
+                result.commands.forEach(::executeCommand)
+            } catch (t: Throwable) {
+                logger.fatal("You must handle all errors inside reducer", t)
+            }
+        }
+    }
+
+    private fun executeCommand(command: Command) = try {
+        logger.debug("Executing command: $command")
+        disposables += actor.execute(command, ::dispatchEvent, { logger.nonfatal(error = it) })
+    } catch (t: Throwable) {
+        logger.fatal("Unexpected actor error", t)
+    }
+
+    private fun startBuffering() = effectListeners.add(effectBufferingListener)
+
+    private fun stopBuffering() = effectListeners.remove(effectBufferingListener)
+
+    private fun dispatchBuffer(onEffectEmission: (Effect) -> Unit) = effectBuffer
+        .onEach { onEffectEmission(it) }
+        .clear()
+
+    private fun requireNotStarted() {
+        if (!isStartedInternal.compareAndSet(false, true)) {
+            logger.fatal("Store start error", StoreAlreadyStartedException())
+        }
+    }
 }

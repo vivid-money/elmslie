@@ -5,7 +5,7 @@ group = libraryGroup
 version = libraryVersion
 
 project.tasks.dokkaJavadoc.configure {
-    outputDirectory.set(new File("javadoc", buildDir))
+    outputDirectory.set(new File("javadoc", project.buildDir))
     moduleName = rootProject.name
 }
 
