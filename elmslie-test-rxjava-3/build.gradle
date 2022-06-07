@@ -9,5 +9,6 @@ dependencies {
     implementation(deps.rx.rxJava3)
 }
 
+apply from: "../gradle/kotlin-publishing.gradle"
 apply from: "../gradle/android-lint.gradle"
 apply from: "../gradle/detekt.gradle"
