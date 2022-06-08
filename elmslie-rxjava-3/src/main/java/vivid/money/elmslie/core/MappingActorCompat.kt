@@ -127,7 +127,7 @@ interface MappingActorCompat<Event : Any> : MappingActor<Event> {
     )
     fun Single<Event>.mapErrorEvent(
         errorEvent: Event
-    ): Observable<Event> = mapEvents(errorMapper = { errorEvent })
+    ): Observable<Event> = mapEvents(eventMapper = { it }, errorMapper = { errorEvent })
 
     @Deprecated(
         "Please, use the default mapEvents method",
@@ -135,7 +135,7 @@ interface MappingActorCompat<Event : Any> : MappingActor<Event> {
     )
     fun Single<Event>.mapErrorEvent(
         errorMapper: (Throwable) -> Event
-    ): Observable<Event> = mapEvents(errorMapper = errorMapper)
+    ): Observable<Event> = mapEvents(eventMapper = { it }, errorMapper = errorMapper)
 
     @Deprecated(
         "Please, use the default mapEvents method",
@@ -203,7 +203,7 @@ interface MappingActorCompat<Event : Any> : MappingActor<Event> {
     )
     fun Observable<Event>.mapErrorEvent(
         errorEvent: Event
-    ): Observable<Event> = mapEvents(errorMapper = { errorEvent })
+    ): Observable<Event> = mapEvents(eventMapper = { it }, errorMapper = { errorEvent })
 
     @Deprecated(
         "Please, use the default mapEvents method",
@@ -211,7 +211,7 @@ interface MappingActorCompat<Event : Any> : MappingActor<Event> {
     )
     fun Observable<Event>.mapErrorEvent(
         errorMapper: (Throwable) -> Event
-    ): Observable<Event> = mapEvents(errorMapper = errorMapper)
+    ): Observable<Event> = mapEvents(eventMapper = { it }, errorMapper = errorMapper)
 
     @Deprecated(
         "Please, use the default mapEvents method",
