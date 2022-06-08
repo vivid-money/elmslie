@@ -9,10 +9,25 @@ import vivid.money.elmslie.core.store.Store
 interface ElmDelegate<Event : Any, Effect : Any, State : Any> {
 
     val initEvent: Event
+
+    /**
+     * Examples:
+     *
+     * 1. Store that doesn't survive configuration change
+     * ```
+     * override fun createStore() = storeFactory.create()
+     * ```
+     *
+     * 2. Store that survives configuration change
+     * ```
+     * override fun createStore() = storeFactory.create()
+     *
+     * override val storeHolder by retainStoreHolder { createStore() }
+     * ```
+     */
     val storeHolder: StoreHolder<Event, Effect, State>
 
-    @Deprecated("Use storeHolder property instead")
-    fun createStore(): Store<Event, Effect, State>? = null
+    fun createStore(): Store<Event, Effect, State>?
     fun render(state: State)
     fun handleEffect(effect: Effect): Unit? = Unit
 

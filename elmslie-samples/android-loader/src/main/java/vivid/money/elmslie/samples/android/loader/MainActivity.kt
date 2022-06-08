@@ -9,6 +9,7 @@ import vivid.money.elmslie.samples.android.loader.elm.Effect
 import vivid.money.elmslie.samples.android.loader.elm.Event
 import vivid.money.elmslie.samples.android.loader.elm.State
 import vivid.money.elmslie.samples.android.loader.elm.storeFactory
+import vivid.money.elmslie.storepersisting.retainStoreHolder
 
 class MainActivity : ElmActivity<Event, Effect, State>(R.layout.activity_main) {
 
@@ -20,6 +21,8 @@ class MainActivity : ElmActivity<Event, Effect, State>(R.layout.activity_main) {
     }
 
     override fun createStore() = storeFactory()
+
+    override val storeHolder by retainStoreHolder { createStore() }
 
     override fun render(state: State) {
         findViewById<TextView>(R.id.currentValue).text = when {
