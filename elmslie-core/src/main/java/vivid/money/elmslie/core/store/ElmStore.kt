@@ -105,6 +105,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
         executor.submit {
             try {
                 logger.debug("New event: $event")
+                eventListeners.forEach { it(event) }
                 val result = reducer.reduce(event, currentState)
                 dispatchState(result.state)
                 result.effects.forEach(::dispatchEffect)
