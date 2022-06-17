@@ -37,7 +37,7 @@ class ElmScreen<Event : Any, Effect : Any, State : Any>(
     }
 
     private fun observeEffects() = store.effects {
-        effectHandler.postSingle {
+        effectHandler.post {
             catchEffectErrors {
                 delegate.handleEffect(it)
             }
