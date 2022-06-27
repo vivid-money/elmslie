@@ -127,6 +127,29 @@ class ElmStoreTest {
     }
 
     @Test
+    fun `Emitted effect that was received before subscribe to effects`() {
+        val store = store(
+            State(),
+            { event, state ->
+                Result(state = state, effect = Effect(value = event.value))
+            }
+        ).start()
+
+        val effects = mutableListOf<Effect>()
+        store.accept(Event(value = 1))
+        store.effects(effects::add)
+        store.accept(Event(value = -1))
+
+        assertEquals(
+            mutableListOf(
+                Effect(value = 1), // The first effect
+                Effect(value = -1), // The second effect
+            ),
+            effects
+        )
+    }
+
+    @Test
     fun `Command result is observed by store`() {
         val store = store(
             State(),
