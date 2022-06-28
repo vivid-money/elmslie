@@ -3,7 +3,7 @@ ext.versions = [
 ]
 
 ext.deps = [
-        gradle : [
+        gradle    : [
                 androidPlugin : "com.android.tools.build:gradle:7.1.3",
                 kotlinPlugin  : "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10",
                 intellijPlugin: "org.jetbrains.intellij.plugins:gradle-intellij-plugin:1.5.3",
@@ -11,8 +11,8 @@ ext.deps = [
                 releasesHub   : "com.dipien:releases-hub-gradle-plugin:3.1.0",
                 dokka         : "org.jetbrains.dokka:dokka-gradle-plugin:1.6.21",
         ],
-        android: [
-                appcompat                   : "androidx.appcompat:appcompat:1.4.1",
+        android   : [
+                appcompat                   : "androidx.appcompat:appcompat:1.4.2",
                 appStartup                  : "androidx.startup:startup-runtime:1.1.1",
                 lifecycle                   : "androidx.lifecycle:lifecycle-common:2.4.1",
                 lifecycleViewmodel          : "androidx.lifecycle:lifecycle-viewmodel:2.4.1",
@@ -20,7 +20,7 @@ ext.deps = [
                 material                    : "com.google.android.material:material:1.6.1",
                 multidex                    : "androidx.multidex:multidex:2.0.1",
         ],
-        compose: [
+        compose   : [
                 activity      : "androidx.activity:activity-compose:1.4.0",
                 foundation    : "androidx.compose.foundation:foundation:1.0.5",
                 iconsCore     : "androidx.compose.material:material-icons-core:1.0.5",
