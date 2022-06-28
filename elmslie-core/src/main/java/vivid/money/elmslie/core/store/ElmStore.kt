@@ -42,7 +42,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
 
     override fun start() = this.also {
         requireNotStarted()
-        stopBuffering()
+        startBuffering()
     }
 
     override fun stop() {
