@@ -22,7 +22,7 @@ ext.deps = [
         ],
         compose   : [
                 activity      : "androidx.activity:activity-compose:1.4.0",
-                foundation    : "androidx.compose.foundation:foundation:1.0.5",
+                foundation    : "androidx.compose.foundation:foundation:1.1.1",
                 iconsCore     : "androidx.compose.material:material-icons-core:1.0.5",
                 iconsExtended : "androidx.compose.material:material-icons-extended:1.0.5",
                 material      : "androidx.compose.material:material:1.0.5",
