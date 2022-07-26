@@ -30,7 +30,7 @@ ext.deps = [
                 runtimeRxJava3: "androidx.compose.runtime:runtime-rxjava3:1.0.5",
                 swiperefresh  : "com.google.accompanist:accompanist-swiperefresh:0.20.3",
                 tooling       : "androidx.compose.ui:ui-tooling:1.1.1",
-                ui            : "androidx.compose.ui:ui:1.0.5",
+                ui            : "androidx.compose.ui:ui:1.1.1",
         ],
         rx        : [
                 rxJava2      : "io.reactivex.rxjava2:rxjava:2.2.21",
