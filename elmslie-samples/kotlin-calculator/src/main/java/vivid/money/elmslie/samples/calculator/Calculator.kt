@@ -1,7 +1,7 @@
 package vivid.money.elmslie.samples.calculator
 
 import io.reactivex.rxjava3.core.Observable
-import vivid.money.elmslie.core.effects
+import vivid.money.elmslie.rx3.effects
 
 class Calculator {
 

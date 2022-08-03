@@ -1,4 +1,4 @@
-package vivid.money.elmslie.core
+package vivid.money.elmslie.coroutines
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch

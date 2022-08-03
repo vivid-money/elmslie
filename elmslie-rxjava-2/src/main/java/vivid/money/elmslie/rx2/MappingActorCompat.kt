@@ -1,13 +1,13 @@
-package vivid.money.elmslie.core
+package vivid.money.elmslie.rx2
 
-import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Maybe
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Single
+import io.reactivex.Completable
+import io.reactivex.Maybe
+import io.reactivex.Observable
+import io.reactivex.Single
 import vivid.money.elmslie.core.store.MappingActor
 
 /**
- * Contains internal event mapping helpers for RxJava3
+ * Contains internal event mapping helpers for RxJava2
  */
 @Suppress("ComplexInterface", "TooManyFunctions")
 interface MappingActorCompat<Event : Any> : MappingActor<Event> {
@@ -36,27 +36,23 @@ interface MappingActorCompat<Event : Any> : MappingActor<Event> {
     ): Observable<Event> = flatMapMaybe { Maybe.fromCallable<Event> { eventMapper(it) } }
         .switchIfEmpty(Maybe.fromCallable<Event> { completionEvent }.toObservable())
         .doOnNext { it.logSuccessEvent() }
-        .onErrorResumeNext { Observable.fromIterable(listOfNotNull(it.logErrorEvent(errorMapper))) }
+        .onErrorResumeNext { t: Throwable ->
+            Maybe.fromCallable { t.logErrorEvent(errorMapper) }.toObservable()
+        }
 
 
     @Deprecated(
         "Please, use the default mapEvents method",
-        ReplaceWith("mapEvents({ successEvent }, { errorEvent })")
+        ReplaceWith("mapEvents(successEvent, { errorEvent })")
     )
     fun Completable.mapEvents(
         successEvent: Event,
         errorEvent: Event
-    ): Observable<Event> = mapEvents(successEvent) { errorEvent }
+    ): Observable<Event> = mapEvents(successEvent, { errorEvent })
 
     @Deprecated(
         "Please, use the default mapEvents method",
-        ReplaceWith("mapEvents()")
-    )
-    fun Completable.ignoreEvents(): Observable<Event> = mapEvents()
-
-    @Deprecated(
-        "Please, use the default mapEvents method",
-        ReplaceWith("mapEvents({ successEvent })")
+        ReplaceWith("mapEvents(successEvent)")
     )
     fun Completable.mapSuccessEvent(
         successEvent: Event
@@ -68,7 +64,7 @@ interface MappingActorCompat<Event : Any> : MappingActor<Event> {
     )
     fun Completable.mapErrorEvent(
         errorEvent: Event
-    ): Observable<Event> = mapEvents(null, { errorEvent })
+    ): Observable<Event> = mapEvents(errorMapper = { errorEvent })
 
     @Deprecated(
         "Please, use the default mapEvents method",
@@ -80,12 +76,19 @@ interface MappingActorCompat<Event : Any> : MappingActor<Event> {
 
     @Deprecated(
         "Please, use the default mapEvents method",
-        ReplaceWith("mapEvents({ successEvent }, { errorEvent })")
+        ReplaceWith("mapEvents()")
+    )
+    fun Completable.ignoreEvents(): Observable<Event> = mapEvents()
+
+
+    @Deprecated(
+        "Please, use the default mapEvents method",
+        ReplaceWith("mapEvents({ successEvent }, { failureEvent })")
     )
     fun <T : Any> Single<T>.mapEvents(
         successEvent: Event,
-        errorEvent: Event
-    ): Observable<Event> = mapEvents({ successEvent }, { errorEvent })
+        failureEvent: Event
+    ): Observable<Event> = mapEvents({ successEvent }, { failureEvent })
 
     @Deprecated(
         "Please, use the default mapEvents method",
@@ -98,7 +101,7 @@ interface MappingActorCompat<Event : Any> : MappingActor<Event> {
 
     @Deprecated(
         "Please, use the default mapEvents method",
-        ReplaceWith("mapEvents(eventMapper, { errorEvent })")
+        ReplaceWith("mapEvents(eventMapper, { errorMapper })")
     )
     fun <T : Any> Single<T>.mapEvents(
         eventMapper: (T) -> Event?,
@@ -107,7 +110,7 @@ interface MappingActorCompat<Event : Any> : MappingActor<Event> {
 
     @Deprecated(
         "Please, use the default mapEvents method",
-        ReplaceWith("mapEvents { successEvent }")
+        ReplaceWith("mapEvents({ successEvent })")
     )
     fun <T : Any> Single<T>.mapSuccessEvent(
         successEvent: Event
@@ -127,35 +130,37 @@ interface MappingActorCompat<Event : Any> : MappingActor<Event> {
     )
     fun Single<Event>.mapErrorEvent(
         errorEvent: Event
-    ): Observable<Event> = mapEvents(eventMapper = { it }, errorMapper = { errorEvent })
+    ): Observable<Event> = mapEvents(errorMapper = { errorEvent })
 
     @Deprecated(
         "Please, use the default mapEvents method",
-        ReplaceWith("mapEvents({ successEvent }, { errorEvent })")
+        ReplaceWith("mapEvents(errorMapper = errorMapper)")
     )
     fun Single<Event>.mapErrorEvent(
         errorMapper: (Throwable) -> Event
-    ): Observable<Event> = mapEvents(eventMapper = { it }, errorMapper = errorMapper)
+    ): Observable<Event> = mapEvents(errorMapper = errorMapper)
+
 
     @Deprecated(
         "Please, use the default mapEvents method",
-        ReplaceWith("mapEvents(eventMapper, eventMapper(null))")
+        ReplaceWith("mapEvents(eventMapper, completionEvent = eventMapper(null)")
     )
     fun <T : Any> Maybe<T>.mapSuccessEvent(
-        eventMapper: (T?) -> Event?
+        eventMapper: (T?) -> Event
     ): Observable<Event> = mapEvents(eventMapper, completionEvent = eventMapper(null))
 
     @Deprecated(
         "Please, use the default mapEvents method",
-        ReplaceWith("mapEvents(eventMapper)")
+        ReplaceWith("mapEvents(eventMapper, eventMapper(null)")
     )
     fun <T : Any> Maybe<T>.mapOnlySuccessEvent(
         eventMapper: (T) -> Event
     ): Observable<Event> = mapEvents(eventMapper)
 
+
     @Deprecated(
         "Please, use the default mapEvents method",
-        ReplaceWith("mapEvents(eventMapper, completionEvent, { errorEvent })")
+        ReplaceWith("mapEvents(eventMapper, { errorEvent }, completionEvent)")
     )
     fun <T : Any> Maybe<T>.mapEvents(
         eventMapper: (T) -> Event,
@@ -165,7 +170,7 @@ interface MappingActorCompat<Event : Any> : MappingActor<Event> {
 
     @Deprecated(
         "Please, use the default mapEvents method",
-        ReplaceWith("mapEvents({ successEvent }, { errorEvent })")
+        ReplaceWith("mapEvents(successEvent, errorMapper = { failureEvent )")
     )
     fun <T : Any> Observable<T>.mapEvents(
         successEvent: Event,
@@ -174,7 +179,7 @@ interface MappingActorCompat<Event : Any> : MappingActor<Event> {
 
     @Deprecated(
         "Please, use the default mapEvents method",
-        ReplaceWith("mapEvents(eventMapper, { errorEvent })")
+        ReplaceWith("mapEvents(eventMapper, errorMapper = { errorEvent )")
     )
     fun <T : Any> Observable<T>.mapEvents(
         eventMapper: (T) -> Event,
@@ -203,15 +208,15 @@ interface MappingActorCompat<Event : Any> : MappingActor<Event> {
     )
     fun Observable<Event>.mapErrorEvent(
         errorEvent: Event
-    ): Observable<Event> = mapEvents(eventMapper = { it }, errorMapper = { errorEvent })
+    ): Observable<Event> = mapEvents(errorMapper = { errorEvent })
 
     @Deprecated(
         "Please, use the default mapEvents method",
-        ReplaceWith("mapEvents(errorEvent = { errorEvent })")
+        ReplaceWith("mapEvents(errorMapper = errorMapper)")
     )
     fun Observable<Event>.mapErrorEvent(
         errorMapper: (Throwable) -> Event
-    ): Observable<Event> = mapEvents(eventMapper = { it }, errorMapper = errorMapper)
+    ): Observable<Event> = mapEvents(errorMapper = errorMapper)
 
     @Deprecated(
         "Please, use the default mapEvents method",
