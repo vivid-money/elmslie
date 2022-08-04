@@ -1,9 +1,10 @@
-package vivid.money.elmslie.core.switcher
+package vivid.money.elmslie.rx3.switcher
 
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.TestScheduler
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import vivid.money.elmslie.core.switcher.Switcher
 import vivid.money.elmslie.test.TestSchedulerExtension
 import java.util.concurrent.TimeUnit
 

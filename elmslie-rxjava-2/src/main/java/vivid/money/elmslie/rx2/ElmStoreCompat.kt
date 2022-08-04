@@ -1,7 +1,7 @@
-package vivid.money.elmslie.core
+package vivid.money.elmslie.rx2
 
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
 import vivid.money.elmslie.core.store.StateReducer
 import vivid.money.elmslie.core.store.ElmStore
 import vivid.money.elmslie.core.store.Store
@@ -9,7 +9,7 @@ import vivid.money.elmslie.core.disposable.Disposable
 import vivid.money.elmslie.core.store.DefaultActor
 
 /**
- * A [Store] implementation that uses RxJava3 for multithreading
+ * A [Store] implementation that uses RxJava2 for multithreading
  */
 class ElmStoreCompat<Event : Any, State : Any, Effect : Any, Command : Any>(
     initialState: State,
@@ -24,10 +24,11 @@ class ElmStoreCompat<Event : Any, State : Any, Effect : Any, Command : Any>(
 private fun <Command : Any, Event : Any> Actor<Command, Event>.toActor() =
     DefaultActor<Command, Event> { command, onEvent, onError ->
         val disposable = execute(command)
-            .observeOn(Schedulers.io())
+            .subscribeOn(Schedulers.io())
             .subscribe(
                 onEvent,
                 onError,
+                { }
             )
         Disposable { disposable.dispose() }
     }

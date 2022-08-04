@@ -1,10 +1,9 @@
-package vivid.money.elmslie.core
+package vivid.money.elmslie.coroutines
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
 import vivid.money.elmslie.core.config.ElmslieConfig
 import vivid.money.elmslie.core.disposable.Disposable

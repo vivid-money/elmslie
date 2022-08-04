@@ -1,7 +1,7 @@
 package vivid.money.elmslie.samples.android.compose.elm
 
-import vivid.money.elmslie.core.Actor
-import vivid.money.elmslie.core.switcher.completable
+import vivid.money.elmslie.rx3.Actor
+import vivid.money.elmslie.rx3.switcher.completable
 import vivid.money.elmslie.core.switcher.Switcher
 import vivid.money.elmslie.samples.android.compose.elm.PagingEvent.Internal
 import vivid.money.elmslie.samples.android.compose.repository.PagingRepository

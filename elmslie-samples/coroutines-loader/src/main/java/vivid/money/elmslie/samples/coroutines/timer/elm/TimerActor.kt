@@ -2,9 +2,9 @@ package vivid.money.elmslie.samples.coroutines.timer.elm
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
-import vivid.money.elmslie.core.Actor
-import vivid.money.elmslie.core.cancel
-import vivid.money.elmslie.core.switch
+import vivid.money.elmslie.coroutines.Actor
+import vivid.money.elmslie.coroutines.cancel
+import vivid.money.elmslie.coroutines.switch
 import vivid.money.elmslie.core.switcher.Switcher
 
 internal object TimerActor : Actor<Command, Event> {

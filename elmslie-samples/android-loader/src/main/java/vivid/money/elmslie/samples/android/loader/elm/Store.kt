@@ -1,8 +1,8 @@
 package vivid.money.elmslie.samples.android.loader.elm
 
 import io.reactivex.Observable
-import vivid.money.elmslie.core.Actor
-import vivid.money.elmslie.core.ElmStoreCompat
+import vivid.money.elmslie.rx2.Actor
+import vivid.money.elmslie.rx2.ElmStoreCompat
 import vivid.money.elmslie.core.store.dsl_reducer.ScreenDslReducer
 import vivid.money.elmslie.samples.android.loader.elm.Event.Internal
 import vivid.money.elmslie.samples.android.loader.elm.Event.Ui

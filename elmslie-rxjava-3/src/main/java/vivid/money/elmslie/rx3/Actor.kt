@@ -1,4 +1,4 @@
-package vivid.money.elmslie.core
+package vivid.money.elmslie.rx3
 
 import io.reactivex.rxjava3.core.Observable
 

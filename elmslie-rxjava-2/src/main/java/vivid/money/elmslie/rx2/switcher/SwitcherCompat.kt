@@ -1,10 +1,11 @@
-package vivid.money.elmslie.core.switcher
+package vivid.money.elmslie.rx2.switcher
 
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
 import vivid.money.elmslie.core.disposable.Disposable
+import vivid.money.elmslie.core.switcher.Switcher
 
 /**
  * Cancels all scheduled actions after [delayMillis] pass.
