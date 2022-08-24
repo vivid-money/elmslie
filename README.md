@@ -10,7 +10,7 @@ Named after [George Grant Elmslie](https://en.wikipedia.org/wiki/George_Grant_El
 
 ## Why?
 - **Scalable and Reusable**: Built-in support for nesting components
-- **Reactive**: Written with RxJava3, but has compatibility mode with RxJava2
+- **Reactive**: Written with pure Kotlin, but has compatibility mode with RxJava2, RxJava3 and Coroutines
 - **Single immutable state**: Simplify state management
 - **UDF**: Say no to spaghetti code with Unidirectional Data Flow
 
