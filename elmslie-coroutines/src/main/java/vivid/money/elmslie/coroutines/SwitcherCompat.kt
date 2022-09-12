@@ -5,7 +5,6 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.flowOf
-import vivid.money.elmslie.core.disposable.Disposable
 import vivid.money.elmslie.core.switcher.Switcher
 
 /**
@@ -15,22 +14,15 @@ import vivid.money.elmslie.core.switcher.Switcher
  */
 fun Switcher.cancel(delayMillis: Long = 0) = switch(delayMillis) { flowOf() }
 
-/**
- * @see [Switcher]
- */
+/** @see [Switcher] */
 @Suppress("TooGenericExceptionCaught", "RethrowCaughtException")
 fun <Event : Any> Switcher.switch(
     delayMillis: Long = 0,
     action: () -> Flow<Event>,
 ): Flow<Event> = channelFlow {
     try {
-        val disposable = switchInternal(delayMillis) {
-            val job = launch {
-                action().collect { trySend(it) }
-            }
-            Disposable(job::cancel)
-        }
-        awaitClose(disposable::dispose)
+        val job = switchInternal(delayMillis) { action().collect { trySend(it) } }
+        awaitClose { job?.cancel() }
     } catch (t: CancellationException) {
         throw t
     } catch (t: Throwable) {

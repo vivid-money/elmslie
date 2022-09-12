@@ -4,7 +4,6 @@ import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
-import vivid.money.elmslie.core.disposable.Disposable
 import vivid.money.elmslie.core.switcher.Switcher
 
 /**
@@ -18,39 +17,40 @@ fun Switcher.cancel(delayMillis: Long = 0) = observable(delayMillis) { Observabl
  * Executes an [action] and cancels all previous requests scheduled for this [Switcher].
  *
  * @param delayMillis Operation delay measured with milliseconds.
+ * ```
  *                    Can be specified to debounce requests.
- * @param action Operation to be executed.
+ * @param action
+ * ```
+ * Operation to be executed.
  */
 fun <Event : Any> Switcher.observable(
     delayMillis: Long = 0,
     action: () -> Observable<Event>,
-): Observable<Event> = Observable.create { emitter ->
-    val disposable = switchInternal(delayMillis) {
-        val rxDisposable = action().subscribe(emitter::onNext, emitter::onError)
-        Disposable { rxDisposable.dispose() }
-    }
-    emitter.setCancellable { disposable.dispose() }
-}
+): Observable<Event> =
+    Observable.create { emitter ->
+        val job =
+            switchInternal(delayMillis) {
+                action()
+                    .doOnComplete(emitter::onComplete)
+                    .subscribe(emitter::onNext, emitter::onError)
+            }
 
-/**
- * Same as [observable], but for [Single].
- */
+        emitter.setCancellable { job?.cancel() }
+    }
+
+/** Same as [observable], but for [Single]. */
 fun <Event : Any> Switcher.single(
     delayMillis: Long = 0,
     action: () -> Single<Event>,
 ): Single<Event> = observable(delayMillis) { action().toObservable() }.firstOrError()
 
-/**
- * Same as [observable], but for [Maybe].
- */
+/** Same as [observable], but for [Maybe]. */
 fun <Event : Any> Switcher.maybe(
     delayMillis: Long = 0,
     action: () -> Maybe<Event>,
 ): Maybe<Event> = observable(delayMillis) { action().toObservable() }.firstElement()
 
-/**
- * Same as [observable], but for [Completable].
- */
+/** Same as [observable], but for [Completable]. */
 fun Switcher.completable(
     delayMillis: Long = 0,
     action: () -> Completable,

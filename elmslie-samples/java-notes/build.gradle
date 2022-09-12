@@ -4,7 +4,9 @@ plugins {
 
 dependencies {
     implementation(project(":elmslie-core"))
+    implementation(deps.coroutines.core)
 
+    testImplementation(deps.coroutines.test)
     testImplementation(project(":elmslie-test"))
 }
 

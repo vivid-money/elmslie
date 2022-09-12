@@ -86,4 +86,9 @@ fun <InitiatorEvent, InitiatorEffect, InitiatorState, ResponderEvent, ResponderE
     receiving: ConversionContract<ResponderEvent, ResponderEffect, ResponderState,
             InitiatorEvent, InitiatorEffect, InitiatorState>.() -> Unit = {},
 ): Store<InitiatorEvent, InitiatorEffect, InitiatorState> =
-    ConversationRules(this, responder, dispatching, receiving)
+    ConversationRules(
+        initiator = this,
+        responder = responder,
+        expecting = dispatching,
+        receiving = receiving,
+    )

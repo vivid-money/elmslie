@@ -6,10 +6,9 @@ import androidx.fragment.app.Fragment
 import vivid.money.elmslie.android.screen.ElmDelegate
 import vivid.money.elmslie.android.screen.ElmScreen
 import vivid.money.elmslie.android.storeholder.LifecycleAwareStoreHolder
-import vivid.money.elmslie.compose.util.subscribeAsState
 
-abstract class ElmComponentFragment<Event : Any, Effect : Any, State : Any> : Fragment,
-    ElmDelegate<Event, Effect, State> {
+abstract class ElmComponentFragment<Event : Any, Effect : Any, State : Any> :
+    Fragment, ElmDelegate<Event, Effect, State> {
 
     constructor() : super()
 
@@ -24,10 +23,4 @@ abstract class ElmComponentFragment<Event : Any, Effect : Any, State : Any> : Fr
     override val storeHolder = LifecycleAwareStoreHolder(lifecycle) { createStore()!! }
 
     final override fun render(state: State) = Unit
-
-    @Composable
-    fun state() = store::states.subscribeAsState(initial = store.currentState)
-
-    @Composable
-    fun effect() = store::effects.subscribeAsState(::EffectWithKey, initial = null)
 }
