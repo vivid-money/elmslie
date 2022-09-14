@@ -1,11 +1,10 @@
 package vivid.money.elmslie.core.store
 
 import java.util.concurrent.LinkedBlockingQueue
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import vivid.money.elmslie.core.config.ElmslieConfig
+import vivid.money.elmslie.core.ElmScope
 
 /**
  * Caches effects until there is at least one collector.
@@ -18,13 +17,12 @@ import vivid.money.elmslie.core.config.ElmslieConfig
  */
 // TODO Should be moved to android artifact?
 class ElmCachedStore<Event : Any, State : Any, Effect : Any, Command : Any>(
-    elmStore: ElmStore<Event, State, Effect, Command>,
+    private val elmStore: ElmStore<Event, State, Effect, Command>,
 ) : Store<Event, Effect, State> by elmStore {
-
-    private val storeScope = CoroutineScope(ElmslieConfig.ioDispatchers + SupervisorJob())
 
     private val effectsCache = LinkedBlockingQueue<Effect>()
     private val effectsFlow = MutableSharedFlow<Effect>()
+    private val storeScope = ElmScope("CachedStoreScope")
 
     init {
         storeScope.launch {
@@ -36,6 +34,11 @@ class ElmCachedStore<Event : Any, State : Any, Effect : Any, Command : Any>(
                 }
             }
         }
+    }
+
+    override fun stop() {
+        elmStore.stop()
+        storeScope.cancel()
     }
 
     override fun effects(): Flow<Effect> =

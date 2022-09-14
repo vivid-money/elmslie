@@ -4,6 +4,8 @@ import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
+import kotlinx.coroutines.rx3.asFlow
+import vivid.money.elmslie.core.ElmScope
 import vivid.money.elmslie.core.switcher.Switcher
 
 /**
@@ -11,7 +13,8 @@ import vivid.money.elmslie.core.switcher.Switcher
  *
  * @param delayMillis Cancellation delay measured with milliseconds.
  */
-fun Switcher.cancel(delayMillis: Long = 0) = observable(delayMillis) { Observable.empty() }
+fun Switcher.cancel(delayMillis: Long = 0) =
+    observable(delayMillis = delayMillis) { Observable.empty() }
 
 /**
  * Executes [action] and cancels all previous requests scheduled on this [Switcher]
@@ -22,44 +25,51 @@ fun Switcher.cancel(delayMillis: Long = 0) = observable(delayMillis) { Observabl
 fun <Event : Any> Switcher.observable(
     delayMillis: Long = 0,
     action: () -> Observable<Event>,
-): Observable<Event> =
-    Observable.create { emitter ->
+): Observable<Event> {
+    return Observable.create { emitter ->
         val job =
-            switchInternal(delayMillis) {
-                action()
-                    .doOnComplete(emitter::onComplete)
-                    .subscribe(emitter::onNext, emitter::onError)
-            }
-        emitter.setCancellable { job?.cancel() }
+            action()
+                .asFlow()
+                .switchInternal(
+                    coroutineScope = ElmScope("Switcher"),
+                    delayMillis = delayMillis,
+                    onEach = { emitter.onNext(it) },
+                    onError = { emitter.onError(it) },
+                    onComplete = { emitter.onComplete() },
+                )
+
+        job.invokeOnCompletion { emitter.onComplete() }
+        emitter.setCancellable { clear(job) }
     }
+}
 
 /** Same as [observable], but for [Single]. */
 fun <Event : Any> Switcher.single(
     delayMillis: Long = 0,
     action: () -> Single<Event>,
-): Single<Event> = observable(delayMillis) { action().toObservable() }.firstOrError()
+): Single<Event> = observable(delayMillis = delayMillis) { action().toObservable() }.firstOrError()
 
 /** Same as [observable], but for [Maybe]. */
 fun <Event : Any> Switcher.maybe(
     delayMillis: Long = 0,
     action: () -> Maybe<Event>,
-): Maybe<Event> = observable(delayMillis) { action().toObservable() }.firstElement()
+): Maybe<Event> = observable(delayMillis = delayMillis) { action().toObservable() }.firstElement()
 
 /** Same as [observable], but for [Completable]. */
 fun Switcher.completable(
     delayMillis: Long = 0,
     action: () -> Completable,
-): Completable = observable(delayMillis) { action().toObservable() }.ignoreElements()
+): Completable = observable(delayMillis = delayMillis) { action().toObservable() }.ignoreElements()
 
 @Deprecated("Please, use property methods", ReplaceWith("observable(delayMillis, action)"))
 fun <Event : Any> Switcher.switch(
     delayMillis: Long = 0,
     action: () -> Observable<Event>,
-) = observable(delayMillis, action)
+) = observable(delayMillis = delayMillis, action = action)
 
 @Deprecated("Please use instance methods", ReplaceWith("switcher.observable(delayMillis, action)"))
 fun <Event : Any> switchOn(
     switcher: Switcher,
     delayMillis: Long = 0,
     action: () -> Observable<Event>
-) = switcher.observable(delayMillis, action)
+) = switcher.observable(delayMillis = delayMillis, action = action)

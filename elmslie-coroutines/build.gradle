@@ -11,6 +11,9 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 dependencies {
     implementation(project(":elmslie-core"))
     implementation(deps.coroutines.core)
+
+    testImplementation(deps.coroutines.test)
+    testImplementation(project(":elmslie-test"))
 }
 
 apply from: "../gradle/junit-5.gradle"

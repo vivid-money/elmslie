@@ -1,7 +1,7 @@
 package vivid.money.elmslie.core.switcher
 
 import kotlinx.coroutines.*
-import vivid.money.elmslie.core.config.ElmslieConfig
+import kotlinx.coroutines.flow.*
 import vivid.money.elmslie.core.store.DefaultActor
 
 /**
@@ -22,28 +22,40 @@ import vivid.money.elmslie.core.store.DefaultActor
 class Switcher {
 
     @Volatile private var currentJob: Job? = null
-    private val switcherScope: CoroutineScope = CoroutineScope(ElmslieConfig.ioDispatchers)
 
     /**
-     * Executes [action] as a job and cancels all previous ones.
+     * Collect given flow as a job and cancels all previous ones.
      *
-     * @param delayMillis operation delay measured with milliseconds. Can be specified to debounce existing requests.
-     * @param action new operation to be executed.
+     * @param coroutineScope outer scope where the result Flow will be collected.
+     * @param delayMillis operation delay measured with milliseconds. Can be specified to debounce
+     * existing requests.
+     * @param onEach callback for successful emission
+     * @param onComplete callback when flow is finished emission
+     * @param onError callback for failed emission
      */
-    fun switchInternal(
+    fun <Event : Any> Flow<Event>.switchInternal(
+        coroutineScope: CoroutineScope,
         delayMillis: Long = 0,
-        action: suspend () -> Unit,
-    ): Job? {
+        onEach: (Event) -> Unit,
+        onComplete: () -> Unit,
+        onError: (Throwable) -> Unit,
+    ): Job {
         currentJob?.cancel()
-        return try {
-                switcherScope.launch {
-                    delay(delayMillis)
-                    action.invoke()
-                }
-            } catch (_: CancellationException) {
-                currentJob?.cancel()
-                null
+        return coroutineScope
+            .launch {
+                delay(delayMillis)
+                this@switchInternal.cancellable()
+                    .catch { onError(it) }
+                    .collect { event -> onEach.invoke(event) }
+                onComplete.invoke()
             }
             .also { currentJob = it }
+    }
+
+    fun clear(job: Job) {
+        // clear reference only if job is cancelled by cancelling outer scope.
+        if (currentJob == job) {
+            currentJob = null
+        }
     }
 }

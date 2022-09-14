@@ -3,9 +3,7 @@ package vivid.money.elmslie.core.config
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import vivid.money.elmslie.core.logger.ElmslieLogConfiguration
 import vivid.money.elmslie.core.logger.ElmslieLogger
 import vivid.money.elmslie.core.logger.strategy.IgnoreLog
@@ -14,28 +12,25 @@ import vivid.money.elmslie.core.switcher.Switcher
 
 object ElmslieConfig {
 
-    @Volatile private lateinit var loggerInternal: ElmslieLogger
+    @Volatile private lateinit var _logger: ElmslieLogger
 
-    @Volatile private lateinit var reducerExecutorInternal: ScheduledExecutorService
+    @Volatile private lateinit var _reducerExecutor: ScheduledExecutorService
 
     @Volatile private lateinit var _ioDispatchers: CoroutineDispatcher
 
     val logger: ElmslieLogger
-        get() = loggerInternal
+        get() = _logger
 
     val backgroundExecutor: ScheduledExecutorService
-        get() = reducerExecutorInternal
+        get() = _reducerExecutor
 
     val ioDispatchers: CoroutineDispatcher
         get() = _ioDispatchers
-
-    val coroutineScope: CoroutineScope
 
     init {
         logger { always(IgnoreLog) }
         backgroundExecutor { Executors.newSingleThreadScheduledExecutor() }
         ioDispatchers { Dispatchers.IO }
-        coroutineScope = CoroutineScope(ioDispatchers + SupervisorJob())
     }
 
     /**
@@ -51,7 +46,7 @@ object ElmslieConfig {
      * ```
      */
     fun logger(config: (ElmslieLogConfiguration.() -> Unit)) {
-        ElmslieLogConfiguration().apply(config).build().also { loggerInternal = it }
+        ElmslieLogConfiguration().apply(config).build().also { _logger = it }
     }
 
     /**
@@ -63,7 +58,7 @@ object ElmslieConfig {
      * ```
      */
     fun backgroundExecutor(builder: () -> ScheduledExecutorService) {
-        reducerExecutorInternal = builder()
+        _reducerExecutor = builder()
     }
 
     /**

@@ -2,11 +2,19 @@ plugins {
     id("kotlin")
 }
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions.freeCompilerArgs += [
+            "-opt-in=kotlin.RequiresOptIn"
+    ]
+}
+
 dependencies {
     implementation(project(":elmslie-core"))
     implementation(deps.rx.rxJava3)
     implementation(deps.coroutines.rx3)
 
+    testImplementation(deps.coroutines.test)
+    testImplementation(project(":elmslie-test"))
     testImplementation(project(":elmslie-test-rxjava-3"))
 }
 

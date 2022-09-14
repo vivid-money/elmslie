@@ -20,6 +20,7 @@ ext.deps = [
                 lifecycleViewModelSavedState: "androidx.lifecycle:lifecycle-viewmodel-savedstate:2.5.0",
                 material                    : "com.google.android.material:material:1.6.1",
                 multidex                    : "androidx.multidex:multidex:2.0.1",
+                paging                      : "androidx.paging:paging-runtime:3.1.1",
         ],
         compose   : [
                 activity      : "androidx.activity:activity-compose:1.4.0",

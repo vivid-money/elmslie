@@ -1,5 +1,7 @@
 package vivid.money.elmslie.core.store.binding
 
+import kotlinx.coroutines.cancel
+import vivid.money.elmslie.core.ElmScope
 import vivid.money.elmslie.core.config.ElmslieConfig
 import vivid.money.elmslie.core.store.Store
 
@@ -19,8 +21,12 @@ import vivid.money.elmslie.core.store.Store
  * @constructor Determines conversion rules
  */
 internal class ConversationRules<
-    InitiatorEvent, InitiatorEffect, InitiatorState, ResponderEvent, ResponderEffect, ResponderState
->(
+    InitiatorEvent,
+    InitiatorEffect,
+    InitiatorState,
+    ResponderEvent,
+    ResponderEffect,
+    ResponderState>(
     private val initiator: Store<InitiatorEvent, InitiatorEffect, InitiatorState>,
     private val responder: Store<ResponderEvent, ResponderEffect, ResponderState>,
     expecting:
@@ -43,10 +49,12 @@ internal class ConversationRules<
         >.() -> Unit
 ) : Store<InitiatorEvent, InitiatorEffect, InitiatorState> by initiator {
 
+    private val conversationScope = ElmScope("ConversationScope")
     private val providedContract =
-        ConversionContract(initiator, responder, ElmslieConfig.ioDispatchers).apply(expecting)
+        ConversionContract(initiator, responder, conversationScope).apply(expecting)
     private val expectedContract =
-        ConversionContract(responder, initiator, ElmslieConfig.ioDispatchers).apply(receiving)
+        ConversionContract(responder, initiator, conversationScope).apply(receiving)
+
 
     override fun start(): Store<InitiatorEvent, InitiatorEffect, InitiatorState> {
         initiator.start()
@@ -57,8 +65,7 @@ internal class ConversationRules<
     }
 
     override fun stop() {
-        providedContract.revoke()
-        expectedContract.revoke()
+        conversationScope.cancel()
         responder.stop()
         initiator.stop()
     }

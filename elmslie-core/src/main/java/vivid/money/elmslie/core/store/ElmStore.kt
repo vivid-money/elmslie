@@ -1,11 +1,9 @@
 package vivid.money.elmslie.core.store
 
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
+import vivid.money.elmslie.core.ElmScope
 import vivid.money.elmslie.core.config.ElmslieConfig
 import vivid.money.elmslie.core.store.exception.StoreAlreadyStartedException
 
@@ -17,7 +15,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
 ) : Store<Event, Effect, State> {
 
     private val logger = ElmslieConfig.logger
-    private val storeScope = CoroutineScope(ElmslieConfig.ioDispatchers + SupervisorJob())
+    private val storeScope = ElmScope("StoreScope")
 
     override val isStarted: Boolean
         get() = _isStarted.get()
@@ -31,7 +29,12 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
 
     override fun accept(event: Event) = dispatchEvent(event)
 
-    override fun start() = this.also { requireNotStarted() }
+    override fun start(): Store<Event, Effect, State> {
+        if (!_isStarted.compareAndSet(false, true)) {
+            logger.fatal("Store start error", StoreAlreadyStartedException())
+        }
+        return this
+    }
 
     override fun stop() {
         _isStarted.set(false)
@@ -50,6 +53,8 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
                 statesFlow.value = state
                 effects.forEach(::dispatchEffect)
                 commands.forEach(::executeCommand)
+            } catch (error: CancellationException) {
+                throw error
             } catch (t: Throwable) {
                 logger.fatal("You must handle all errors inside reducer", t)
             }
@@ -72,15 +77,11 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
                     .catch { logger.nonfatal(error = it) }
                     .collect { dispatchEvent(it) }
             }
+        } catch (error: CancellationException) {
+            throw error
         } catch (t: Throwable) {
             logger.fatal("Unexpected actor error", t)
         }
-
-    private fun requireNotStarted() {
-        if (!_isStarted.compareAndSet(false, true)) {
-            logger.fatal("Store start error", StoreAlreadyStartedException())
-        }
-    }
 }
 
 fun <Event : Any, State : Any, Effect : Any, Command : Any> ElmStore<Event, State, Effect, Command>
