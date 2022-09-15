@@ -6,6 +6,7 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import kotlinx.coroutines.rx3.asFlow
 import kotlinx.coroutines.rx3.asObservable
+import kotlinx.coroutines.rx3.rxObservable
 import vivid.money.elmslie.core.switcher.Switcher
 
 /**
@@ -13,8 +14,10 @@ import vivid.money.elmslie.core.switcher.Switcher
  *
  * @param delayMillis Cancellation delay measured with milliseconds.
  */
-fun Switcher.cancel(delayMillis: Long = 0) =
-    observable(delayMillis = delayMillis) { Observable.empty() }
+fun Switcher.cancel(delayMillis: Long = 0): Observable<Any> =
+    rxObservable {
+        cancelInternal(delayMillis = delayMillis)
+    }
 
 /**
  * Executes [action] and cancels all previous requests scheduled on this [Switcher]

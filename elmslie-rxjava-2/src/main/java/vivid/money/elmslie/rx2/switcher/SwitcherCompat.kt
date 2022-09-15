@@ -5,7 +5,8 @@ import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
 import kotlinx.coroutines.rx2.asFlow
-import vivid.money.elmslie.core.ElmScope
+import kotlinx.coroutines.rx2.asObservable
+import kotlinx.coroutines.rx2.rxObservable
 import vivid.money.elmslie.core.switcher.Switcher
 
 /**
@@ -13,8 +14,9 @@ import vivid.money.elmslie.core.switcher.Switcher
  *
  * @param delayMillis Cancellation delay measured with milliseconds.
  */
-fun <Event : Any> Switcher.cancel(delayMillis: Long = 0) =
-    observable(delayMillis) { Observable.empty() }
+fun Switcher.cancel(delayMillis: Long = 0): Observable<Any> = rxObservable {
+    cancelInternal(delayMillis)
+}
 
 /**
  * Executes an [action] and cancels all previous requests scheduled for this [Switcher].
@@ -29,22 +31,7 @@ fun <Event : Any> Switcher.cancel(delayMillis: Long = 0) =
 fun <Event : Any> Switcher.observable(
     delayMillis: Long = 0,
     action: () -> Observable<Event>,
-): Observable<Event> =
-    Observable.create { emitter ->
-        val job =
-            action()
-                .asFlow()
-                .switchInternal(
-                    coroutineScope = ElmScope("Switcher"),
-                    delayMillis = delayMillis,
-                    onEach = { emitter.onNext(it) },
-                    onError = { emitter.onError(it) },
-                    onComplete = { emitter.onComplete() },
-                )
-
-        job.invokeOnCompletion { emitter.onComplete() }
-        emitter.setCancellable { clear(job) }
-    }
+): Observable<Event> = switchInternal(delayMillis = delayMillis) { action.invoke().asFlow() }.asObservable()
 
 /** Same as [observable], but for [Single]. */
 fun <Event : Any> Switcher.single(
