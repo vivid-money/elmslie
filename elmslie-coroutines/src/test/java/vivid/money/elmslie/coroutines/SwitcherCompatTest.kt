@@ -2,6 +2,7 @@ package vivid.money.elmslie.coroutines
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
@@ -65,8 +66,9 @@ class SwitcherCompatTest {
     fun `Switcher cancels request if error`() = runTest {
         val switcher = Switcher()
         val values = mutableListOf<Event>()
+        val errors = mutableListOf<Throwable>()
         val firstCollector = launch {
-            switcher.switch<Event> { flow { error("Error") } }.collect { values.add(it) }
+            switcher.switch<Event> { flow { error("Error") } }.catch { errors.add(it)  }.collect { values.add(it) }
         }
         advanceUntilIdle()
 
@@ -78,6 +80,8 @@ class SwitcherCompatTest {
             true,
             firstCollector.isCompleted,
         )
+        Assertions.assertEquals(errors.size, 1)
+        Assertions.assertEquals(errors[0].message, "Error")
 
         firstCollector.cancel()
     }
@@ -116,5 +120,47 @@ class SwitcherCompatTest {
         )
 
         firstCollector.cancel()
+    }
+
+    @Test
+    fun `Switcher cancels consecutive requests`() = runTest {
+        val switcher = Switcher()
+
+        val firstValues = mutableListOf<Event>()
+        launch {
+            switcher
+                .switch<Event>(delayMillis = 300L) { flow { emit(Event.First) } }
+                .collect { firstValues.add(it) }
+        }
+        advanceTimeBy(250)
+
+        val secondValues = mutableListOf<Event>()
+        launch {
+            switcher
+                .switch<Event>(delayMillis = 300L) { flow { emit(Event.First) } }
+                .collect { secondValues.add(it) }
+        }
+        advanceTimeBy(250)
+
+        val thirdValues = mutableListOf<Event>()
+        launch {
+            switcher
+                .switch<Event>(delayMillis = 300L) { flow { emit(Event.First) } }
+                .collect { thirdValues.add(it) }
+        }
+        advanceTimeBy(250)
+
+        val fourthValues = mutableListOf<Event>()
+        launch {
+            switcher
+                .switch<Event>(delayMillis = 300L) { flow { emit(Event.First) } }
+                .collect { fourthValues.add(it) }
+        }
+        advanceTimeBy(1000)
+
+        Assertions.assertEquals(firstValues, emptyList<Event>())
+        Assertions.assertEquals(secondValues, emptyList<Event>())
+        Assertions.assertEquals(thirdValues, emptyList<Event>())
+        Assertions.assertEquals(fourthValues, listOf(Event.First))
     }
 }

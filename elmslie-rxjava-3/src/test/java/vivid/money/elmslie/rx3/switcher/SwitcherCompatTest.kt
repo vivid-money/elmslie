@@ -4,6 +4,8 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.TestScheduler
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.rx3.asFlow
+import kotlinx.coroutines.rx3.asObservable
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runCurrent
@@ -13,6 +15,7 @@ import org.junit.jupiter.api.extension.RegisterExtension
 import vivid.money.elmslie.core.switcher.Switcher
 import vivid.money.elmslie.test.TestSchedulerExtension
 import vivid.money.elmslie.test.background.executor.TestDispatcherExtension
+import kotlin.coroutines.CoroutineContext
 
 /**
  * Area for improvement: assert negative scenarios. There's no reason to test other methods since
@@ -130,33 +133,27 @@ internal class SwitcherCompatTest {
     }
 
     @Test
-    fun `Switcher cancels consecutive requests`() = runTest {
+    fun `Switcher execute delayed request`() = runTest {
         val switcher = Switcher()
 
         val firstObserver =
-            switcher.observable(delayMillis = 300L) { Observable.just(Event) }.test()
+            switcher
+                .observable(delayMillis = 100, context = this@runTest.coroutineContext) { Observable.just(Event) }
+                .test()
+        advanceTimeBy(150)
+        scheduler.advanceTimeBy(150, TimeUnit.MILLISECONDS)
 
-        scheduler.advanceTimeBy(250, TimeUnit.MILLISECONDS)
-
-        val secondObserver =
-            switcher.observable(delayMillis = 300L) { Observable.just(Event) }.test()
-
-        scheduler.advanceTimeBy(250, TimeUnit.MILLISECONDS)
-
-        val thirdObserver =
-            switcher.observable(delayMillis = 300L) { Observable.just(Event) }.test()
-
-        scheduler.advanceTimeBy(250, TimeUnit.MILLISECONDS)
-
-        val fourthObserver =
-            switcher.observable(delayMillis = 300L) { Observable.just(Event) }.test()
-
-        scheduler.advanceTimeBy(1000, TimeUnit.MILLISECONDS)
         advanceUntilIdle()
+        scheduler.triggerActions()
 
-        firstObserver.assertResult()
-        secondObserver.assertResult()
-        thirdObserver.assertResult()
-        fourthObserver.assertResult(Event)
+        firstObserver.assertResult(Event)
     }
+}
+
+private fun <Event : Any> Switcher.observable(
+    delayMillis: Long = 0,
+    context: CoroutineContext,
+    action: () -> Observable<Event>,
+): Observable<Event> {
+    return switchInternal(delayMillis) { action.invoke().asFlow() }.asObservable(context)
 }

@@ -5,7 +5,7 @@ import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import kotlinx.coroutines.rx3.asFlow
-import vivid.money.elmslie.core.ElmScope
+import kotlinx.coroutines.rx3.asObservable
 import vivid.money.elmslie.core.switcher.Switcher
 
 /**
@@ -26,21 +26,7 @@ fun <Event : Any> Switcher.observable(
     delayMillis: Long = 0,
     action: () -> Observable<Event>,
 ): Observable<Event> {
-    return Observable.create { emitter ->
-        val job =
-            action()
-                .asFlow()
-                .switchInternal(
-                    coroutineScope = ElmScope("Switcher"),
-                    delayMillis = delayMillis,
-                    onEach = { emitter.onNext(it) },
-                    onError = { emitter.onError(it) },
-                    onComplete = { emitter.onComplete() },
-                )
-
-        job.invokeOnCompletion { emitter.onComplete() }
-        emitter.setCancellable { clear(job) }
-    }
+    return switchInternal(delayMillis) { action.invoke().asFlow() }.asObservable()
 }
 
 /** Same as [observable], but for [Single]. */
