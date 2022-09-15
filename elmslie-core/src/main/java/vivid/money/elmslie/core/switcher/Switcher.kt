@@ -3,9 +3,9 @@ package vivid.money.elmslie.core.switcher
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import vivid.money.elmslie.core.store.DefaultActor
-import java.util.concurrent.locks.ReentrantLock
-import kotlin.concurrent.withLock
 
 /**
  * Allows to execute requests for [DefaultActor] implementations in a switching manner. Each request
@@ -25,7 +25,7 @@ import kotlin.concurrent.withLock
 class Switcher {
 
     private var currentChannel: SendChannel<*>? = null
-    private val lock = ReentrantLock()
+    private val lock = Mutex()
     /**
      * Collect given flow as a job and cancels all previous ones.
      *
