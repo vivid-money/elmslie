@@ -1,35 +1,25 @@
 package vivid.money.elmslie.core.config
 
-import java.util.concurrent.Executors
-import java.util.concurrent.ScheduledExecutorService
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import vivid.money.elmslie.core.logger.ElmslieLogConfiguration
 import vivid.money.elmslie.core.logger.ElmslieLogger
 import vivid.money.elmslie.core.logger.strategy.IgnoreLog
-import vivid.money.elmslie.core.store.StateReducer
-import vivid.money.elmslie.core.switcher.Switcher
 
 object ElmslieConfig {
 
     @Volatile private lateinit var _logger: ElmslieLogger
-
-    @Volatile private lateinit var _reducerExecutor: ScheduledExecutorService
 
     @Volatile private lateinit var _ioDispatchers: CoroutineDispatcher
 
     val logger: ElmslieLogger
         get() = _logger
 
-    val backgroundExecutor: ScheduledExecutorService
-        get() = _reducerExecutor
-
     val ioDispatchers: CoroutineDispatcher
         get() = _ioDispatchers
 
     init {
         logger { always(IgnoreLog) }
-        backgroundExecutor { Executors.newSingleThreadScheduledExecutor() }
         ioDispatchers { Dispatchers.IO }
     }
 
@@ -47,18 +37,6 @@ object ElmslieConfig {
      */
     fun logger(config: (ElmslieLogConfiguration.() -> Unit)) {
         ElmslieLogConfiguration().apply(config).build().also { _logger = it }
-    }
-
-    /**
-     * Configures an executor for running background operations for [StateReducer] and [Switcher].
-     *
-     * Example:
-     * ```
-     * ElmslieConfig.backgroundExecutor { Executors.newScheduledThreadPool(4) }
-     * ```
-     */
-    fun backgroundExecutor(builder: () -> ScheduledExecutorService) {
-        _reducerExecutor = builder()
     }
 
     /**

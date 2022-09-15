@@ -9,17 +9,9 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import java.util.Collections;
 
 import kotlin.jvm.JvmField;
-import kotlin.jvm.functions.Function2;
-import kotlinx.coroutines.test.TestBuildersJvmKt;
-import kotlinx.coroutines.test.TestBuildersKt;
-import vivid.money.elmslie.test.background.executor.MockBackgroundExecutorExtension;
 import vivid.money.elmslie.test.background.executor.TestDispatcherExtension;
 
 public class NotesTest {
-
-    @JvmField
-    @RegisterExtension
-    public Extension extension = new MockBackgroundExecutorExtension();
 
     @JvmField
     @RegisterExtension

@@ -7,7 +7,6 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import vivid.money.elmslie.test.TestSchedulerExtension
-import vivid.money.elmslie.test.background.executor.MockBackgroundExecutorExtension
 import vivid.money.elmslie.test.background.executor.TestDispatcherExtension
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -16,8 +15,6 @@ internal class StoreKtTest {
     private val scheduler = TestScheduler()
 
     @JvmField @RegisterExtension val schedulerExtension = TestSchedulerExtension(scheduler)
-
-    @JvmField @RegisterExtension val executorExtension = MockBackgroundExecutorExtension()
 
     @JvmField @RegisterExtension val testDispatcherExtension = TestDispatcherExtension()
 

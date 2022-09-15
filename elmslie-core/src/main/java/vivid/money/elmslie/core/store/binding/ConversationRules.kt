@@ -2,7 +2,6 @@ package vivid.money.elmslie.core.store.binding
 
 import kotlinx.coroutines.cancel
 import vivid.money.elmslie.core.ElmScope
-import vivid.money.elmslie.core.config.ElmslieConfig
 import vivid.money.elmslie.core.store.Store
 
 /**
