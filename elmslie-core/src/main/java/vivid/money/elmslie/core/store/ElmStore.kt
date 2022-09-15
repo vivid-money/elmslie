@@ -1,5 +1,6 @@
 package vivid.money.elmslie.core.store
 
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
@@ -7,9 +8,10 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.cancellable
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import java.util.concurrent.atomic.AtomicBoolean
 import vivid.money.elmslie.core.ElmScope
 import vivid.money.elmslie.core.config.ElmslieConfig
 import vivid.money.elmslie.core.store.exception.StoreAlreadyStartedException
@@ -58,8 +60,8 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
                 logger.debug("New event: $event")
                 val (state, effects, commands) = reducer.reduce(event, currentState)
                 statesFlow.value = state
-                effects.forEach(::dispatchEffect)
-                commands.forEach(::executeCommand)
+                effects.forEach { if (isActive) dispatchEffect(it) }
+                commands.forEach { if (isActive) executeCommand(it) }
             } catch (error: CancellationException) {
                 throw error
             } catch (t: Throwable) {
@@ -75,20 +77,16 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
         }
     }
 
-    private fun executeCommand(command: Command) =
-        try {
+    private fun executeCommand(command: Command) {
+        storeScope.launch {
             logger.debug("Executing command: $command")
-            storeScope.launch {
-                actor
-                    .execute(command)
-                    .catch { logger.nonfatal(error = it) }
-                    .collect { dispatchEvent(it) }
-            }
-        } catch (error: CancellationException) {
-            throw error
-        } catch (t: Throwable) {
-            logger.fatal("Unexpected actor error", t)
+            actor
+                .execute(command)
+                .cancellable()
+                .catch { logger.nonfatal(error = it) }
+                .collect { dispatchEvent(it) }
         }
+    }
 }
 
 fun <Event : Any, State : Any, Effect : Any, Command : Any> ElmStore<Event, State, Effect, Command>
