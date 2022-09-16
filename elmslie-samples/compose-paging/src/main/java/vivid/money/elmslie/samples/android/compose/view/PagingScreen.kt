@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import vivid.money.elmslie.samples.android.compose.elm.PagingEffect
 import vivid.money.elmslie.samples.android.compose.elm.PagingState
 
 private const val PREFETCH_BORDER = 20

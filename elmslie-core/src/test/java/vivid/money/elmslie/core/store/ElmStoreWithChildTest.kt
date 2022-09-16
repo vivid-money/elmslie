@@ -216,8 +216,6 @@ class ElmStoreWithChildTest {
         collectJob.cancel()
     }
 
-    @Test fun `Should collect all commands when state is updated frequently`() {}
-
     @Test
     fun `Parent Effect is delivered when it's effect observation started`() = runTest {
         val parent =
