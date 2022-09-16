@@ -1,9 +1,11 @@
 package vivid.money.elmslie.android.screen
 
 import android.app.Activity
-import androidx.lifecycle.*
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Lifecycle.State.RESUMED
 import androidx.lifecycle.Lifecycle.State.STARTED
+import androidx.lifecycle.coroutineScope
+import androidx.lifecycle.flowWithLifecycle
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
@@ -68,11 +70,11 @@ class ElmScreen<Event : Any, Effect : Any, State : Any>(
         }
     }
 
-    private fun mapListItems(state: State) =
+    private fun mapListItems(state: State): List<Any> =
         catchStateErrors { delegate.mapList(state) } ?: emptyList()
 
     @Suppress("TooGenericExceptionCaught")
-    private fun <T> catchStateErrors(action: () -> T?) =
+    private fun <T> catchStateErrors(action: () -> T?): T? =
         try {
             action()
         } catch (t: Throwable) {
@@ -81,12 +83,13 @@ class ElmScreen<Event : Any, Effect : Any, State : Any>(
         }
 
     @Suppress("TooGenericExceptionCaught")
-    private fun <T> catchEffectErrors(action: () -> T?) =
+    private fun <T> catchEffectErrors(action: () -> T?) {
         try {
             action()
         } catch (t: Throwable) {
             logger.fatal("Crash while handling effect", t)
         }
+    }
 
     private fun saveProcessDeathState() {
         isAfterProcessDeath = isRestoringAfterProcessDeath
@@ -98,6 +101,6 @@ class ElmScreen<Event : Any, Effect : Any, State : Any>(
         }
     }
 
-    private fun isAllowedToRun() =
+    private fun isAllowedToRun(): Boolean =
         !isAfterProcessDeath || activityProvider() !is StopElmOnProcessDeath
 }
