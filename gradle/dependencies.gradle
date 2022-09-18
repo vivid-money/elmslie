@@ -40,7 +40,7 @@ ext.deps = [
         ],
         coroutines: [
                 core: "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4",
-                test: "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.2",
+                test: "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4",
         ],
         test      : [
                 jUnit5           : "org.junit.jupiter:junit-jupiter:5.8.2",
