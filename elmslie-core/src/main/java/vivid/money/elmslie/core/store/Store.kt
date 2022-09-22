@@ -8,7 +8,11 @@ interface Store<Event, Effect, State> {
     val currentState: State
 
     /** Returns `true` for the span duration between [start] and [stop] calls. */
+    @Deprecated("Will be deleted in future releases.")
     val isStarted: Boolean
+
+    /** Event that will be emitted after store start. */
+    val startEvent: Event?
 
     /**
      * Starts the operations inside the store. Throws **[StoreAlreadyStartedException]

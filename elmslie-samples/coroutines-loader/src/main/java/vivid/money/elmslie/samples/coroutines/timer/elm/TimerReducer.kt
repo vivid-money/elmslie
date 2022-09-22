@@ -5,7 +5,10 @@ import vivid.money.elmslie.core.store.dsl_reducer.DslReducer
 internal object TimerReducer : DslReducer<Event, State, Effect, Command>() {
 
     override fun Result.reduce(event: Event) = when (event) {
-        is Event.Init -> Unit
+        is Event.Init -> {
+            state { copy(isStarted = true) }
+            commands { +Command.Start }
+        }
         is Event.Start -> {
             state { copy(isStarted = true) }
             commands { +Command.Start }

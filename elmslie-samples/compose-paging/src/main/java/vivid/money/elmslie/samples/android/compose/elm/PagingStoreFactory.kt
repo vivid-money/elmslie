@@ -6,6 +6,7 @@ import vivid.money.elmslie.samples.android.compose.repository.PagingRepository
 
 fun pagingStoreFactory() = ElmStoreCompat(
     initialState = PagingState(),
+    startEvent = PagingEvent.Ui.Init,
     reducer = PagingReducer,
-    actor = PagingActor(PagingRepository(FakeApi))
+    actor = PagingActor(PagingRepository(FakeApi)),
 )

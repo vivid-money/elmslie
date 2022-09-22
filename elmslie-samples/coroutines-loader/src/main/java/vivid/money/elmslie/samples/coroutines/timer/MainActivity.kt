@@ -6,6 +6,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Button
 import android.widget.TextView
+import androidx.lifecycle.SavedStateHandle
 import com.google.android.material.snackbar.Snackbar
 import vivid.money.elmslie.android.base.ElmActivity
 import vivid.money.elmslie.samples.coroutines.timer.elm.Effect
@@ -23,7 +24,7 @@ internal class MainActivity : ElmActivity<Event, Effect, State>(R.layout.activit
         findViewById<Button>(R.id.stop).setOnClickListener { store.accept(Event.Stop) }
     }
 
-    override fun createStore() = storeFactory()
+    override fun createStore(savedStateHandle: SavedStateHandle) = storeFactory()
 
     @SuppressLint("SetTextI18n")
     override fun render(state: State) {

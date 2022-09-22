@@ -10,12 +10,14 @@ import vivid.money.elmslie.core.store.Store
 class ElmStoreCompat<Event : Any, State : Any, Effect : Any, Command : Any>(
     initialState: State,
     reducer: StateReducer<Event, State, Effect, Command>,
-    actor: Actor<Command, out Event>
+    actor: Actor<Command, out Event>,
+    startEvent: Event? = null,
 ) :
     Store<Event, Effect, State> by ElmStore(
         initialState = initialState,
         reducer = reducer,
-        actor = actor.toDefaultActor()
+        actor = actor.toDefaultActor(),
+        startEvent = startEvent,
     )
 
 @Suppress("TooGenericExceptionCaught", "RethrowCaughtException")

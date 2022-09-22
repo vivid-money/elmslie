@@ -4,21 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.SavedStateHandle
 import vivid.money.elmslie.compose.ElmComponentFragment
 import vivid.money.elmslie.samples.android.compose.elm.PagingEffect
 import vivid.money.elmslie.samples.android.compose.elm.PagingEvent
-import vivid.money.elmslie.samples.android.compose.elm.PagingEvent.Ui
 import vivid.money.elmslie.samples.android.compose.elm.PagingState
 import vivid.money.elmslie.samples.android.compose.elm.pagingStoreFactory
 
 class PagingFragment : ElmComponentFragment<PagingEvent, PagingEffect, PagingState>() {
 
-    override val initEvent = Ui.Init
-
-    override fun createStore() = pagingStoreFactory()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,8 +37,10 @@ class PagingFragment : ElmComponentFragment<PagingEvent, PagingEffect, PagingSta
 //        )
     }
 
-    override fun handleEffect(effect: PagingEffect) = when (effect) {
-        is PagingEffect.LoadError -> Unit // Not ui related effect will be handled here
-        is PagingEffect.RefreshError -> Unit
-    }
+    override fun createStore(stateHandle: SavedStateHandle) = pagingStoreFactory()
+
+//    override fun handleEffect(effect: PagingEffect) = when (effect) {
+//        is PagingEffect.LoadError -> Unit // Not ui related effect will be handled here
+//        is PagingEffect.RefreshError -> Unit
+//    }
 }

@@ -1,45 +1,29 @@
-package vivid.money.elmslie.android.screen
+package vivid.money.elmslie.android.renderer
 
-import android.app.Activity
-import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.*
 import androidx.lifecycle.Lifecycle.State.RESUMED
 import androidx.lifecycle.Lifecycle.State.STARTED
-import androidx.lifecycle.coroutineScope
-import androidx.lifecycle.flowWithLifecycle
-import androidx.lifecycle.withCreated
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
-import vivid.money.elmslie.android.processdeath.ProcessDeathDetector.isRestoringAfterProcessDeath
-import vivid.money.elmslie.android.processdeath.StopElmOnProcessDeath
+import vivid.money.elmslie.android.util.fastLazy
 import vivid.money.elmslie.core.config.ElmslieConfig
 
-class ElmScreen<Event : Any, Effect : Any, State : Any>(
-    private val delegate: ElmDelegate<Event, Effect, State>,
+class ElmRenderer<Effect : Any, State : Any>(
+    private val delegate: ElmRendererDelegate<Effect, State>,
     private val screenLifecycle: Lifecycle,
-    private val activityProvider: () -> Activity,
 ) {
 
-    val store
-        get() = delegate.storeHolder.store
-
+    private val store by fastLazy { delegate.store }
     private val logger = ElmslieConfig.logger
     private val ioDispatcher: CoroutineDispatcher = ElmslieConfig.ioDispatchers
-    private var isAfterProcessDeath = false
     private val canRender
         get() = screenLifecycle.currentState.isAtLeast(STARTED)
 
     init {
-        with(screenLifecycle.coroutineScope) {
-            launch {
-                screenLifecycle.withCreated {
-                    saveProcessDeathState()
-                    triggerInitEventIfNecessary()
-                }
-            }
-            launch {
+        with(screenLifecycle) {
+            coroutineScope.launchWhenCreated {
                 store
                     .effects()
                     .flowWithLifecycle(
@@ -48,7 +32,7 @@ class ElmScreen<Event : Any, Effect : Any, State : Any>(
                     )
                     .collect { effect -> catchEffectErrors { delegate.handleEffect(effect) } }
             }
-            launch {
+            coroutineScope.launchWhenCreated {
                 store
                     .states()
                     .flowWithLifecycle(
@@ -73,11 +57,11 @@ class ElmScreen<Event : Any, Effect : Any, State : Any>(
         }
     }
 
-    private fun mapListItems(state: State): List<Any> =
+    private fun mapListItems(state: State) =
         catchStateErrors { delegate.mapList(state) } ?: emptyList()
 
     @Suppress("TooGenericExceptionCaught")
-    private fun <T> catchStateErrors(action: () -> T?): T? =
+    private fun <T> catchStateErrors(action: () -> T?) =
         try {
             action()
         } catch (t: Throwable) {
@@ -86,24 +70,10 @@ class ElmScreen<Event : Any, Effect : Any, State : Any>(
         }
 
     @Suppress("TooGenericExceptionCaught")
-    private fun <T> catchEffectErrors(action: () -> T?) {
+    private fun <T> catchEffectErrors(action: () -> T?) =
         try {
             action()
         } catch (t: Throwable) {
             logger.fatal("Crash while handling effect", t)
         }
-    }
-
-    private fun saveProcessDeathState() {
-        isAfterProcessDeath = isRestoringAfterProcessDeath
-    }
-
-    private fun triggerInitEventIfNecessary() {
-        if (!delegate.storeHolder.isStarted && isAllowedToRun()) {
-            store.accept(delegate.initEvent)
-        }
-    }
-
-    private fun isAllowedToRun(): Boolean =
-        !isAfterProcessDeath || activityProvider() !is StopElmOnProcessDeath
 }

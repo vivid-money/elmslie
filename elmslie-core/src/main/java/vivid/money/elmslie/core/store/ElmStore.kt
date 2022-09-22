@@ -20,7 +20,8 @@ import vivid.money.elmslie.core.store.exception.StoreAlreadyStartedException
 class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     initialState: State,
     private val reducer: StateReducer<Event, State, Effect, Command>,
-    private val actor: DefaultActor<Command, out Event>
+    private val actor: DefaultActor<Command, out Event>,
+    override val startEvent: Event? = null,
 ) : Store<Event, Effect, State> {
 
     private val logger = ElmslieConfig.logger
@@ -39,7 +40,9 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     override fun accept(event: Event) = dispatchEvent(event)
 
     override fun start(): Store<Event, Effect, State> {
-        if (!_isStarted.compareAndSet(false, true)) {
+        if (_isStarted.compareAndSet(false, true)) {
+            startEvent?.let(::accept)
+        } else {
             logger.fatal("Store start error", StoreAlreadyStartedException())
         }
         return this

@@ -44,5 +44,6 @@ class Reducer : ScreenDslReducer<Event, Ui, Internal, State, Effect, Command>(
 fun storeFactory() = ElmStoreCompat(
     initialState = State(),
     reducer = Reducer(),
-    actor = Actor()
+    actor = Actor(),
+    startEvent = Ui.Init,
 )

@@ -14,13 +14,13 @@ ext.deps = [
         android   : [
                 appcompat                   : "androidx.appcompat:appcompat:1.4.2",
                 appStartup                  : "androidx.startup:startup-runtime:1.1.1",
-                lifecycle                   : "androidx.lifecycle:lifecycle-common:2.5.0",
+                lifecycle                   : "androidx.lifecycle:lifecycle-common:2.2.0",
                 lifecycleKtx                : "androidx.lifecycle:lifecycle-runtime-ktx:2.5.0",
                 lifecycleViewmodel          : "androidx.lifecycle:lifecycle-viewmodel:2.5.0",
                 lifecycleViewModelSavedState: "androidx.lifecycle:lifecycle-viewmodel-savedstate:2.5.0",
                 material                    : "com.google.android.material:material:1.6.1",
                 multidex                    : "androidx.multidex:multidex:2.0.1",
-                paging                      : "androidx.paging:paging-runtime:3.1.1",
+                paging                      : "androidx.paging:paging-runtime:3.2.0-alpha03",
         ],
         compose   : [
                 activity      : "androidx.activity:activity-compose:1.4.0",

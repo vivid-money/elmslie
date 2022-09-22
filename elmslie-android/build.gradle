@@ -10,6 +10,8 @@ dependencies {
     implementation(deps.android.appStartup)
     implementation(deps.android.lifecycle)
     implementation(deps.android.lifecycleKtx)
+    implementation(deps.android.lifecycleViewModelSavedState)
+    implementation(deps.android.paging)
 }
 
 apply from: "../gradle/junit-5.gradle"
