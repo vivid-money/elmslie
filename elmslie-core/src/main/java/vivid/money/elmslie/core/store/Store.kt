@@ -47,4 +47,9 @@ interface Store<Event, Effect, State> {
      * By default, [Effect] is collected in [Dispatchers.IO].
      */
     fun effects(): Flow<Effect>
+
+    /**
+     * This method allow to execute any work while store is alive. Will be executed in ElmslieConfig.ioDispatcher.
+     */
+    fun launch(block: suspend () -> Unit)
 }

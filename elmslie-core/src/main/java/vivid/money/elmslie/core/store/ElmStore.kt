@@ -57,6 +57,12 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
 
     override fun effects(): Flow<Effect> = effectsFlow.asSharedFlow()
 
+    override fun launch(block: suspend () -> Unit) {
+        storeScope.launch {
+            block.invoke()
+        }
+    }
+
     private fun dispatchEvent(event: Event) {
         storeScope.launch {
             try {
