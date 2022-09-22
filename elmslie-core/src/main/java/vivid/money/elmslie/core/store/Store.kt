@@ -43,4 +43,9 @@ interface Store<Event, Effect, State> {
      * By default, [Effect] is collected in [Dispatchers.IO].
      */
     fun effects(): Flow<Effect>
+
+    /**
+     * TODO: add notes
+     */
+    fun launch(block: suspend () -> Unit)
 }

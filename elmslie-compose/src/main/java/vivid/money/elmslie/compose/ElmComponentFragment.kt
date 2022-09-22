@@ -1,26 +1,38 @@
 package vivid.money.elmslie.compose
 
 import androidx.annotation.LayoutRes
-import androidx.compose.runtime.*
 import androidx.fragment.app.Fragment
-import vivid.money.elmslie.android.screen.ElmDelegate
-import vivid.money.elmslie.android.screen.ElmScreen
+import vivid.money.elmslie.android.manager.createElmManager
+import vivid.money.elmslie.android.storeholder.ElmCreatorDelegate
 import vivid.money.elmslie.android.storeholder.LifecycleAwareStoreHolder
+import vivid.money.elmslie.android.storeholder.StoreHolder
+import vivid.money.elmslie.core.store.Store
 
 abstract class ElmComponentFragment<Event : Any, Effect : Any, State : Any> :
-    Fragment, ElmDelegate<Event, Effect, State> {
+    Fragment, ElmCreatorDelegate<Event, Effect, State> {
 
     constructor() : super()
 
     constructor(@LayoutRes contentLayoutId: Int) : super(contentLayoutId)
 
     @Suppress("LeakingThis", "UnusedPrivateMember")
-    private val elm = ElmScreen(this, lifecycle) { requireActivity() }
+    private val elmManager =
+        createElmManager(
+            storeHolderFactory = ::createStoreHolder,
+            storeCreator = ::createStore,
+            initEventProvider = { initEvent },
+        )
 
     protected val store
-        get() = storeHolder.store
+        get() = elmManager.store
 
-    override val storeHolder = LifecycleAwareStoreHolder(lifecycle) { createStore()!! }
+    override fun createStoreHolder(
+        storeProvider: () -> Store<Event, Effect, State>
+    ): StoreHolder<Event, Effect, State> =
+        LifecycleAwareStoreHolder(
+            lifecycle = lifecycle,
+            storeProvider = storeProvider,
+        )
 
-    final override fun render(state: State) = Unit
+    abstract val initEvent: Event
 }
