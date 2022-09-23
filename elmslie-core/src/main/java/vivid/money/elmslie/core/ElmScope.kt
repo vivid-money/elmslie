@@ -14,6 +14,6 @@ fun ElmScope(name: String): CoroutineScope =
                 SupervisorJob() +
                 CoroutineName(name) +
                 CoroutineExceptionHandler { _, throwable ->
-                    ElmslieConfig.logger.debug("Unhandled error: $throwable")
+                    ElmslieConfig.logger.fatal("Unhandled error: $throwable")
                 },
     )

@@ -16,7 +16,7 @@ import vivid.money.elmslie.core.testutil.model.State
 import vivid.money.elmslie.test.background.executor.TestDispatcherExtension
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class ElmCachedStoreTest {
+class EffectCachingElmStoreTest {
 
     @JvmField @RegisterExtension val testDispatcherExtension = TestDispatcherExtension()
 

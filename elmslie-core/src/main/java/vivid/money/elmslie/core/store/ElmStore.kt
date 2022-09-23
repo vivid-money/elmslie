@@ -16,7 +16,7 @@ import vivid.money.elmslie.core.ElmScope
 import vivid.money.elmslie.core.config.ElmslieConfig
 import vivid.money.elmslie.core.store.exception.StoreAlreadyStartedException
 
-@Suppress("TooManyFunctions", "TooGenericExceptionCaught")
+@Suppress("TooGenericExceptionCaught")
 class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     initialState: State,
     private val reducer: StateReducer<Event, State, Effect, Command>,
@@ -60,7 +60,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
                 logger.debug("New event: $event")
                 val (state, effects, commands) = reducer.reduce(event, currentState)
                 statesFlow.value = state
-                effects.forEach { if (isActive) dispatchEffect(it) }
+                effects.forEach { effect -> if (isActive) dispatchEffect(effect) }
                 commands.forEach { if (isActive) executeCommand(it) }
             } catch (error: CancellationException) {
                 throw error
@@ -70,11 +70,9 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
         }
     }
 
-    private fun dispatchEffect(effect: Effect) {
-        storeScope.launch {
-            logger.debug("New effect: $effect")
-            effectsFlow.emit(effect)
-        }
+    private suspend fun dispatchEffect(effect: Effect) {
+        logger.debug("New effect: $effect")
+        effectsFlow.emit(effect)
     }
 
     private fun executeCommand(command: Command) {
@@ -90,4 +88,4 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
 }
 
 fun <Event : Any, State : Any, Effect : Any, Command : Any> ElmStore<Event, State, Effect, Command>
-    .toCachedStore() = ElmCachedStore(this)
+    .toCachedStore() = EffectCachingElmStore(this)

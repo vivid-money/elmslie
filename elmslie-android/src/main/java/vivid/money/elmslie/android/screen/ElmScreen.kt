@@ -6,6 +6,7 @@ import androidx.lifecycle.Lifecycle.State.RESUMED
 import androidx.lifecycle.Lifecycle.State.STARTED
 import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.withCreated
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
@@ -31,12 +32,14 @@ class ElmScreen<Event : Any, Effect : Any, State : Any>(
         get() = screenLifecycle.currentState.isAtLeast(STARTED)
 
     init {
-        with(screenLifecycle) {
-            coroutineScope.launchWhenCreated {
-                saveProcessDeathState()
-                triggerInitEventIfNecessary()
+        with(screenLifecycle.coroutineScope) {
+            launch {
+                screenLifecycle.withCreated {
+                    saveProcessDeathState()
+                    triggerInitEventIfNecessary()
+                }
             }
-            coroutineScope.launch {
+            launch {
                 store
                     .effects()
                     .flowWithLifecycle(
@@ -45,7 +48,7 @@ class ElmScreen<Event : Any, Effect : Any, State : Any>(
                     )
                     .collect { effect -> catchEffectErrors { delegate.handleEffect(effect) } }
             }
-            coroutineScope.launch {
+            launch {
                 store
                     .states()
                     .flowWithLifecycle(

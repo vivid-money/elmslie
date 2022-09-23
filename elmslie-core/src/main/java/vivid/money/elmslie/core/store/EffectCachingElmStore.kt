@@ -13,12 +13,12 @@ import vivid.money.elmslie.core.ElmScope
  *
  * Note, that effects from the cache are replayed only for the first one.
  *
- * Wrap the store with the instance of [ElmCachedStore] to get the desired behavior like this:
+ * Wrap the store with the instance of [EffectCachingElmStore] to get the desired behavior like this:
  * ```
  * ```
  */
 // TODO Should be moved to android artifact?
-class ElmCachedStore<Event : Any, State : Any, Effect : Any, Command : Any>(
+class EffectCachingElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     private val elmStore: ElmStore<Event, State, Effect, Command>,
 ) : Store<Event, Effect, State> by elmStore {
 

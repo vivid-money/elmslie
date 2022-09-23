@@ -1,7 +1,6 @@
 package vivid.money.elmslie.core.store
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
@@ -214,79 +213,6 @@ class ElmStoreWithChildTest {
             values,
         )
         collectJob.cancel()
-    }
-
-    @Test
-    fun `Parent Effect is delivered when it's effect observation started`() = runTest {
-        val parent =
-            parentStore(
-                state = ParentState(),
-                reducer = { event, state ->
-                    if (event is ParentEvent.ChildUpdated) {
-                        Result(state = state.copy(childValue = event.state.value))
-                    } else {
-                        Result(
-                            state = state.copy(value = 10),
-                            commands = emptyList(),
-                            effects =
-                                listOf(
-                                    ParentEffect.ToParent,
-                                    ParentEffect.ToChild(ChildEvent.First),
-                                ),
-                        )
-                    }
-                },
-            )
-        val child =
-            childStore(
-                state = ChildState(),
-                reducer = { event, state ->
-                    when (event) {
-                        ChildEvent.First -> Result(state.copy(value = 100))
-                        ChildEvent.Second -> Result(state)
-                        ChildEvent.Third -> Result(state)
-                    }
-                },
-            )
-        val combined =
-            parent
-                .coordinates(
-                    responder = child,
-                    dispatching = { effects { (this as? ParentEffect.ToChild)?.childEvent } },
-                    receiving = { states { ParentEvent.ChildUpdated(this) } }
-                )
-                .start()
-
-        val values = mutableListOf<ParentState>()
-        val collectStatesJob = launch { parent.states().toList(values) }
-        parent.accept(ParentEvent.Plain)
-        advanceUntilIdle()
-
-        assertEquals(
-            mutableListOf(
-                ParentState(value = 0, childValue = 0),
-                ParentState(value = 10, childValue = 0),
-                ParentState(value = 10, childValue = 100),
-            ),
-            values,
-        )
-
-        // start observing effects later, simulating effects observing in onResume
-        val combinedJob = launch { combined.effects().collect { effect -> effect } }
-        val parentEffects = mutableListOf<ParentEffect>()
-        val collectEffectsJob = launch { parent.effects().toList(parentEffects) }
-        //
-        //        assertEquals(
-        //            mutableListOf(
-        //                ParentEffect.ToParent,
-        //                ParentEffect.ToChild(ChildEvent.First),
-        //            ),
-        //            parentEffects
-        //        )
-
-        collectStatesJob.cancel()
-        collectEffectsJob.cancel()
-        combinedJob.cancel()
     }
 
     private fun parentStore(

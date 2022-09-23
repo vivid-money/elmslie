@@ -71,4 +71,9 @@ class ConversionContract<
         check(responder.isStarted)
         contracts.forEach { it.invoke() }
     }
+
+    /** Stops conversion between stores by revoking contracts. */
+    fun revoke() {
+        // This method is left for compatibility with prev versions
+    }
 }
