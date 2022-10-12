@@ -1,9 +1,9 @@
 package vivid.money.elmslie.android.renderer
 
-import vivid.money.elmslie.android.storeholder.StoreHolder
+import vivid.money.elmslie.core.store.Store
 
 interface ElmRendererDelegate<Effect : Any, State : Any> {
-    val storeHolder: StoreHolder<*, Effect, State>
+    val store: Store<*, Effect, State>
 
     fun render(state: State)
     fun handleEffect(effect: Effect): Unit? = Unit

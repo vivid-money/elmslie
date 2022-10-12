@@ -5,7 +5,7 @@ import vivid.money.elmslie.android.renderer.ElmRenderer
 import vivid.money.elmslie.android.storestarter.ViewBasedStoreStarter
 
 class ElmScreen<Event : Any, Effect : Any, State : Any>(
-    delegate: ElmDelegate<Event, Effect, State>,
+    private val delegate: ElmDelegate<Event, Effect, State>,
     screenLifecycle: Lifecycle,
 ) {
 
@@ -19,7 +19,7 @@ class ElmScreen<Event : Any, Effect : Any, State : Any>(
     @Suppress("LeakingThis", "UnusedPrivateMember")
     private val elmStarter =
         ViewBasedStoreStarter(
-            storeHolder = delegate.storeHolder,
+            storeProvider = { delegate.store },
             screenLifecycle = screenLifecycle,
             initEventProvider = { delegate.initEvent },
         )

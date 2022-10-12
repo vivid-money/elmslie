@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import vivid.money.elmslie.android.util.fastLazy
 import vivid.money.elmslie.core.config.ElmslieConfig
 
 class ElmRenderer<Effect : Any, State : Any>(
@@ -15,9 +16,7 @@ class ElmRenderer<Effect : Any, State : Any>(
     private val screenLifecycle: Lifecycle,
 ) {
 
-    val store
-        get() = delegate.storeHolder.store
-
+    private val store by fastLazy { delegate.store }
     private val logger = ElmslieConfig.logger
     private val ioDispatcher: CoroutineDispatcher = ElmslieConfig.ioDispatchers
     private val canRender

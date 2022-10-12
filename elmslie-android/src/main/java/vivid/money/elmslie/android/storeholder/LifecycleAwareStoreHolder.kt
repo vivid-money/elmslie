@@ -9,15 +9,14 @@ class LifecycleAwareStoreHolder<Event : Any, Effect : Any, State : Any>(
     storeProvider: () -> Store<Event, Effect, State>,
 ) : StoreHolder<Event, Effect, State> {
 
-    override var isStarted = false
+    override val store by fastLazy { storeProvider().start() }
 
-    override val store by fastLazy { storeProvider().start().also { isStarted = true } }
-
-    private val lifecycleObserver = object : DefaultLifecycleObserver {
-        override fun onDestroy(owner: LifecycleOwner) {
-            store.stop()
+    private val lifecycleObserver =
+        object : DefaultLifecycleObserver {
+            override fun onDestroy(owner: LifecycleOwner) {
+                store.stop()
+            }
         }
-    }
 
     init {
         lifecycle.addObserver(lifecycleObserver)

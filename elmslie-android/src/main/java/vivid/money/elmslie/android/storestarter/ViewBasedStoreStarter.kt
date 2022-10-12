@@ -3,16 +3,20 @@ package vivid.money.elmslie.android.storestarter
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.coroutineScope
 import vivid.money.elmslie.android.processdeath.ProcessDeathDetector
-import vivid.money.elmslie.android.storeholder.StoreHolder
+import vivid.money.elmslie.android.util.fastLazy
 import vivid.money.elmslie.core.config.ElmslieConfig
+import vivid.money.elmslie.core.store.Store
 
-class ViewBasedStoreStarter<Event : Any, Effect : Any, State : Any>(
-    private val storeHolder: StoreHolder<Event, Effect, State>,
+class ViewBasedStoreStarter<Event : Any>(
+    private val storeProvider: () -> Store<Event, *, *>,
     screenLifecycle: Lifecycle,
     private val initEventProvider: () -> Event,
 ) {
 
     private var isAfterProcessDeath = false
+    private val store by fastLazy {
+        storeProvider.invoke()
+    }
 
     init {
         screenLifecycle.coroutineScope.launchWhenCreated {
@@ -26,8 +30,8 @@ class ViewBasedStoreStarter<Event : Any, Effect : Any, State : Any>(
     }
 
     private fun triggerInitEventIfNecessary() {
-        if (!storeHolder.isStarted && isAllowedToRun()) {
-            storeHolder.store.accept(initEventProvider.invoke())
+        if (!store.isStarted && isAllowedToRun()) {
+            store.accept(initEventProvider.invoke())
         }
     }
 

@@ -16,21 +16,22 @@ abstract class ElmActivity<Event : Any, Effect : Any, State : Any> :
 
     constructor(@LayoutRes contentLayoutId: Int) : super(contentLayoutId)
 
-    @Suppress("LeakingThis", "UnusedPrivateMember")
-    private val elm = ElmScreen(this, lifecycle) { this }
+    @Suppress("LeakingThis", "UnusedPrivateMember") private val elm = ElmScreen(this, lifecycle)
 
-    protected val store
+    override val store
         get() = storeHolder.store
 
-    override val storeHolder: StoreHolder<Event, Effect, State> by fastLazy {
+    private val storeHolder: StoreHolder<Event, Effect, State> by fastLazy {
         createStoreHolder { createStore() }
     }
 
-    override fun createStoreHolder(
+    open fun createStoreHolder(
         storeProvider: () -> Store<Event, Effect, State>
     ): StoreHolder<Event, Effect, State> =
         LifecycleAwareStoreHolder(
             lifecycle = lifecycle,
             storeProvider = storeProvider,
         )
+
+    abstract fun createStore(): Store<Event, Effect, State>
 }

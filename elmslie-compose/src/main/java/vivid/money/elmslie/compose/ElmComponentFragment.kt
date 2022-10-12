@@ -3,13 +3,11 @@ package vivid.money.elmslie.compose
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import vivid.money.elmslie.android.manager.createElmManager
-import vivid.money.elmslie.android.storeholder.ElmCreatorDelegate
 import vivid.money.elmslie.android.storeholder.LifecycleAwareStoreHolder
 import vivid.money.elmslie.android.storeholder.StoreHolder
 import vivid.money.elmslie.core.store.Store
 
-abstract class ElmComponentFragment<Event : Any, Effect : Any, State : Any> :
-    Fragment, ElmCreatorDelegate<Event, Effect, State> {
+abstract class ElmComponentFragment<Event : Any, Effect : Any, State : Any> : Fragment {
 
     constructor() : super()
 
@@ -26,7 +24,7 @@ abstract class ElmComponentFragment<Event : Any, Effect : Any, State : Any> :
     protected val store
         get() = elmManager.store
 
-    override fun createStoreHolder(
+    open fun createStoreHolder(
         storeProvider: () -> Store<Event, Effect, State>
     ): StoreHolder<Event, Effect, State> =
         LifecycleAwareStoreHolder(
@@ -35,4 +33,5 @@ abstract class ElmComponentFragment<Event : Any, Effect : Any, State : Any> :
         )
 
     abstract val initEvent: Event
+    abstract fun createStore(): Store<Event, Effect, State>
 }
