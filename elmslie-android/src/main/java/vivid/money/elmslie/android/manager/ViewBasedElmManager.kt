@@ -1,6 +1,5 @@
 package vivid.money.elmslie.android.manager
 
-import android.app.Activity
 import androidx.lifecycle.Lifecycle
 import vivid.money.elmslie.android.storeholder.StoreHolder
 import vivid.money.elmslie.android.storestarter.ViewBasedStoreStarter
@@ -11,7 +10,6 @@ class ViewBasedElmManager<Event : Any, Effect : Any, State : Any>(
     storeCreator: () -> Store<Event, Effect, State>,
     screenLifecycle: Lifecycle,
     initEventProvider: () -> Event,
-    activityProvider: () -> Activity
 ) : ElmManager<Event, Effect, State> {
 
     override val store: Store<Event, Effect, State>
@@ -26,6 +24,5 @@ class ViewBasedElmManager<Event : Any, Effect : Any, State : Any>(
             storeHolder = storeHolder,
             screenLifecycle = screenLifecycle,
             initEventProvider = initEventProvider,
-            activityProvider = activityProvider,
         )
 }

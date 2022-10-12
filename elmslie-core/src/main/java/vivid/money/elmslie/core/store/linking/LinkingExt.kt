@@ -2,6 +2,7 @@ package vivid.money.elmslie.core.store.linking
 
 import vivid.money.elmslie.core.store.Store
 
+// TODO: think about invoking one function from another
 fun <
     ParentEvent : Any,
     ParentState : Any,
