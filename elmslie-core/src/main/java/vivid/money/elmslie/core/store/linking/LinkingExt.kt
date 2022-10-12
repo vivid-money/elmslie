@@ -15,10 +15,8 @@ fun <
     effectMapper: (ChildEffect) -> ParentEvent?,
     stateMapper: (ChildState) -> ParentEvent?,
 ) = apply {
-    launch {
-        childStore.states().collect { stateMapper.invoke(it)?.let(this@linkTo::accept) }
-        childStore.effects().collect { effectMapper.invoke(it)?.let(this@linkTo::accept) }
-    }
+    launch { childStore.states().collect { stateMapper.invoke(it)?.let(this@linkTo::accept) } }
+    launch { childStore.effects().collect { effectMapper.invoke(it)?.let(this@linkTo::accept) } }
 }
 
 fun <
@@ -57,12 +55,14 @@ fun <
     effectMapper: (ChildState, ChildEffect) -> List<ParentEvent> = { _, _ -> emptyList() },
     stateMapper: (ChildState, ChildState) -> List<ParentEvent> = { _, _ -> emptyList() },
 ) = apply {
+    var currentState = childStore.currentState
     launch {
-        var currentState = childStore.currentState
         childStore.states().collect {
             stateMapper.invoke(currentState, it).forEach(this@linkListTo::accept)
             currentState = it
         }
+    }
+    launch {
         childStore.effects().collect {
             effectMapper.invoke(currentState, it).forEach(this@linkListTo::accept)
         }
