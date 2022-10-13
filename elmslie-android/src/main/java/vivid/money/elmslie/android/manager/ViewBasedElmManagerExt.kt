@@ -1,39 +1,53 @@
 package vivid.money.elmslie.android.manager
 
+import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.fragment.app.Fragment
-import vivid.money.elmslie.android.storeholder.LifecycleAwareStoreHolder
-import vivid.money.elmslie.android.storeholder.StoreHolder
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.savedstate.SavedStateRegistryOwner
 import vivid.money.elmslie.core.store.Store
 
-fun <Event : Any, Effect : Any, State : Any> Fragment.createElmManager(
-    storeCreator: () -> Store<Event, Effect, State>,
+fun <
+    Event : Any,
+    Effect : Any,
+    State : Any,
+> Fragment.createElmManager(
+    storeFactory: (SavedStateHandle) -> Store<Event, Effect, State>,
     initEventProvider: () -> Event,
-    storeHolderFactory: (() -> Store<Event, Effect, State>) -> StoreHolder<Event, Effect, State> = {
-        LifecycleAwareStoreHolder(
-            lifecycle = lifecycle,
-            storeProvider = it,
-        )
-    },
+    key: String,
+    getDefaultArgs: () -> Bundle = { arguments ?: Bundle() },
+    getViewModelStoreOwner: () -> ViewModelStoreOwner = { this },
+    getSavedStateRegistryOwner: () -> SavedStateRegistryOwner = { this },
 ): ViewBasedElmManager<Event, Effect, State> =
     ViewBasedElmManager(
-        storeProvider = { storeHolderFactory.invoke { storeCreator.invoke() }.store },
+        storeFactory = storeFactory,
         screenLifecycle = lifecycle,
         initEventProvider = initEventProvider,
+        key = key,
+        getViewModelStoreOwner = getViewModelStoreOwner,
+        getSavedStateRegistryOwner = getSavedStateRegistryOwner,
+        getDefaultArgs = getDefaultArgs,
     )
 
-fun <Event : Any, Effect : Any, State : Any> ComponentActivity.createElmManager(
-    storeCreator: () -> Store<Event, Effect, State>,
+fun <
+    Event : Any,
+    Effect : Any,
+    State : Any,
+> ComponentActivity.createElmManager(
+    storeFactory: (SavedStateHandle) -> Store<Event, Effect, State>,
     initEventProvider: () -> Event,
-    storeHolderFactory: (() -> Store<Event, Effect, State>) -> StoreHolder<Event, Effect, State> = {
-        LifecycleAwareStoreHolder(
-            lifecycle = lifecycle,
-            storeProvider = it,
-        )
-    },
+    key: String,
+    getDefaultArgs: () -> Bundle = { this.intent?.extras ?: Bundle() },
+    getViewModelStoreOwner: () -> ViewModelStoreOwner = { this },
+    getSavedStateRegistryOwner: () -> SavedStateRegistryOwner = { this },
 ): ViewBasedElmManager<Event, Effect, State> =
     ViewBasedElmManager(
-        storeProvider = { storeHolderFactory.invoke { storeCreator.invoke() }.store },
+        storeFactory = storeFactory,
         screenLifecycle = lifecycle,
         initEventProvider = initEventProvider,
+        key = key,
+        getViewModelStoreOwner = getViewModelStoreOwner,
+        getSavedStateRegistryOwner = getSavedStateRegistryOwner,
+        getDefaultArgs = getDefaultArgs,
     )

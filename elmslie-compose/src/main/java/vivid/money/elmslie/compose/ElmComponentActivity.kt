@@ -2,9 +2,8 @@ package vivid.money.elmslie.compose
 
 import androidx.activity.ComponentActivity
 import androidx.annotation.LayoutRes
+import androidx.lifecycle.SavedStateHandle
 import vivid.money.elmslie.android.manager.createElmManager
-import vivid.money.elmslie.android.storeholder.LifecycleAwareStoreHolder
-import vivid.money.elmslie.android.storeholder.StoreHolder
 import vivid.money.elmslie.core.store.Store
 
 abstract class ElmComponentActivity<Event : Any, Effect : Any, State : Any> : ComponentActivity {
@@ -16,22 +15,14 @@ abstract class ElmComponentActivity<Event : Any, Effect : Any, State : Any> : Co
     @Suppress("LeakingThis", "UnusedPrivateMember")
     private val elmManager =
         createElmManager(
-            storeHolderFactory = ::createStoreHolder,
-            storeCreator = ::createStore,
+            storeFactory = ::createStore,
             initEventProvider = { initEvent },
+            key = this::class.java.name,
         )
 
     protected val store
         get() = elmManager.store
 
-    open fun createStoreHolder(
-        storeProvider: () -> Store<Event, Effect, State>
-    ): StoreHolder<Event, Effect, State> =
-        LifecycleAwareStoreHolder(
-            lifecycle = lifecycle,
-            storeProvider = storeProvider,
-        )
-
     abstract val initEvent: Event
-    abstract fun createStore(): Store<Event, Effect, State>
+    abstract fun createStore(stateHandle: SavedStateHandle): Store<Event, Effect, State>
 }

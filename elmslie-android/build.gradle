@@ -10,6 +10,7 @@ dependencies {
     implementation(deps.android.appStartup)
     implementation(deps.android.lifecycle)
     implementation(deps.android.lifecycleKtx)
+    implementation(deps.android.lifecycleViewModelSavedState)
     implementation(deps.android.paging)
 }
 

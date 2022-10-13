@@ -2,6 +2,7 @@ package vivid.money.elmslie.core.store.linking
 
 import vivid.money.elmslie.core.store.Store
 
+//TODO: think about reusing one function
 fun <
     ParentEvent : Any,
     ParentState : Any,
@@ -30,12 +31,14 @@ fun <
     effectMapper: (ChildState, ChildEffect) -> ParentEvent? = { _, _ -> null },
     stateMapper: (ChildState, ChildState) -> ParentEvent? = { _, _ -> null },
 ): Store<ParentEvent, ParentState, ParentEffect> = apply {
+    var currentState = childStore.currentState
     launch {
-        var currentState = childStore.currentState
         childStore.states().collect {
             stateMapper.invoke(currentState, it)?.let(this@linkTo::accept)
             currentState = it
         }
+    }
+    launch {
         childStore.effects().collect {
             effectMapper.invoke(currentState, it)?.let(this@linkTo::accept)
         }
