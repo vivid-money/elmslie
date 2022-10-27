@@ -1,0 +1,29 @@
+plugins {
+    id("com.android.application")
+    id("kotlin-android")
+}
+
+android {
+    buildFeatures.compose = true
+    composeOptions.kotlinCompilerExtensionVersion = versions.compose
+}
+
+dependencies {
+    implementation(project(":elmslie-android"))
+    implementation(project(":elmslie-core"))
+    implementation(project(":elmslie-coroutines"))
+    implementation(project(":elmslie-compose"))
+
+    implementation(deps.android.appcompat)
+    implementation(deps.android.material)
+
+    implementation(deps.coroutines.core)
+    implementation(deps.compose.activity)
+    implementation(deps.compose.material)
+    implementation(deps.compose.tooling)
+    implementation(deps.compose.ui)
+}
+
+apply from: "../../gradle/junit-5.gradle"
+apply from: "../../gradle/android-library.gradle"
+apply from: "../../gradle/detekt.gradle"
