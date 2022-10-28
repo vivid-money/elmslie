@@ -4,7 +4,9 @@ import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
-import vivid.money.elmslie.core.disposable.Disposable
+import kotlinx.coroutines.rx3.asFlow
+import kotlinx.coroutines.rx3.asObservable
+import kotlinx.coroutines.rx3.rxObservable
 import vivid.money.elmslie.core.switcher.Switcher
 
 /**
@@ -12,7 +14,10 @@ import vivid.money.elmslie.core.switcher.Switcher
  *
  * @param delayMillis Cancellation delay measured with milliseconds.
  */
-fun Switcher.cancel(delayMillis: Long = 0) = observable(delayMillis) { Observable.empty() }
+fun Switcher.cancel(delayMillis: Long = 0): Observable<Any> =
+    rxObservable {
+        cancelInternal(delayMillis = delayMillis)
+    }
 
 /**
  * Executes [action] and cancels all previous requests scheduled on this [Switcher]
@@ -23,58 +28,37 @@ fun Switcher.cancel(delayMillis: Long = 0) = observable(delayMillis) { Observabl
 fun <Event : Any> Switcher.observable(
     delayMillis: Long = 0,
     action: () -> Observable<Event>,
-): Observable<Event> = Observable.create { emitter ->
-    val disposable = switchInternal(delayMillis) {
-        val rxDisposable = action()
-            .doOnComplete(emitter::onComplete)
-            .subscribe(emitter::onNext, emitter::onError)
-        Disposable {
-            emitter.onComplete()
-            rxDisposable.dispose()
-        }
-    }
-    emitter.setCancellable(disposable::dispose)
+): Observable<Event> {
+    return switchInternal(delayMillis) { action.invoke().asFlow() }.asObservable()
 }
 
-/**
- * Same as [observable], but for [Single].
- */
+/** Same as [observable], but for [Single]. */
 fun <Event : Any> Switcher.single(
     delayMillis: Long = 0,
     action: () -> Single<Event>,
-): Single<Event> = observable(delayMillis) { action().toObservable() }.firstOrError()
+): Single<Event> = observable(delayMillis = delayMillis) { action().toObservable() }.firstOrError()
 
-/**
- * Same as [observable], but for [Maybe].
- */
+/** Same as [observable], but for [Maybe]. */
 fun <Event : Any> Switcher.maybe(
     delayMillis: Long = 0,
     action: () -> Maybe<Event>,
-): Maybe<Event> = observable(delayMillis) { action().toObservable() }.firstElement()
+): Maybe<Event> = observable(delayMillis = delayMillis) { action().toObservable() }.firstElement()
 
-/**
- * Same as [observable], but for [Completable].
- */
+/** Same as [observable], but for [Completable]. */
 fun Switcher.completable(
     delayMillis: Long = 0,
     action: () -> Completable,
-): Completable = observable(delayMillis) { action().toObservable() }.ignoreElements()
+): Completable = observable(delayMillis = delayMillis) { action().toObservable() }.ignoreElements()
 
-@Deprecated(
-    "Please, use property methods",
-    ReplaceWith("observable(delayMillis, action)")
-)
+@Deprecated("Please, use property methods", ReplaceWith("observable(delayMillis, action)"))
 fun <Event : Any> Switcher.switch(
     delayMillis: Long = 0,
     action: () -> Observable<Event>,
-) = observable(delayMillis, action)
+) = observable(delayMillis = delayMillis, action = action)
 
-@Deprecated(
-    "Please use instance methods",
-    ReplaceWith("switcher.observable(delayMillis, action)")
-)
+@Deprecated("Please use instance methods", ReplaceWith("switcher.observable(delayMillis, action)"))
 fun <Event : Any> switchOn(
     switcher: Switcher,
     delayMillis: Long = 0,
     action: () -> Observable<Event>
-) = switcher.observable(delayMillis, action)
+) = switcher.observable(delayMillis = delayMillis, action = action)

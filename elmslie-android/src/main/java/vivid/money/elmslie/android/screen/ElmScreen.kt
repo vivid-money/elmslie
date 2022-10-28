@@ -1,16 +1,19 @@
 package vivid.money.elmslie.android.screen
 
 import android.app.Activity
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Lifecycle.State.RESUMED
 import androidx.lifecycle.Lifecycle.State.STARTED
+import androidx.lifecycle.coroutineScope
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.withCreated
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import vivid.money.elmslie.android.processdeath.ProcessDeathDetector.isRestoringAfterProcessDeath
 import vivid.money.elmslie.android.processdeath.StopElmOnProcessDeath
-import vivid.money.elmslie.android.util.bindToState
-import vivid.money.elmslie.android.util.onCreate
-import vivid.money.elmslie.android.util.postSingle
 import vivid.money.elmslie.core.config.ElmslieConfig
 
 class ElmScreen<Event : Any, Effect : Any, State : Any>(
@@ -19,60 +22,76 @@ class ElmScreen<Event : Any, Effect : Any, State : Any>(
     private val activityProvider: () -> Activity,
 ) {
 
-    val store get() = delegate.storeHolder.store
+    val store
+        get() = delegate.storeHolder.store
 
-    private val stateHandler = Handler(Looper.getMainLooper())
-    private val effectHandler = Handler(Looper.getMainLooper())
     private val logger = ElmslieConfig.logger
+    private val ioDispatcher: CoroutineDispatcher = ElmslieConfig.ioDispatchers
     private var isAfterProcessDeath = false
-    private val isRenderable get() = screenLifecycle.currentState.isAtLeast(STARTED)
+    private val canRender
+        get() = screenLifecycle.currentState.isAtLeast(STARTED)
 
     init {
-        with(screenLifecycle) {
-            onCreate(::saveProcessDeathState)
-            onCreate(::triggerInitEventIfNecessary)
-            bindToState(RESUMED, ::observeEffects)
-            bindToState(STARTED, ::observeStates)
-        }
-    }
-
-    private fun observeEffects() = store.effects {
-        effectHandler.post {
-            catchEffectErrors {
-                delegate.handleEffect(it)
+        with(screenLifecycle.coroutineScope) {
+            launch {
+                screenLifecycle.withCreated {
+                    saveProcessDeathState()
+                    triggerInitEventIfNecessary()
+                }
+            }
+            launch {
+                store
+                    .effects()
+                    .flowWithLifecycle(
+                        lifecycle = screenLifecycle,
+                        minActiveState = RESUMED,
+                    )
+                    .collect { effect -> catchEffectErrors { delegate.handleEffect(effect) } }
+            }
+            launch {
+                store
+                    .states()
+                    .flowWithLifecycle(
+                        lifecycle = screenLifecycle,
+                        minActiveState = STARTED,
+                    )
+                    .map { state ->
+                        val list = mapListItems(state)
+                        state to list
+                    }
+                    .catch { logger.fatal("Crash while mapping state", it) }
+                    .flowOn(ioDispatcher)
+                    .collect { (state, listItems) ->
+                        catchStateErrors {
+                            if (canRender) {
+                                delegate.renderList(state, listItems)
+                                delegate.render(state)
+                            }
+                        }
+                    }
             }
         }
     }
 
-    private fun observeStates() = store.states {
-        val list = mapListItems(it)
-        stateHandler.postSingle { renderListItems(it, list) }
-    }
+    private fun mapListItems(state: State): List<Any> =
+        catchStateErrors { delegate.mapList(state) } ?: emptyList()
 
-    private fun mapListItems(state: State) = catchStateErrors {
-        delegate.mapList(state)
-    } ?: emptyList()
-
-    private fun renderListItems(state: State, list: List<Any>) = catchStateErrors {
-        if (isRenderable) {
-            delegate.renderList(state, list)
-            delegate.render(state)
+    @Suppress("TooGenericExceptionCaught")
+    private fun <T> catchStateErrors(action: () -> T?): T? =
+        try {
+            action()
+        } catch (t: Throwable) {
+            logger.fatal("Crash while rendering state", t)
+            null
         }
-    }
 
     @Suppress("TooGenericExceptionCaught")
-    private fun <T> catchStateErrors(action: () -> T?) = try {
-        action()
-    } catch (t: Throwable) {
-        logger.fatal("Crash while rendering state", t)
-        null
-    }
-
-    @Suppress("TooGenericExceptionCaught")
-    private fun <T> catchEffectErrors(action: () -> T?) = try {
-        action()
-    } catch (t: Throwable) {
-        logger.fatal("Crash while handling effect", t)
+    private fun <T> catchEffectErrors(action: () -> T?) {
+        try {
+            action()
+        } catch (t: Throwable) {
+            logger.fatal("Crash while handling effect", t)
+        }
     }
 
     private fun saveProcessDeathState() {
@@ -85,6 +104,6 @@ class ElmScreen<Event : Any, Effect : Any, State : Any>(
         }
     }
 
-    private fun isAllowedToRun() =
+    private fun isAllowedToRun(): Boolean =
         !isAfterProcessDeath || activityProvider() !is StopElmOnProcessDeath
 }

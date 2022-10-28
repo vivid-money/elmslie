@@ -1,8 +1,6 @@
 package vivid.money.elmslie.core.store
 
-/**
- * Represents result of reduce function
- */
+/** Represents result of reduce function */
 data class Result<State : Any, Effect : Any, Command : Any>(
     val state: State,
     val effects: List<Effect>,
@@ -14,19 +12,25 @@ data class Result<State : Any, Effect : Any, Command : Any>(
         effect: Effect? = null,
         command: Command? = null,
     ) : this(
-        state,
-        effect?.let(::listOf) ?: emptyList(),
-        command?.let(::listOf) ?: emptyList()
+        state = state,
+        effects = effect?.let(::listOf) ?: emptyList(),
+        commands = command?.let(::listOf) ?: emptyList(),
     )
 
     constructor(
         state: State,
         commands: List<Command>,
     ) : this(
-        state,
-        emptyList(),
-        commands
+        state = state,
+        effects = emptyList(),
+        commands = commands,
     )
 
-    constructor(state: State) : this(state, emptyList(), emptyList())
+    constructor(
+        state: State
+    ) : this(
+        state = state,
+        effects = emptyList(),
+        commands = emptyList(),
+    )
 }

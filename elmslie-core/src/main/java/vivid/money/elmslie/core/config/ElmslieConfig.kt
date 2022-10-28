@@ -1,30 +1,26 @@
 package vivid.money.elmslie.core.config
 
-import vivid.money.elmslie.core.logger.ElmslieLogger
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import vivid.money.elmslie.core.logger.ElmslieLogConfiguration
+import vivid.money.elmslie.core.logger.ElmslieLogger
 import vivid.money.elmslie.core.logger.strategy.IgnoreLog
-import vivid.money.elmslie.core.store.StateReducer
-import vivid.money.elmslie.core.switcher.Switcher
-import java.util.concurrent.Executors
-import java.util.concurrent.ScheduledExecutorService
 
 object ElmslieConfig {
 
-    @Volatile
-    private lateinit var loggerInternal: ElmslieLogger
+    @Volatile private lateinit var _logger: ElmslieLogger
 
-    @Volatile
-    private lateinit var reducerExecutorInternal: ScheduledExecutorService
+    @Volatile private lateinit var _ioDispatchers: CoroutineDispatcher
 
     val logger: ElmslieLogger
-        get() = loggerInternal
+        get() = _logger
 
-    val backgroundExecutor: ScheduledExecutorService
-        get() = reducerExecutorInternal
+    val ioDispatchers: CoroutineDispatcher
+        get() = _ioDispatchers
 
     init {
         logger { always(IgnoreLog) }
-        backgroundExecutor { Executors.newSingleThreadScheduledExecutor() }
+        ioDispatchers { Dispatchers.IO }
     }
 
     /**
@@ -40,18 +36,14 @@ object ElmslieConfig {
      * ```
      */
     fun logger(config: (ElmslieLogConfiguration.() -> Unit)) {
-        ElmslieLogConfiguration().apply(config).build().also { loggerInternal = it }
+        ElmslieLogConfiguration().apply(config).build().also { _logger = it }
     }
 
     /**
-     * Configures an executor for running background operations for [StateReducer] and [Switcher].
-     *
-     * Example:
-     * ```
-     * ElmslieConfig.backgroundExecutor { Executors.newScheduledThreadPool(4) }
-     * ```
+     * Configures CoroutineDispatcher for performing operations in background. Default is
+     * [Dispatchers.IO]
      */
-    fun backgroundExecutor(builder: () -> ScheduledExecutorService) {
-        reducerExecutorInternal = builder()
+    fun ioDispatchers(builder: () -> CoroutineDispatcher) {
+        _ioDispatchers = builder()
     }
 }

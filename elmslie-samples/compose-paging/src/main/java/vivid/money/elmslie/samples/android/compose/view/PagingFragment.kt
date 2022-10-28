@@ -29,16 +29,16 @@ class PagingFragment : ElmComponentFragment<PagingEvent, PagingEffect, PagingSta
     @Preview
     @Composable
     private fun Screen() {
-        val state by state()
-        val effect by effect()
-        PagingScreen(
-            state = state,
-            effect = effect,
-            onRefresh = { store.accept(Ui.PullToRefresh) },
-            onReloadPage = { store.accept(Ui.ClickReloadPage) },
-            onReloadScreen = { store.accept(Ui.ClickReloadScreen) },
-            onCloseToEnd = { store.accept(Ui.CloseToEnd) }
-        )
+        store.states()
+        store.effects()
+//        PagingScreen(
+//            state = state,
+//            effect = effect,
+//            onRefresh = { store.accept(Ui.PullToRefresh) },
+//            onReloadPage = { store.accept(Ui.ClickReloadPage) },
+//            onReloadScreen = { store.accept(Ui.ClickReloadScreen) },
+//            onCloseToEnd = { store.accept(Ui.CloseToEnd) }
+//        )
     }
 
     override fun handleEffect(effect: PagingEffect) = when (effect) {

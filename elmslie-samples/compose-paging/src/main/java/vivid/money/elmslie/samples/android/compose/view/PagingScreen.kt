@@ -12,8 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import vivid.money.elmslie.compose.EffectWithKey
-import vivid.money.elmslie.samples.android.compose.elm.PagingEffect
 import vivid.money.elmslie.samples.android.compose.elm.PagingState
 
 private const val PREFETCH_BORDER = 20
@@ -23,7 +21,6 @@ private const val SHIMMER_COUNT = 10
 @Composable
 fun PagingScreen(
     state: PagingState,
-    effect: EffectWithKey<PagingEffect>?,
     onRefresh: () -> Unit,
     onReloadScreen: () -> Unit,
     onReloadPage: () -> Unit,
@@ -36,9 +33,9 @@ fun PagingScreen(
             state.error == null && state.items == null -> Shimmers()
             state.items != null -> List(state, onRefresh, onCloseToEnd, onReloadPage)
         }
-        effect?.takeIfInstanceOf<PagingEffect.RefreshError>()?.key?.let {
-            Error(scaffoldState = scaffoldState, key = it)
-        }
+//        effect?.takeIfInstanceOf<PagingEffect.RefreshError>()?.key?.let {
+//            Error(scaffoldState = scaffoldState, key = it)
+//        }
     }
 }
 

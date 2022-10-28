@@ -2,17 +2,18 @@ plugins {
     id("kotlin")
 }
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions.freeCompilerArgs += [
+            "-opt-in=kotlin.RequiresOptIn"
+    ]
+}
+
 dependencies {
     implementation(project(":elmslie-core"))
     implementation(deps.coroutines.core)
-}
 
-// Enable channel flow and delicate apis.
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-    kotlinOptions.freeCompilerArgs += [
-            "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi",
-            "-Xuse-experimental=kotlinx.coroutines.DelicateCoroutinesApi",
-    ]
+    testImplementation(deps.coroutines.test)
+    testImplementation(project(":elmslie-test"))
 }
 
 apply from: "../gradle/junit-5.gradle"

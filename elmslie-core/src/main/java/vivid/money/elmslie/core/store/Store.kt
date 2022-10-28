@@ -1,18 +1,19 @@
 package vivid.money.elmslie.core.store
 
-import vivid.money.elmslie.core.disposable.Disposable
+import kotlinx.coroutines.flow.Flow
 
 interface Store<Event, Effect, State> {
 
-    /** Provides access to the current store [State]. */
+    /** The current value of the [State]. The property is **thread-safe**. */
     val currentState: State
 
     /** Returns `true` for the span duration between [start] and [stop] calls. */
     val isStarted: Boolean
 
     /**
-     * Starts the operations inside the store.
-     * Calls fatal exception handler in case the store is already started.
+     * Starts the operations inside the store. Throws **[StoreAlreadyStartedException]
+     * [vivid.money.elmslie.core.store.exception.StoreAlreadyStartedException]** in case when the
+     * store is already started.
      */
     fun start(): Store<Event, Effect, State>
 
@@ -23,38 +24,23 @@ interface Store<Event, Effect, State> {
     fun accept(event: Event)
 
     /**
-     * Provides ability to subscribe to state changes.
+     * Returns the flow of [State]. Internally the store keeps the last emitted state value, so each
+     * new subscribers will get it.
      *
-     * State dispatching is restricted. Behavior contract:
-     * - The current state will be sent synchronously.
-     * - Every two subsequent invocation of [onStateChange] have not equal states.
-     * - States are **never** delivered on the main thread.
+     * Note that there will be no emission if a state isn't changed (it's [equals] method returned
+     * `true`.
      *
-     * @return [Disposable] For stopping [onStateChange] callback invocations.
+     * By default, [State] is collected in [Dispatchers.IO].
      */
-    fun states(onStateChange: (State) -> Unit): Disposable
+    fun states(): Flow<State>
 
     /**
-     * Provides ability to subscribe to effect emissions.
+     * Returns the flow of [Effect]. It's a _hot_ flow and values produced by it **don't cache**.
      *
-     * Effects may be buffered. Behavior contract:
-     * - Buffering is active when the store [isStarted].
-     * - Buffering starts after disposing all [effects] listeners.
-     * - All buffered effects are sent to the first attached [effects] observer synchronously.
-     * - Examples: Before the first [effects] call, after disposing [effects] observer.
+     * In order to implement cache of [Effect], consider extending [Store] with appropriate
+     * behavior.
      *
-     * Emission thread is unspecified. Behavior contract:
-     * - Effects are **never** delivered on the main thread.
-     *
-     * @return [Disposable] For stopping [onEffectEmission] callback invocations.
+     * By default, [Effect] is collected in [Dispatchers.IO].
      */
-    fun effects(onEffectEmission: (Effect) -> Unit): Disposable
-
-    @Deprecated("Please, use store coordination instead. This approach will be removed in future.")
-    fun <ChildEvent : Any, ChildState : Any, ChildEffect : Any> addChildStore(
-        childStore: Store<ChildEvent, ChildEffect, ChildState>,
-        eventMapper: (parentEvent: Event) -> ChildEvent? = { null },
-        effectMapper: (parentState: State, childEffect: ChildEffect) -> Effect? = { _, _ -> null },
-        stateReducer: (parentState: State, childState: ChildState) -> State = { parentState, _ -> parentState }
-    ): Store<Event, Effect, State>
+    fun effects(): Flow<Effect>
 }

@@ -2,11 +2,18 @@ plugins {
     id("kotlin")
 }
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions.freeCompilerArgs += [
+            "-opt-in=kotlin.RequiresOptIn"
+    ]
+}
+
 dependencies {
     implementation(project(":elmslie-core"))
 
     implementation(deps.test.jUnit5)
     implementation(deps.rx.rxJava3)
+    implementation(deps.coroutines.test)
 }
 
 apply from: "../gradle/kotlin-publishing.gradle"

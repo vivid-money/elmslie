@@ -1,16 +1,16 @@
 package vivid.money.elmslie.core.switcher
 
-import vivid.money.elmslie.core.config.ElmslieConfig
-import vivid.money.elmslie.core.disposable.CompositeDisposable
-import vivid.money.elmslie.core.disposable.Disposable
+import kotlinx.coroutines.channels.SendChannel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import vivid.money.elmslie.core.store.DefaultActor
-import java.util.concurrent.CancellationException
-import java.util.concurrent.ScheduledFuture
-import java.util.concurrent.TimeUnit
 
 /**
- * Allows to execute requests for [DefaultActor] implementations in a switching manner.
- * Each request will cancel the previous one.
+ * Allows to execute requests for [DefaultActor] implementations in a switching manner. Each request
+ * will cancel the previous one.
  *
  * Example:
  * ```
@@ -25,47 +25,40 @@ import java.util.concurrent.TimeUnit
  */
 class Switcher {
 
-    private val disposable = CompositeDisposable()
-    private val tasks = mutableSetOf<ScheduledFuture<*>>()
-    private val service = ElmslieConfig.backgroundExecutor
-
+    private var currentChannel: SendChannel<*>? = null
+    private val lock = Mutex()
     /**
-     * Executes [action] and cancels all previous requests scheduled on this [Switcher].
+     * Collect given flow as a job and cancels all previous ones.
      *
-     * @param delayMillis Operation delay measured with milliseconds.
-     *                    Can be specified to debounce existing requests.
-     * @param action New operation to be executed.
+     * @param delayMillis operation delay measured with milliseconds. Can be specified to debounce
+     * existing requests.
+     * @param action actual event source
      */
-    fun switchInternal(
+    fun <Event : Any> switchInternal(
         delayMillis: Long = 0,
-        action: () -> Disposable,
-    ): Disposable {
-        disposable.clear()
-        synchronized(tasks) {
-            tasks.onEach { task -> task.cancel(true) }.clear()
+        action: () -> Flow<Event>,
+    ): Flow<Event> {
+        return callbackFlow {
+            lock.withLock {
+                currentChannel?.close()
+                currentChannel = channel
+            }
+
+            delay(delayMillis)
+
+            action.invoke().collect { send(it) }
+
+            channel.close()
         }
-        val future = service.schedule(
-            { disposable.add(action()) },
-            delayMillis,
-            TimeUnit.MILLISECONDS
-        )
-        synchronized(tasks) {
-            tasks.add(future)
-        }
-        return Disposable { future.cancel(true) }
     }
 
-    /**
-     * Awaits completion of all scheduled background tasks.
-     */
-    fun await(
-        delay: Long = 1,
-        timeUnit: TimeUnit = TimeUnit.DAYS
-    ) = tasks.forEach { task ->
-        try {
-            task.get(delay, timeUnit)
-        } catch (_: CancellationException) {
-            // Expected state
+    suspend fun cancelInternal(
+        delayMillis: Long = 0,
+    ) {
+        delay(delayMillis)
+        lock.withLock {
+            currentChannel?.close()
+            currentChannel = null
         }
     }
 }

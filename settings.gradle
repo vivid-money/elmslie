@@ -15,8 +15,6 @@ include ':sample-compose-paging'
 project(":sample-compose-paging").projectDir = file("elmslie-samples/compose-paging")
 include ':sample-coroutines-loader'
 project(":sample-coroutines-loader").projectDir = file("elmslie-samples/coroutines-loader")
-include ':sample-java-notes'
-project(":sample-java-notes").projectDir = file("elmslie-samples/java-notes")
 include ':sample-kotlin-calculator'
 project(":sample-kotlin-calculator").projectDir = file("elmslie-samples/kotlin-calculator")
 
