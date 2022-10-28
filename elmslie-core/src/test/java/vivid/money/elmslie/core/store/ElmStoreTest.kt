@@ -182,8 +182,8 @@ class ElmStoreTest {
                 .start()
 
         val effects = mutableListOf<Effect>()
-        store.accept(Event(value = 1))
         val collectJob = launch { store.effects().toList(effects) }
+        store.accept(Event(value = 1))
         advanceUntilIdle()
 
         assertEquals(
