@@ -12,7 +12,7 @@ object ElmslieConfig {
 
     @Volatile private lateinit var _ioDispatchers: CoroutineDispatcher
 
-    @Volatile private var _shouldStopElmOnProcessDeath: Boolean = true
+    @Volatile private var _shouldStopOnProcessDeath: Boolean = true
 
     val logger: ElmslieLogger
         get() = _logger
@@ -21,7 +21,7 @@ object ElmslieConfig {
         get() = _ioDispatchers
 
     val shouldStopElmOnProcessDeath: Boolean
-        get() = _shouldStopElmOnProcessDeath
+        get() = _shouldStopOnProcessDeath
 
     init {
         logger { always(IgnoreLog) }
@@ -53,6 +53,6 @@ object ElmslieConfig {
     }
 
     fun shouldStopElmOnProcessDeath(builder: () -> Boolean) {
-        _shouldStopElmOnProcessDeath = builder()
+        _shouldStopOnProcessDeath = builder()
     }
 }

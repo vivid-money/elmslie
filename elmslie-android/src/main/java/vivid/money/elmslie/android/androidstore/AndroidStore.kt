@@ -48,7 +48,7 @@ fun <
     getSavedStateRegistryOwner: () -> SavedStateRegistryOwner = { this },
     getDefaultArgs: () -> Bundle = { arguments ?: Bundle() },
     storeFactory: (SavedStateHandle) -> Store<Event, Effect, State>,
-) =
+): Lazy<Store<Event, Effect, State>> =
     androidStore(
         storeFactory = storeFactory,
         key = key,
@@ -68,7 +68,7 @@ fun <
     getSavedStateRegistryOwner: () -> SavedStateRegistryOwner = { this },
     getDefaultArgs: () -> Bundle = { this.intent?.extras ?: Bundle() },
     storeFactory: (SavedStateHandle) -> Store<Event, Effect, State>,
-) =
+): Lazy<Store<Event, Effect, State>> =
     androidStore(
         storeFactory = storeFactory,
         key = key,

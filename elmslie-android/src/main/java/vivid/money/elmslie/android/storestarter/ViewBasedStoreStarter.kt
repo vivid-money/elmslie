@@ -7,6 +7,7 @@ import vivid.money.elmslie.android.util.fastLazy
 import vivid.money.elmslie.core.config.ElmslieConfig
 import vivid.money.elmslie.core.store.Store
 
+@Deprecated("Use store start event instead of init event.")
 class ViewBasedStoreStarter<Event : Any>(
     private val storeProvider: () -> Store<Event, *, *>,
     screenLifecycle: Lifecycle,
