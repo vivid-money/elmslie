@@ -10,7 +10,6 @@ android {
 
 dependencies {
     implementation(project(":elmslie-android"))
-    implementation(project(":elmslie-compose"))
     implementation(project(":elmslie-core"))
     implementation(project(":elmslie-rxjava-3"))
 

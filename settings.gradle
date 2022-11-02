@@ -1,5 +1,4 @@
 include ':elmslie-android'
-include ':elmslie-compose'
 include ':elmslie-core'
 include ':elmslie-coroutines'
 include ':elmslie-rxjava-2'

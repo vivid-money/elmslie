@@ -3,7 +3,7 @@ package vivid.money.elmslie.android.base
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.SavedStateHandle
-import vivid.money.elmslie.android.androidstore.store
+import vivid.money.elmslie.android.fabric.elmStore
 import vivid.money.elmslie.android.renderer.ElmRenderer
 import vivid.money.elmslie.android.renderer.ElmRendererDelegate
 import vivid.money.elmslie.android.storestarter.ViewBasedStoreStarter
@@ -13,7 +13,7 @@ import vivid.money.elmslie.core.store.Store
 abstract class ElmActivity<Event : Any, Effect : Any, State : Any> :
     AppCompatActivity, ElmRendererDelegate<Effect, State> {
 
-    override val store by store(
+    override val store by elmStore(
         storeFactory = ::createStore,
     )
 

@@ -3,7 +3,7 @@ android {
     buildToolsVersion '31.0.0'
 
     defaultConfig.minSdkVersion 21
-    defaultConfig.targetSdkVersion 33
+    defaultConfig.targetSdkVersion 32
 
     lintOptions {
         checkReleaseBuilds false

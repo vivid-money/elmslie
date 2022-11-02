@@ -7,6 +7,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import vivid.money.elmslie.android.util.fastLazy
 import vivid.money.elmslie.core.config.ElmslieConfig
 
@@ -23,36 +24,40 @@ class ElmRenderer<Effect : Any, State : Any>(
 
     init {
         with(screenLifecycle) {
-            coroutineScope.launchWhenCreated {
-                store
-                    .effects()
-                    .flowWithLifecycle(
-                        lifecycle = screenLifecycle,
-                        minActiveState = RESUMED,
-                    )
-                    .collect { effect -> catchEffectErrors { delegate.handleEffect(effect) } }
+            coroutineScope.launch {
+                whenCreated {
+                    store
+                        .effects()
+                        .flowWithLifecycle(
+                            lifecycle = screenLifecycle,
+                            minActiveState = RESUMED,
+                        )
+                        .collect { effect -> catchEffectErrors { delegate.handleEffect(effect) } }
+                }
             }
-            coroutineScope.launchWhenCreated {
-                store
-                    .states()
-                    .flowWithLifecycle(
-                        lifecycle = screenLifecycle,
-                        minActiveState = STARTED,
-                    )
-                    .map { state ->
-                        val list = mapListItems(state)
-                        state to list
-                    }
-                    .catch { logger.fatal("Crash while mapping state", it) }
-                    .flowOn(ioDispatcher)
-                    .collect { (state, listItems) ->
-                        catchStateErrors {
-                            if (canRender) {
-                                delegate.renderList(state, listItems)
-                                delegate.render(state)
+            coroutineScope.launch {
+                whenCreated {
+                    store
+                        .states()
+                        .flowWithLifecycle(
+                            lifecycle = screenLifecycle,
+                            minActiveState = STARTED,
+                        )
+                        .map { state ->
+                            val list = mapListItems(state)
+                            state to list
+                        }
+                        .catch { logger.fatal("Crash while mapping state", it) }
+                        .flowOn(ioDispatcher)
+                        .collect { (state, listItems) ->
+                            catchStateErrors {
+                                if (canRender) {
+                                    delegate.renderList(state, listItems)
+                                    delegate.render(state)
+                                }
                             }
                         }
-                    }
+                }
             }
         }
     }

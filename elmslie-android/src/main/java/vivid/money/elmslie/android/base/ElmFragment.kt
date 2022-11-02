@@ -3,7 +3,7 @@ package vivid.money.elmslie.android.base
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.SavedStateHandle
-import vivid.money.elmslie.android.androidstore.store
+import vivid.money.elmslie.android.fabric.elmStore
 import vivid.money.elmslie.android.renderer.ElmRenderer
 import vivid.money.elmslie.android.renderer.ElmRendererDelegate
 import vivid.money.elmslie.android.storestarter.ViewBasedStoreStarter
@@ -32,7 +32,7 @@ abstract class ElmFragment<Event : Any, Effect : Any, State : Any> :
             initEventProvider = { initEvent },
         )
 
-    override val store by store(
+    override val store by elmStore(
         storeFactory = ::createStore,
     )
 

@@ -2,6 +2,7 @@ package vivid.money.elmslie.android.renderer
 
 import vivid.money.elmslie.core.store.Store
 
+@Suppress("OptionalUnit")
 interface ElmRendererDelegate<Effect : Any, State : Any> {
     val store: Store<*, Effect, State>
 
