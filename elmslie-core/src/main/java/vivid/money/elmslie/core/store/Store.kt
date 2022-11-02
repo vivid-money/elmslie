@@ -1,8 +1,15 @@
 package vivid.money.elmslie.core.store
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 
 interface Store<Event, Effect, State> {
+
+    /**
+     * Scope that allow to execute any work while store is alive.
+     * Will be executed in ElmslieConfig.ioDispatcher.
+     */
+    val scope: CoroutineScope
 
     /** The current value of the [State]. The property is **thread-safe**. */
     val currentState: State

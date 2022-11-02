@@ -25,7 +25,6 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
 ) : Store<Event, Effect, State> {
 
     private val logger = ElmslieConfig.logger
-    private val storeScope = ElmScope("StoreScope")
 
     override val isStarted: Boolean
         get() = _isStarted.get()
@@ -36,6 +35,8 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     override val currentState: State
         get() = statesFlow.value
     private val statesFlow: MutableStateFlow<State> = MutableStateFlow(initialState)
+
+    override val scope = ElmScope("StoreScope")
 
     override fun accept(event: Event) = dispatchEvent(event)
 
@@ -50,7 +51,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
 
     override fun stop() {
         _isStarted.set(false)
-        storeScope.cancel()
+        scope.cancel()
     }
 
     override fun states(): Flow<State> = statesFlow.asStateFlow()
@@ -58,7 +59,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     override fun effects(): Flow<Effect> = effectsFlow.asSharedFlow()
 
     private fun dispatchEvent(event: Event) {
-        storeScope.launch {
+        scope.launch {
             try {
                 logger.debug("New event: $event")
                 val (state, effects, commands) = reducer.reduce(event, currentState)
@@ -79,7 +80,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     }
 
     private fun executeCommand(command: Command) {
-        storeScope.launch {
+        scope.launch {
             logger.debug("Executing command: $command")
             actor
                 .execute(command)
