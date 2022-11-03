@@ -9,7 +9,7 @@ import vivid.money.elmslie.android.util.fastLazy
 import vivid.money.elmslie.core.config.ElmslieConfig
 import vivid.money.elmslie.core.store.Store
 
-@Deprecated("Use store start event instead of init event.")
+@Deprecated("Prefer setting start event inside [storeFactory] of elmStore delegate")
 class ViewBasedStoreStarter<Event : Any>(
     private val storeProvider: () -> Store<Event, *, *>,
     screenLifecycle: Lifecycle,
@@ -41,5 +41,5 @@ class ViewBasedStoreStarter<Event : Any>(
     }
 
     private fun isAllowedToRun() =
-        !isAfterProcessDeath || !ElmslieConfig.shouldStopElmOnProcessDeath
+        !isAfterProcessDeath || !ElmslieConfig.shouldStopOnProcessDeath
 }

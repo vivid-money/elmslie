@@ -1,4 +1,4 @@
-package vivid.money.elmslie.android.fabric
+package vivid.money.elmslie.android
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -49,7 +49,7 @@ fun <
     getDefaultArgs: () -> Bundle = { arguments ?: Bundle() },
     storeFactory: (SavedStateHandle) -> Store<Event, Effect, State>,
 ): Lazy<Store<Event, Effect, State>> =
-    vivid.money.elmslie.android.fabric.elmStore(
+    vivid.money.elmslie.android.elmStore(
         storeFactory = storeFactory,
         key = key,
         getViewModelStoreOwner = getViewModelStoreOwner,
@@ -69,7 +69,7 @@ fun <
     getDefaultArgs: () -> Bundle = { this.intent?.extras ?: Bundle() },
     storeFactory: (SavedStateHandle) -> Store<Event, Effect, State>,
 ): Lazy<Store<Event, Effect, State>> =
-    vivid.money.elmslie.android.fabric.elmStore(
+    vivid.money.elmslie.android.elmStore(
         storeFactory = storeFactory,
         key = key,
         getViewModelStoreOwner = getViewModelStoreOwner,

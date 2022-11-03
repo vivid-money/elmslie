@@ -20,7 +20,7 @@ object ElmslieConfig {
     val ioDispatchers: CoroutineDispatcher
         get() = _ioDispatchers
 
-    val shouldStopElmOnProcessDeath: Boolean
+    val shouldStopOnProcessDeath: Boolean
         get() = _shouldStopOnProcessDeath
 
     init {
@@ -52,7 +52,7 @@ object ElmslieConfig {
         _ioDispatchers = builder()
     }
 
-    fun shouldStopElmOnProcessDeath(builder: () -> Boolean) {
+    fun shouldStopOnProcessDeath(builder: () -> Boolean) {
         _shouldStopOnProcessDeath = builder()
     }
 }
