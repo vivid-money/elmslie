@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 interface Store<Event, Effect, State> {
 
     /**
-     * Scope that allow to execute any work while store is alive.
+     * Store's scope. Active for the lifetime of store.
      * Will be executed in ElmslieConfig.ioDispatcher.
      */
     val scope: CoroutineScope
@@ -18,7 +18,7 @@ interface Store<Event, Effect, State> {
     @Deprecated("Will be deleted in future releases.")
     val isStarted: Boolean
 
-    /** Event that will be emitted after store start. */
+    /** Event that will be emitted upon store start. */
     val startEvent: Event?
 
     /**

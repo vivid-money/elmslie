@@ -17,31 +17,6 @@ fun <
     Event : Any,
     Effect : Any,
     State : Any,
-> elmStore(
-    key: String,
-    getViewModelStoreOwner: () -> ViewModelStoreOwner,
-    getSavedStateRegistryOwner: () -> SavedStateRegistryOwner,
-    getDefaultArgs: () -> Bundle,
-    storeFactory: (SavedStateHandle) -> Store<Event, Effect, State>,
-): Lazy<Store<Event, Effect, State>> =
-    lazy(LazyThreadSafetyMode.NONE) {
-        val factory =
-            RetainedElmStoreFactory(
-                stateRegistryOwner = getSavedStateRegistryOwner.invoke(),
-                defaultArgs = getDefaultArgs.invoke(),
-                storeFactory = storeFactory,
-            )
-        val provider = ViewModelProvider(getViewModelStoreOwner.invoke(), factory)
-
-        @Suppress("UNCHECKED_CAST")
-        provider.get(key, RetainedElmStore::class.java).store as Store<Event, Effect, State>
-    }
-
-@MainThread
-fun <
-    Event : Any,
-    Effect : Any,
-    State : Any,
 > Fragment.elmStore(
     key: String = this::class.java.canonicalName ?: this::class.java.simpleName,
     getViewModelStoreOwner: () -> ViewModelStoreOwner = { this },
@@ -76,6 +51,31 @@ fun <
         getSavedStateRegistryOwner = getSavedStateRegistryOwner,
         getDefaultArgs = getDefaultArgs,
     )
+
+@MainThread
+internal fun <
+        Event : Any,
+        Effect : Any,
+        State : Any,
+> elmStore(
+    key: String,
+    getViewModelStoreOwner: () -> ViewModelStoreOwner,
+    getSavedStateRegistryOwner: () -> SavedStateRegistryOwner,
+    getDefaultArgs: () -> Bundle,
+    storeFactory: (SavedStateHandle) -> Store<Event, Effect, State>,
+): Lazy<Store<Event, Effect, State>> =
+    lazy(LazyThreadSafetyMode.NONE) {
+        val factory =
+            RetainedElmStoreFactory(
+                stateRegistryOwner = getSavedStateRegistryOwner.invoke(),
+                defaultArgs = getDefaultArgs.invoke(),
+                storeFactory = storeFactory,
+            )
+        val provider = ViewModelProvider(getViewModelStoreOwner.invoke(), factory)
+
+        @Suppress("UNCHECKED_CAST")
+        provider.get(key, RetainedElmStore::class.java).store as Store<Event, Effect, State>
+    }
 
 class RetainedElmStore<Event : Any, Effect : Any, State : Any>(
     savedStateHandle: SavedStateHandle,
