@@ -5,10 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface Store<Event, Effect, State> {
 
-    /**
-     * Store's scope. Active for the lifetime of store.
-     * Will be executed in ElmslieConfig.ioDispatcher.
-     */
+    /** Store's scope. Active for the lifetime of store. */
     val scope: CoroutineScope
 
     /** The current value of the [State]. The property is **thread-safe**. */

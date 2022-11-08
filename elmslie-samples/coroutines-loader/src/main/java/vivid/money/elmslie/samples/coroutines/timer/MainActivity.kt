@@ -6,25 +6,45 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.SavedStateHandle
 import com.google.android.material.snackbar.Snackbar
-import vivid.money.elmslie.android.base.ElmActivity
+import vivid.money.elmslie.android.elmStore
+import vivid.money.elmslie.android.renderer.ElmRenderer
+import vivid.money.elmslie.android.renderer.ElmRendererDelegate
+import vivid.money.elmslie.android.storestarter.ViewBasedStoreStarter
 import vivid.money.elmslie.samples.coroutines.timer.elm.Effect
 import vivid.money.elmslie.samples.coroutines.timer.elm.Event
 import vivid.money.elmslie.samples.coroutines.timer.elm.State
 import vivid.money.elmslie.samples.coroutines.timer.elm.storeFactory
 
-internal class MainActivity : ElmActivity<Event, Effect, State>(R.layout.activity_main) {
+internal class MainActivity : AppCompatActivity(R.layout.activity_main),
+    ElmRendererDelegate<Effect, State> {
 
-    override val initEvent: Event = Event.Init
+    override val store by elmStore(
+        storeFactory = ::createStore,
+    )
+
+    @Suppress("LeakingThis")
+    private val renderer =
+        ElmRenderer(
+            delegate = this,
+            screenLifecycle = lifecycle,
+        )
+
+    @Suppress("LeakingThis", "UnusedPrivateMember")
+    private val starter =
+        ViewBasedStoreStarter(
+            storeProvider = { store },
+            screenLifecycle = lifecycle,
+            initEventProvider = { Event.Init },
+        )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         findViewById<Button>(R.id.start).setOnClickListener { store.accept(Event.Start) }
         findViewById<Button>(R.id.stop).setOnClickListener { store.accept(Event.Stop) }
     }
-
-    override fun createStore(savedStateHandle: SavedStateHandle) = storeFactory()
 
     @SuppressLint("SetTextI18n")
     override fun render(state: State) {
@@ -40,4 +60,7 @@ internal class MainActivity : ElmActivity<Event, Effect, State>(R.layout.activit
             Snackbar.LENGTH_SHORT
         ).show()
     }
+
+    @Suppress("UnusedPrivateMember")
+    private fun createStore(savedStateHandle: SavedStateHandle) = storeFactory()
 }
