@@ -20,11 +20,11 @@ import vivid.money.elmslie.core.store.exception.StoreAlreadyStartedException
 class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     initialState: State,
     private val reducer: StateReducer<Event, State, Effect, Command>,
-    private val actor: DefaultActor<Command, out Event>
+    private val actor: DefaultActor<Command, out Event>,
+    override val startEvent: Event? = null,
 ) : Store<Event, Effect, State> {
 
     private val logger = ElmslieConfig.logger
-    private val storeScope = ElmScope("StoreScope")
 
     override val isStarted: Boolean
         get() = _isStarted.get()
@@ -36,10 +36,14 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
         get() = statesFlow.value
     private val statesFlow: MutableStateFlow<State> = MutableStateFlow(initialState)
 
+    override val scope = ElmScope("StoreScope")
+
     override fun accept(event: Event) = dispatchEvent(event)
 
     override fun start(): Store<Event, Effect, State> {
-        if (!_isStarted.compareAndSet(false, true)) {
+        if (_isStarted.compareAndSet(false, true)) {
+            startEvent?.let(::accept)
+        } else {
             logger.fatal("Store start error", StoreAlreadyStartedException())
         }
         return this
@@ -47,7 +51,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
 
     override fun stop() {
         _isStarted.set(false)
-        storeScope.cancel()
+        scope.cancel()
     }
 
     override fun states(): Flow<State> = statesFlow.asStateFlow()
@@ -55,7 +59,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     override fun effects(): Flow<Effect> = effectsFlow.asSharedFlow()
 
     private fun dispatchEvent(event: Event) {
-        storeScope.launch {
+        scope.launch {
             try {
                 logger.debug("New event: $event")
                 val (state, effects, commands) = reducer.reduce(event, currentState)
@@ -76,7 +80,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     }
 
     private fun executeCommand(command: Command) {
-        storeScope.launch {
+        scope.launch {
             logger.debug("Executing command: $command")
             actor
                 .execute(command)

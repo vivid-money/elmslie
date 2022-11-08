@@ -1,5 +1,4 @@
 include ':elmslie-android'
-include ':elmslie-compose'
 include ':elmslie-core'
 include ':elmslie-coroutines'
 include ':elmslie-rxjava-2'
@@ -11,8 +10,6 @@ include ':elmslie-test-rxjava-3'
 
 include ':sample-android-loader'
 project(":sample-android-loader").projectDir = file("elmslie-samples/android-loader")
-include ':sample-compose-paging'
-project(":sample-compose-paging").projectDir = file("elmslie-samples/compose-paging")
 include ':sample-coroutines-loader'
 project(":sample-coroutines-loader").projectDir = file("elmslie-samples/coroutines-loader")
 include ':sample-kotlin-calculator'
