@@ -60,9 +60,16 @@ jobs:
           failOnError: true
           configuration: .github/changelogconfig/configuration.json
 
+      - name: Get current git commit SHA
+        id: vars
+        run: |
+          calculatedSha=$(git rev-parse HEAD)
+          echo "::set-output name=commit_sha::$calculatedSha"
+
       - name: Create github release
         uses: ncipollo/release-action@v1
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
           tag: "${{ env.NEW_VERSION }}"
+          commit: "${{ steps.vars.outputs.commit_sha }}"
           body: ${{ steps.github_release.outputs.changelog }}
