@@ -91,5 +91,5 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     }
 }
 
-fun <Event : Any, State : Any, Effect : Any, Command : Any> ElmStore<Event, State, Effect, Command>
+fun <Event : Any, State : Any, Effect : Any> Store<Event, State, Effect>
     .toCachedStore() = EffectCachingElmStore(this)
