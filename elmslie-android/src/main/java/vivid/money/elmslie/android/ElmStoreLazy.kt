@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.savedstate.SavedStateRegistryOwner
 import vivid.money.elmslie.core.store.Store
+import vivid.money.elmslie.core.store.toCachedStore
 
 @MainThread
 fun <
@@ -82,7 +83,7 @@ class RetainedElmStore<Event : Any, Effect : Any, State : Any>(
     storeFactory: (SavedStateHandle) -> Store<Event, Effect, State>,
 ) : ViewModel() {
 
-    val store = storeFactory.invoke(savedStateHandle).also { it.start() }
+    val store = storeFactory.invoke(savedStateHandle).toCachedStore().also { it.start() }
 
     override fun onCleared() {
         store.stop()

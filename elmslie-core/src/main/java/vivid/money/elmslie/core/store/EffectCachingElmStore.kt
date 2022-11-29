@@ -18,8 +18,8 @@ import vivid.money.elmslie.core.ElmScope
  * ```
  */
 // TODO Should be moved to android artifact?
-class EffectCachingElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
-    private val elmStore: ElmStore<Event, State, Effect, Command>,
+class EffectCachingElmStore<Event : Any, State : Any, Effect : Any>(
+    private val elmStore: Store<Event, Effect, State>,
 ) : Store<Event, Effect, State> by elmStore {
 
     private val effectsCache = LinkedBlockingQueue<Effect>()
