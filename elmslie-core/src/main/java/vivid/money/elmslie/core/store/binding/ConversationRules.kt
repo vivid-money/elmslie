@@ -1,7 +1,7 @@
 package vivid.money.elmslie.core.store.binding
 
 import kotlinx.coroutines.cancel
-import vivid.money.elmslie.core.ElmScope
+import vivid.money.elmslie.core.ElmBackgroundScope
 import vivid.money.elmslie.core.store.Store
 
 /**
@@ -48,7 +48,7 @@ internal class ConversationRules<
         >.() -> Unit
 ) : Store<InitiatorEvent, InitiatorEffect, InitiatorState> by initiator {
 
-    private val conversationScope = ElmScope("ConversationScope")
+    private val conversationScope = ElmBackgroundScope("ConversationScope")
     private val providedContract =
         ConversionContract(initiator, responder, conversationScope).apply(expecting)
     private val expectedContract =

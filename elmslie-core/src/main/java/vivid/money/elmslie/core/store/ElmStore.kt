@@ -12,7 +12,8 @@ import kotlinx.coroutines.flow.cancellable
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import vivid.money.elmslie.core.ElmScope
+import vivid.money.elmslie.core.ElmBackgroundScope
+import vivid.money.elmslie.core.ElmEventScope
 import vivid.money.elmslie.core.config.ElmslieConfig
 import vivid.money.elmslie.core.store.exception.StoreAlreadyStartedException
 
@@ -25,6 +26,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
 ) : Store<Event, Effect, State> {
 
     private val logger = ElmslieConfig.logger
+    private val eventScope = ElmEventScope("EventScope")
 
     override val isStarted: Boolean
         get() = _isStarted.get()
@@ -36,7 +38,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
         get() = statesFlow.value
     private val statesFlow: MutableStateFlow<State> = MutableStateFlow(initialState)
 
-    override val scope = ElmScope("StoreScope")
+    override val scope = ElmBackgroundScope("CommandScope")
 
     override fun accept(event: Event) = dispatchEvent(event)
 
@@ -59,7 +61,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     override fun effects(): Flow<Effect> = effectsFlow.asSharedFlow()
 
     private fun dispatchEvent(event: Event) {
-        scope.launch {
+        eventScope.launch {
             try {
                 logger.debug("New event: $event")
                 val (state, effects, commands) = reducer.reduce(event, currentState)

@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.onSubscription
 import kotlinx.coroutines.launch
-import vivid.money.elmslie.core.ElmScope
+import vivid.money.elmslie.core.ElmBackgroundScope
 
 /**
  * Caches effects until there is at least one collector.
@@ -24,7 +24,7 @@ class EffectCachingElmStore<Event : Any, State : Any, Effect : Any>(
 
     private val effectsCache = LinkedBlockingQueue<Effect>()
     private val effectsFlow = MutableSharedFlow<Effect>()
-    private val storeScope = ElmScope("CachedStoreScope")
+    private val storeScope = ElmBackgroundScope("CachedStoreScope")
 
     init {
         storeScope.launch {
