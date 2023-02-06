@@ -12,6 +12,8 @@ import kotlinx.coroutines.flow.cancellable
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import vivid.money.elmslie.core.ElmScope
 import vivid.money.elmslie.core.config.ElmslieConfig
 import vivid.money.elmslie.core.store.exception.StoreAlreadyStartedException
@@ -25,6 +27,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
 ) : Store<Event, Effect, State> {
 
     private val logger = ElmslieConfig.logger
+    private val eventMutex = Mutex()
 
     override val isStarted: Boolean
         get() = _isStarted.get()
@@ -62,8 +65,12 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
         scope.launch {
             try {
                 logger.debug("New event: $event")
-                val (state, effects, commands) = reducer.reduce(event, currentState)
-                statesFlow.value = state
+                val (_, effects, commands) =
+                    eventMutex.withLock {
+                        val result = reducer.reduce(event, currentState)
+                        statesFlow.value = result.state
+                        result
+                    }
                 effects.forEach { effect -> if (isActive) dispatchEffect(effect) }
                 commands.forEach { if (isActive) executeCommand(it) }
             } catch (error: CancellationException) {
@@ -91,5 +98,5 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     }
 }
 
-fun <Event : Any, State : Any, Effect : Any> Store<Event, State, Effect>
-    .toCachedStore() = EffectCachingElmStore(this)
+fun <Event : Any, State : Any, Effect : Any> Store<Event, State, Effect>.toCachedStore() =
+    EffectCachingElmStore(this)
