@@ -17,7 +17,7 @@ ext.deps = [
                 lifecycle                   : "androidx.lifecycle:lifecycle-common:2.5.1",
                 lifecycleViewModel          : "androidx.lifecycle:lifecycle-viewmodel:2.5.1",
                 lifecycleViewModelSavedState: "androidx.lifecycle:lifecycle-viewmodel-savedstate:2.5.1",
-                material                    : "com.google.android.material:material:1.7.0",
+                material                    : "com.google.android.material:material:1.8.0",
                 multidex                    : "androidx.multidex:multidex:2.0.1",
         ],
         compose   : [
