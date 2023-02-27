@@ -49,6 +49,6 @@ ext.deps = [
                 kotestProperty   : "io.kotest:kotest-property:5.3.2",
         ],
         plugin    : [
-                freemarker: "org.freemarker:freemarker:2.3.31",
+                freemarker: "org.freemarker:freemarker:2.3.32",
         ]
 ]
