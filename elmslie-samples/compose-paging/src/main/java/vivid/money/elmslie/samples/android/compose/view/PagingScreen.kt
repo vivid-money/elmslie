@@ -16,7 +16,6 @@ import vivid.money.elmslie.compose.EffectWithKey
 import vivid.money.elmslie.samples.android.compose.elm.PagingEffect
 import vivid.money.elmslie.samples.android.compose.elm.PagingState
 
-private const val PREFETCH_BORDER = 20
 private const val SHIMMER_COUNT = 10
 
 @Suppress("LongParameterList")
@@ -30,11 +29,11 @@ fun PagingScreen(
     onCloseToEnd: () -> Unit,
 ) {
     val scaffoldState = rememberScaffoldState()
-    Scaffold(scaffoldState = scaffoldState) {
+    Scaffold(scaffoldState = scaffoldState) { padding ->
         when {
-            state.error != null && state.items == null -> ErrorState(onReloadScreen)
-            state.error == null && state.items == null -> Shimmers()
-            state.items != null -> List(state, onRefresh, onCloseToEnd, onReloadPage)
+            state.error != null && state.items == null -> ErrorState(onReloadScreen, padding)
+            state.error == null && state.items == null -> Shimmers(padding)
+            state.items != null -> List(state, onRefresh, onCloseToEnd, onReloadPage, padding)
         }
         effect?.takeIfInstanceOf<PagingEffect.RefreshError>()?.key?.let {
             Error(scaffoldState = scaffoldState, key = it)
@@ -47,15 +46,16 @@ fun List(
     state: PagingState,
     onRefresh: () -> Unit,
     onCloseToEnd: () -> Unit,
-    onReloadPage: () -> Unit
+    onReloadPage: () -> Unit,
+    padding: PaddingValues
 ) {
     require(state.items != null)
     SwipeRefresh(
         state = rememberSwipeRefreshState(isRefreshing = state.isRefreshing),
+        indicatorPadding = padding,
         onRefresh = onRefresh
     ) {
         val listState = rememberLazyListState()
-        if (listState.firstVisibleItemIndex > state.items.size - PREFETCH_BORDER) onCloseToEnd()
         LazyColumn(state = listState) {
             items(state.items) { Item(text = "Value: ${it.value}") }
             if (state.error != null) {
@@ -63,23 +63,36 @@ fun List(
             } else if (state.hasMorePages) {
                 item { LoadingIndicator() }
             }
+            item {
+                LaunchedEffect(true) {
+                    onCloseToEnd()
+                }
+            }
         }
     }
 }
 
 @Composable
-fun Shimmers() {
-    LazyColumn {
+fun Shimmers(
+    padding: PaddingValues
+) {
+    LazyColumn(
+        modifier = Modifier.padding(padding)
+    ) {
         items(SHIMMER_COUNT) { Item(text = "SHIMMER") }
     }
 }
 
 @Composable
-fun ErrorState(onReloadScreen: () -> Unit) {
+fun ErrorState(
+    onReloadScreen: () -> Unit,
+    padding: PaddingValues
+) {
     Column(
         modifier = Modifier
             .fillMaxHeight()
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(padding),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
