@@ -14,7 +14,7 @@ ext.deps = [
         android   : [
                 appcompat                   : "androidx.appcompat:appcompat:1.5.1",
                 appStartup                  : "androidx.startup:startup-runtime:1.1.1",
-                lifecycle                   : "androidx.lifecycle:lifecycle-common:2.5.1",
+                lifecycle                   : "androidx.lifecycle:lifecycle-common:2.6.0",
                 lifecycleViewModel          : "androidx.lifecycle:lifecycle-viewmodel:2.6.0",
                 lifecycleViewModelSavedState: "androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.0",
                 material                    : "com.google.android.material:material:1.8.0",
