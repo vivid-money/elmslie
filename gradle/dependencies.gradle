@@ -1,11 +1,12 @@
 ext.versions = [
-        compose: "1.1.1",
+        compose: "1.4.0",
 ]
 
 ext.deps = [
         gradle    : [
                 androidPlugin : "com.android.tools.build:gradle:7.3.1",
                 kotlinPlugin  : "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10",
+                kotlinPlugin  : "org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.0",
                 intellijPlugin: "org.jetbrains.intellij.plugins:gradle-intellij-plugin:1.13.3",
                 detektPlugin  : "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.22.0",
                 releasesHub   : "com.dipien:releases-hub-gradle-plugin:4.0.0",
@@ -23,9 +24,9 @@ ext.deps = [
         compose   : [
                 activity      : "androidx.activity:activity-compose:1.6.1",
                 foundation    : "androidx.compose.foundation:foundation:1.1.1",
-                iconsCore     : "androidx.compose.material:material-icons-core:1.1.1",
-                iconsExtended : "androidx.compose.material:material-icons-extended:1.1.1",
-                material      : "androidx.compose.material:material:1.1.1",
+                iconsCore     : "androidx.compose.material:material-icons-core:1.4.0",
+                iconsExtended : "androidx.compose.material:material-icons-extended:1.4.0",
+                material      : "androidx.compose.material:material:1.4.0",
                 runtimeRxJava2: "androidx.compose.runtime:runtime-rxjava2:1.1.1",
                 runtimeRxJava3: "androidx.compose.runtime:runtime-rxjava3:1.1.1",
                 swiperefresh  : "com.google.accompanist:accompanist-swiperefresh:0.28.0",
