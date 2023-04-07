@@ -10,7 +10,7 @@ ext.deps = [
                 intellijPlugin: "org.jetbrains.intellij.plugins:gradle-intellij-plugin:1.13.3",
                 detektPlugin  : "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.22.0",
                 releasesHub   : "com.dipien:releases-hub-gradle-plugin:4.0.0",
-                dokka         : "org.jetbrains.dokka:dokka-gradle-plugin:1.7.20",
+                dokka         : "org.jetbrains.dokka:dokka-gradle-plugin:1.8.10",
         ],
         android   : [
                 appcompat                   : "androidx.appcompat:appcompat:1.5.1",
