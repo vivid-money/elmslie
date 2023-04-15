@@ -16,7 +16,10 @@ internal object TimerActor : Actor<Command, Event> {
             is Command.Start ->
                 switcher
                     .switch { secondsFlow() }
-                    .mapEvents({ Event.OnTimeTick }, Event::OnTimeError)
+                    .mapEvents(
+                        eventMapper = { Event.OnTimeTick },
+                        errorMapper = { Event.OnTimeError(it) },
+                    )
             is Command.Stop -> switcher.cancel().mapEvents()
         }
 
@@ -24,7 +27,7 @@ internal object TimerActor : Actor<Command, Event> {
     private fun secondsFlow() = flow {
         repeat(10) {
             delay(1000)
-            emit(0)
+            emit(it)
         }
         error("Test error")
     }

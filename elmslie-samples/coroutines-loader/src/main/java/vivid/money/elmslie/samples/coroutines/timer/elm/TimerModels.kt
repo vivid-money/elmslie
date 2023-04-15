@@ -1,6 +1,7 @@
 package vivid.money.elmslie.samples.coroutines.timer.elm
 
 internal data class State(
+    val id: String,
     val secondsPassed: Long = 0,
     val isStarted: Boolean = false
 )

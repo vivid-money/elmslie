@@ -18,6 +18,7 @@ ext.deps = [
                 lifecycleKtx                : "androidx.lifecycle:lifecycle-runtime-ktx:2.5.0",
                 lifecycleViewmodel          : "androidx.lifecycle:lifecycle-viewmodel:2.5.0",
                 lifecycleViewModelSavedState: "androidx.lifecycle:lifecycle-viewmodel-savedstate:2.5.0",
+                fragmentKtx                 : "androidx.fragment:fragment-ktx:1.5.6",
                 material                    : "com.google.android.material:material:1.6.1",
                 multidex                    : "androidx.multidex:multidex:2.0.1",
                 paging                      : "androidx.paging:paging-runtime:3.2.0-alpha03",

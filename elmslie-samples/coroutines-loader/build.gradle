@@ -14,6 +14,7 @@ dependencies {
 
     implementation(deps.android.appcompat)
     implementation(deps.android.material)
+    implementation(deps.android.fragmentKtx)
     implementation(deps.coroutines.core)
 
     testImplementation(project(":elmslie-test"))
