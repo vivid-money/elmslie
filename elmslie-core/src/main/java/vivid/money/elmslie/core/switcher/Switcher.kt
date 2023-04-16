@@ -2,8 +2,7 @@ package vivid.money.elmslie.core.switcher
 
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import vivid.money.elmslie.core.store.DefaultActor
@@ -46,7 +45,10 @@ class Switcher {
 
             delay(delayMillis)
 
-            action.invoke().collect { send(it) }
+            action.invoke()
+                .onEach { send(it) }
+                .catch { close(it) }
+                .collect()
 
             channel.close()
         }

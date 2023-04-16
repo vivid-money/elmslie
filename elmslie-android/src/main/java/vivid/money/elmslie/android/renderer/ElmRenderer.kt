@@ -25,6 +25,10 @@ class ElmRenderer<Effect : Any, State : Any>(
     init {
         with(screenLifecycle) {
             coroutineScope.launch {
+                /**
+                 * [whenCreated] lambda is needed because we can't access to store before [Lifecycle.STARTED]
+                 * otherwise it crashes.
+                 */
                 whenCreated {
                     store
                         .effects()
