@@ -12,7 +12,7 @@ class Actor : RxActor<Command, Internal> {
 
     override fun execute(command: Command): Observable<Internal> = when (command) {
         is Command.LoadNewValue -> ValueRepository.getValue()
-            .mapEvents(Internal::ValueLoaded, Internal.ErrorLoadingValue)
+            .mapEvents(Internal::ValueLoaded, { Internal.ErrorLoadingValue })
     }
 }
 
