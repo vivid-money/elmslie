@@ -1,18 +1,18 @@
-package vivid.money.elmslie.rx2
+package vivid.money.elmslie.rx3
 
-import io.reactivex.Observable
-import kotlinx.coroutines.rx2.asFlow
-import kotlinx.coroutines.rx2.asObservable
+import io.reactivex.rxjava3.core.Observable
+import kotlinx.coroutines.rx3.asFlow
+import kotlinx.coroutines.rx3.asObservable
 import vivid.money.elmslie.core.store.DefaultActor
 import vivid.money.elmslie.core.store.ElmStore
 import vivid.money.elmslie.core.store.StateReducer
 import vivid.money.elmslie.core.store.Store
 
-/** A [Store] implementation that uses RxJava2 for multithreading */
-class ElmStoreCompat<Event : Any, State : Any, Effect : Any, Command : Any>(
+/** A [Store] implementation that uses RxJava3 for multithreading */
+class RxElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     initialState: State,
     reducer: StateReducer<Event, State, Effect, Command>,
-    actor: Actor<Command, out Event>,
+    actor: RxActor<Command, out Event>,
     startEvent: Event? = null,
 ) :
     Store<Event, Effect, State> by ElmStore(
@@ -22,9 +22,10 @@ class ElmStoreCompat<Event : Any, State : Any, Effect : Any, Command : Any>(
         startEvent = startEvent,
     )
 
-private fun <Command : Any, Event : Any> Actor<Command, Event>.toActor() =
+private fun <Command : Any, Event : Any> RxActor<Command, Event>.toActor() =
     DefaultActor<Command, Event> { command ->
-        execute(command).asFlow()
+        execute(command)
+            .asFlow()
     }
 
 /** An extension for accessing [Store] states as an [Observable] */

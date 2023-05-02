@@ -11,10 +11,6 @@ interface Store<Event, Effect, State> {
     /** The current value of the [State]. The property is **thread-safe**. */
     val currentState: State
 
-    /** Returns `true` for the span duration between [start] and [stop] calls. */
-    @Deprecated("Will be deleted in future releases.")
-    val isStarted: Boolean
-
     /** Event that will be emitted upon store start. */
     val startEvent: Event?
 

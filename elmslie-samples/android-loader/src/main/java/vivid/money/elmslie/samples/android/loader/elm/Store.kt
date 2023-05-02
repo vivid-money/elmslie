@@ -1,14 +1,14 @@
 package vivid.money.elmslie.samples.android.loader.elm
 
-import io.reactivex.Observable
-import vivid.money.elmslie.rx2.Actor
-import vivid.money.elmslie.rx2.ElmStoreCompat
+import io.reactivex.rxjava3.core.Observable
 import vivid.money.elmslie.core.store.dsl_reducer.ScreenDslReducer
+import vivid.money.elmslie.rx3.RxActor
+import vivid.money.elmslie.rx3.RxElmStore
 import vivid.money.elmslie.samples.android.loader.elm.Event.Internal
 import vivid.money.elmslie.samples.android.loader.elm.Event.Ui
 import vivid.money.elmslie.samples.android.loader.repository.ValueRepository
 
-class Actor : Actor<Command, Internal> {
+class Actor : RxActor<Command, Internal> {
 
     override fun execute(command: Command): Observable<Internal> = when (command) {
         is Command.LoadNewValue -> ValueRepository.getValue()
@@ -41,7 +41,7 @@ class Reducer : ScreenDslReducer<Event, Ui, Internal, State, Effect, Command>(
     }
 }
 
-fun storeFactory() = ElmStoreCompat(
+fun storeFactory() = RxElmStore(
     initialState = State(),
     reducer = Reducer(),
     actor = Actor(),

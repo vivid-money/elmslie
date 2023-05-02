@@ -29,9 +29,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     private val logger = ElmslieConfig.logger
     private val eventMutex = Mutex()
 
-    override val isStarted: Boolean
-        get() = _isStarted.get()
-    private val _isStarted = AtomicBoolean(false)
+    private val isStarted = AtomicBoolean(false)
 
     private val effectsFlow = MutableSharedFlow<Effect>()
 
@@ -44,7 +42,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     override fun accept(event: Event) = dispatchEvent(event)
 
     override fun start(): Store<Event, Effect, State> {
-        if (_isStarted.compareAndSet(false, true)) {
+        if (isStarted.compareAndSet(false, true)) {
             startEvent?.let(::accept)
         } else {
             logger.fatal("Store start error", StoreAlreadyStartedException())
@@ -53,7 +51,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     }
 
     override fun stop() {
-        _isStarted.set(false)
+        isStarted.set(false)
         scope.cancel()
     }
 

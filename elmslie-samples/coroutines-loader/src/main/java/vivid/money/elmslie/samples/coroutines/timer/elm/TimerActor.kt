@@ -2,12 +2,10 @@ package vivid.money.elmslie.samples.coroutines.timer.elm
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
+import vivid.money.elmslie.core.store.DefaultActor
 import vivid.money.elmslie.core.switcher.Switcher
-import vivid.money.elmslie.coroutines.Actor
-import vivid.money.elmslie.coroutines.cancel
-import vivid.money.elmslie.coroutines.switch
 
-internal object TimerActor : Actor<Command, Event> {
+internal object TimerActor : DefaultActor<Command, Event> {
 
     private val switcher = Switcher()
 
@@ -20,7 +18,7 @@ internal object TimerActor : Actor<Command, Event> {
                         eventMapper = { Event.OnTimeTick },
                         errorMapper = { Event.OnTimeError(it) },
                     )
-            is Command.Stop -> switcher.cancel().mapEvents()
+            is Command.Stop -> switcher.cancel()
         }
 
     @Suppress("MagicNumber")

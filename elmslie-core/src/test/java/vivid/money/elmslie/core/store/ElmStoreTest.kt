@@ -29,8 +29,6 @@ class ElmStoreTest {
         store.accept(Event())
         store.stop()
         advanceUntilIdle()
-
-        assert(!store.isStarted)
     }
 
     @Test

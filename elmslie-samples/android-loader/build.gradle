@@ -11,12 +11,12 @@ android {
 dependencies {
     implementation(project(":elmslie-android"))
     implementation(project(":elmslie-core"))
-    implementation(project(":elmslie-rxjava-2"))
+    implementation(project(":elmslie-rxjava-3"))
 
     implementation(deps.android.appcompat)
     implementation(deps.android.material)
     implementation(deps.android.multidex)
-    implementation(deps.rx.rxJava2)
+    implementation(deps.rx.rxJava3)
 }
 
 apply from: "../../gradle/junit-5.gradle"
