@@ -5,10 +5,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import vivid.money.elmslie.core.store.DefaultActor
+import vivid.money.elmslie.core.store.Actor
 
 /**
- * Allows to execute requests for [DefaultActor] implementations in a switching manner. Each request
+ * Allows to execute requests for [Actor] implementations in a switching manner. Each request
  * will cancel the previous one.
  *
  * Example:

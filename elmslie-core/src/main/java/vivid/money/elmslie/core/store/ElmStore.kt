@@ -22,7 +22,7 @@ import vivid.money.elmslie.core.store.exception.StoreAlreadyStartedException
 class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     initialState: State,
     private val reducer: StateReducer<Event, State, Effect, Command>,
-    private val actor: DefaultActor<Command, out Event>,
+    private val actor: Actor<Command, out Event>,
     override val startEvent: Event? = null,
 ) : Store<Event, Effect, State> {
 

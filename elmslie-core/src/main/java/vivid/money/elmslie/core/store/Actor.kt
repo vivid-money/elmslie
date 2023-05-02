@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import vivid.money.elmslie.core.config.ElmslieConfig
 
-fun interface DefaultActor<Command : Any, Event : Any> {
+fun interface Actor<Command : Any, Event : Any> {
 
     /**
      * Executes a command. This method is performed on the [Dispatchers.IO]

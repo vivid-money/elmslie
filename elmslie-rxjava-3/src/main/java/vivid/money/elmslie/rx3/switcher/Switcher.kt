@@ -6,7 +6,6 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import kotlinx.coroutines.rx3.asFlow
 import kotlinx.coroutines.rx3.asObservable
-import kotlinx.coroutines.rx3.rxObservable
 import vivid.money.elmslie.core.switcher.Switcher
 
 /**

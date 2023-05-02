@@ -2,10 +2,10 @@ package vivid.money.elmslie.samples.coroutines.timer.elm
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
-import vivid.money.elmslie.core.store.DefaultActor
+import vivid.money.elmslie.core.store.Actor
 import vivid.money.elmslie.core.switcher.Switcher
 
-internal object TimerActor : DefaultActor<Command, Event> {
+internal object TimerActor : Actor<Command, Event> {
 
     private val switcher = Switcher()
 
