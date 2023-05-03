@@ -9,7 +9,7 @@ import vivid.money.elmslie.core.config.ElmslieConfig
 /**
  * Actor that supports event mappings for RxJava 3
  */
-fun interface RxActor<Command : Any, Event : Any> {
+abstract class RxActor<Command : Any, Event : Any> {
 
     /**
      * Executes a command.
@@ -18,7 +18,7 @@ fun interface RxActor<Command : Any, Event : Any> {
      * - Implementations don't have to call subscribeOn
      * - By default subscription will be on the `io` scheduler
      */
-    fun execute(command: Command): Observable<Event>
+    abstract fun execute(command: Command): Observable<Event>
 
     fun Completable.mapEvents(
         completionEvent: Event? = null,
@@ -46,12 +46,12 @@ fun interface RxActor<Command : Any, Event : Any> {
         .doOnNext { it.logSuccessEvent() }
         .onErrorResumeNext { Observable.fromIterable(listOfNotNull(it.logErrorEvent(errorMapper))) }
 
-    fun Throwable.logErrorEvent(errorMapper: (Throwable) -> Event?): Event? {
+    private fun Throwable.logErrorEvent(errorMapper: (Throwable) -> Event?): Event? {
         return errorMapper(this).also {
             ElmslieConfig.logger.nonfatal(error = this)
             ElmslieConfig.logger.debug("Failed app state: $it")
         }
     }
 
-    fun Event.logSuccessEvent() = ElmslieConfig.logger.debug("Completed app state: $this")
+    private fun Event.logSuccessEvent() = ElmslieConfig.logger.debug("Completed app state: $this")
 }

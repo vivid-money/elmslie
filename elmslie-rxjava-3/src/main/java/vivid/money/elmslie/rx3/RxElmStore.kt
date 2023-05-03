@@ -1,6 +1,7 @@
 package vivid.money.elmslie.rx3
 
 import io.reactivex.rxjava3.core.Observable
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.rx3.asFlow
 import kotlinx.coroutines.rx3.asObservable
 import vivid.money.elmslie.core.store.Actor
@@ -23,9 +24,10 @@ class RxElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     )
 
 private fun <Command : Any, Event : Any> RxActor<Command, Event>.toActor() =
-    Actor<Command, Event> { command ->
-        execute(command)
-            .asFlow()
+    object : Actor<Command, Event>() {
+        override fun execute(command: Command): Flow<Event> {
+            return this@toActor.execute(command).asFlow()
+        }
     }
 
 /** An extension for accessing [Store] states as an [Observable] */

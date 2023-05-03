@@ -8,7 +8,7 @@ import vivid.money.elmslie.samples.android.loader.elm.Event.Internal
 import vivid.money.elmslie.samples.android.loader.elm.Event.Ui
 import vivid.money.elmslie.samples.android.loader.repository.ValueRepository
 
-class Actor : RxActor<Command, Internal> {
+class Actor : RxActor<Command, Internal>() {
 
     override fun execute(command: Command): Observable<Internal> = when (command) {
         is Command.LoadNewValue -> ValueRepository.getValue()

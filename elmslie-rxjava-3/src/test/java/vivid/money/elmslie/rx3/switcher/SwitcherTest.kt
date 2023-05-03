@@ -22,7 +22,7 @@ import kotlin.coroutines.CoroutineContext
  * they're very similar.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
-internal class SwitcherCompatTest {
+internal class SwitcherTest {
 
     private val scheduler = TestScheduler()
 

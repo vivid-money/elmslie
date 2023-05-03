@@ -33,13 +33,17 @@ class ElmStoreTest {
 
     @Test
     fun `Should stop getting state updates when the store is stopped`() = runTest {
+        val actor = object : Actor<Command, Event>() {
+            override fun execute(command: Command): Flow<Event> =
+                flow { emit(Event()) }.onEach { delay(1000) }
+        }
         val store =
             store(
                     state = State(),
                     reducer = { _, state ->
                         Result(state = state.copy(value = state.value + 1), command = Command())
                     },
-                    actor = { flow { emit(Event()) }.onEach { delay(1000) } }
+                    actor = actor,
                 )
                 .start()
 
@@ -260,6 +264,9 @@ class ElmStoreTest {
 
     @Test
     fun `Should collect event caused by actor`() = runTest {
+        val actor = object : Actor<Command, Event>() {
+            override fun execute(command: Command): Flow<Event> = flowOf(Event(command.value))
+        }
         val store =
             store(
                     state = State(),
@@ -269,7 +276,7 @@ class ElmStoreTest {
                             command = Command(event.value - 1).takeIf { event.value > 0 }
                         )
                     },
-                    actor = { command -> flowOf(Event(command.value)) },
+                    actor = actor,
                 )
                 .start()
 
