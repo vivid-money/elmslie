@@ -6,6 +6,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.cancellable
@@ -33,8 +34,6 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
 
     private val effectsFlow = MutableSharedFlow<Effect>()
 
-    override val currentState: State
-        get() = statesFlow.value
     private val statesFlow: MutableStateFlow<State> = MutableStateFlow(initialState)
 
     override val scope = ElmScope("StoreScope")
@@ -55,7 +54,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
         scope.cancel()
     }
 
-    override fun states(): Flow<State> = statesFlow.asStateFlow()
+    override fun states(): StateFlow<State> = statesFlow.asStateFlow()
 
     override fun effects(): Flow<Effect> = effectsFlow.asSharedFlow()
 
@@ -65,7 +64,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
                 logger.debug("New event: $event")
                 val (_, effects, commands) =
                     eventMutex.withLock {
-                        val result = reducer.reduce(event, currentState)
+                        val result = reducer.reduce(event, statesFlow.value)
                         statesFlow.value = result.state
                         result
                     }

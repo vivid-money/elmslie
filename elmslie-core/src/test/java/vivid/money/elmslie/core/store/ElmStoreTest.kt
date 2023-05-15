@@ -78,12 +78,12 @@ class ElmStoreTest {
 
         assertEquals(
             State(0),
-            store.currentState,
+            store.states().value,
         )
         store.accept(Event(value = 10))
         advanceUntilIdle()
 
-        assertEquals(State(10), store.currentState)
+        assertEquals(State(10), store.states().value)
     }
 
     @Test
