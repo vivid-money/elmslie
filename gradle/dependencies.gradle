@@ -26,7 +26,7 @@ ext.deps = [
                 foundation    : "androidx.compose.foundation:foundation:1.1.1",
                 iconsCore     : "androidx.compose.material:material-icons-core:1.4.3",
                 iconsExtended : "androidx.compose.material:material-icons-extended:1.4.0",
-                material      : "androidx.compose.material:material:1.4.0",
+                material      : "androidx.compose.material:material:1.4.3",
                 runtimeRxJava2: "androidx.compose.runtime:runtime-rxjava2:1.1.1",
                 runtimeRxJava3: "androidx.compose.runtime:runtime-rxjava3:1.1.1",
                 swiperefresh  : "com.google.accompanist:accompanist-swiperefresh:0.28.0",
