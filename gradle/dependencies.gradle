@@ -24,7 +24,7 @@ ext.deps = [
         compose   : [
                 activity      : "androidx.activity:activity-compose:1.7.0",
                 foundation    : "androidx.compose.foundation:foundation:1.1.1",
-                iconsCore     : "androidx.compose.material:material-icons-core:1.4.0",
+                iconsCore     : "androidx.compose.material:material-icons-core:1.4.3",
                 iconsExtended : "androidx.compose.material:material-icons-extended:1.4.0",
                 material      : "androidx.compose.material:material:1.4.0",
                 runtimeRxJava2: "androidx.compose.runtime:runtime-rxjava2:1.1.1",
