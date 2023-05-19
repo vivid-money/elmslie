@@ -6,6 +6,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.cancellable
@@ -22,21 +23,17 @@ import vivid.money.elmslie.core.store.exception.StoreAlreadyStartedException
 class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     initialState: State,
     private val reducer: StateReducer<Event, State, Effect, Command>,
-    private val actor: DefaultActor<Command, out Event>,
+    private val actor: Actor<Command, out Event>,
     override val startEvent: Event? = null,
 ) : Store<Event, Effect, State> {
 
     private val logger = ElmslieConfig.logger
     private val eventMutex = Mutex()
 
-    override val isStarted: Boolean
-        get() = _isStarted.get()
-    private val _isStarted = AtomicBoolean(false)
+    private val isStarted = AtomicBoolean(false)
 
     private val effectsFlow = MutableSharedFlow<Effect>()
 
-    override val currentState: State
-        get() = statesFlow.value
     private val statesFlow: MutableStateFlow<State> = MutableStateFlow(initialState)
 
     override val scope = ElmScope("StoreScope")
@@ -44,7 +41,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     override fun accept(event: Event) = dispatchEvent(event)
 
     override fun start(): Store<Event, Effect, State> {
-        if (_isStarted.compareAndSet(false, true)) {
+        if (isStarted.compareAndSet(false, true)) {
             startEvent?.let(::accept)
         } else {
             logger.fatal("Store start error", StoreAlreadyStartedException())
@@ -53,11 +50,11 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     }
 
     override fun stop() {
-        _isStarted.set(false)
+        isStarted.set(false)
         scope.cancel()
     }
 
-    override fun states(): Flow<State> = statesFlow.asStateFlow()
+    override fun states(): StateFlow<State> = statesFlow.asStateFlow()
 
     override fun effects(): Flow<Effect> = effectsFlow.asSharedFlow()
 
@@ -67,7 +64,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
                 logger.debug("New event: $event")
                 val (_, effects, commands) =
                     eventMutex.withLock {
-                        val result = reducer.reduce(event, currentState)
+                        val result = reducer.reduce(event, statesFlow.value)
                         statesFlow.value = result.state
                         result
                     }

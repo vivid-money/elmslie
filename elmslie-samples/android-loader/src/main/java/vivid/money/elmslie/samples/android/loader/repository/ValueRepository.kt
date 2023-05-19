@@ -1,6 +1,6 @@
 package vivid.money.elmslie.samples.android.loader.repository
 
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import java.util.*
 import java.util.concurrent.TimeUnit
 

@@ -169,6 +169,6 @@ class EffectCachingElmStoreTest {
     private fun store(
         state: State,
         reducer: StateReducer<Event, State, Effect, Command> = NoOpReducer(),
-        actor: DefaultActor<Command, Event> = NoOpActor()
+        actor: Actor<Command, Event> = NoOpActor()
     ) = ElmStore(state, reducer, actor)
 }

@@ -5,10 +5,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import vivid.money.elmslie.core.store.DefaultActor
+import vivid.money.elmslie.core.store.Actor
 
 /**
- * Allows to execute requests for [DefaultActor] implementations in a switching manner. Each request
+ * Allows to execute requests for [Actor] implementations in a switching manner. Each request
  * will cancel the previous one.
  *
  * Example:
@@ -26,6 +26,7 @@ class Switcher {
 
     private var currentChannel: SendChannel<*>? = null
     private val lock = Mutex()
+
     /**
      * Collect given flow as a job and cancels all previous ones.
      *
@@ -33,7 +34,7 @@ class Switcher {
      * existing requests.
      * @param action actual event source
      */
-    fun <Event : Any> switchInternal(
+    fun <Event : Any> switch(
         delayMillis: Long = 0,
         action: () -> Flow<Event>,
     ): Flow<Event> {
@@ -54,9 +55,9 @@ class Switcher {
         }
     }
 
-    suspend fun cancelInternal(
+    fun <Event : Any> cancel(
         delayMillis: Long = 0,
-    ) {
+    ): Flow<Event> = flow {
         delay(delayMillis)
         lock.withLock {
             currentChannel?.close()

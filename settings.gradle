@@ -1,7 +1,5 @@
 include ':elmslie-android'
 include ':elmslie-core'
-include ':elmslie-coroutines'
-include ':elmslie-rxjava-2'
 include ':elmslie-rxjava-3'
 include ':elmslie-plugin'
 include ':elmslie-store-persisting'

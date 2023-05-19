@@ -2,18 +2,12 @@ package vivid.money.elmslie.core.store
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 interface Store<Event, Effect, State> {
 
     /** Store's scope. Active for the lifetime of store. */
     val scope: CoroutineScope
-
-    /** The current value of the [State]. The property is **thread-safe**. */
-    val currentState: State
-
-    /** Returns `true` for the span duration between [start] and [stop] calls. */
-    @Deprecated("Will be deleted in future releases.")
-    val isStarted: Boolean
 
     /** Event that will be emitted upon store start. */
     val startEvent: Event?
@@ -40,7 +34,7 @@ interface Store<Event, Effect, State> {
      *
      * By default, [State] is collected in [Dispatchers.IO].
      */
-    fun states(): Flow<State>
+    fun states(): StateFlow<State>
 
     /**
      * Returns the flow of [Effect]. It's a _hot_ flow and values produced by it **don't cache**.

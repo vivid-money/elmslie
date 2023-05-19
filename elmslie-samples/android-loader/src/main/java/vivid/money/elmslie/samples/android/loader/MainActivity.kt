@@ -9,7 +9,6 @@ import com.google.android.material.snackbar.Snackbar
 import vivid.money.elmslie.android.elmStore
 import vivid.money.elmslie.android.renderer.ElmRenderer
 import vivid.money.elmslie.android.renderer.ElmRendererDelegate
-import vivid.money.elmslie.android.storestarter.ViewBasedStoreStarter
 import vivid.money.elmslie.core.store.Store
 import vivid.money.elmslie.samples.android.loader.elm.Effect
 import vivid.money.elmslie.samples.android.loader.elm.Event
@@ -32,14 +31,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), ElmRendererDeleg
         ElmRenderer(
             delegate = this,
             screenLifecycle = lifecycle,
-        )
-
-    @Suppress("LeakingThis", "UnusedPrivateMember")
-    private val starter =
-        ViewBasedStoreStarter(
-            storeProvider = { store },
-            screenLifecycle = lifecycle,
-            initEventProvider = { Event.Ui.Init },
         )
 
     override fun render(state: State) {

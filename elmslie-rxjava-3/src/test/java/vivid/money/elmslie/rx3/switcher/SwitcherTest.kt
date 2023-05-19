@@ -22,7 +22,7 @@ import kotlin.coroutines.CoroutineContext
  * they're very similar.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
-internal class SwitcherCompatTest {
+internal class SwitcherTest {
 
     private val scheduler = TestScheduler()
 
@@ -155,5 +155,5 @@ private fun <Event : Any> Switcher.observable(
     context: CoroutineContext,
     action: () -> Observable<Event>,
 ): Observable<Event> {
-    return switchInternal(delayMillis) { action.invoke().asFlow() }.asObservable(context)
+    return switch(delayMillis) { action.invoke().asFlow() }.asObservable(context)
 }
