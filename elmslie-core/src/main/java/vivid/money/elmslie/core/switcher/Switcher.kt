@@ -15,9 +15,9 @@ import vivid.money.elmslie.core.store.Actor
  * ```
  * private val switcher = Switcher()
  *
- * override fun execute(command: Command) = when (command) {
- *    is MyCommand -> switcher.switchInternal() {
- *        Observable.just(123)
+ * override fun execute(command: Command): Flow<*> = when (command) {
+ *    is MyCommand -> switcher.switch {
+ *        flowOf(123)
  *    }
  * }
  * ```

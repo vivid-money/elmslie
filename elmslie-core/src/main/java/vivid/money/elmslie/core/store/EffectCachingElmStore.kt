@@ -28,7 +28,7 @@ class EffectCachingElmStore<Event : Any, State : Any, Effect : Any>(
 
     init {
         storeScope.launch {
-            elmStore.effects().collect { effect ->
+            elmStore.effects.collect { effect ->
                 if (effectsFlow.subscriptionCount.value > 0) {
                     effectsFlow.emit(effect)
                 } else {
@@ -43,7 +43,7 @@ class EffectCachingElmStore<Event : Any, State : Any, Effect : Any>(
         storeScope.cancel()
     }
 
-    override fun effects(): Flow<Effect> =
+    override val effects: Flow<Effect> =
         effectsFlow.onSubscription {
             for (effect in effectsCache) {
                 emit(effect)
