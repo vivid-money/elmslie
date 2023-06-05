@@ -41,7 +41,7 @@ class EffectCachingElmStoreTest {
         advanceUntilIdle()
 
         val effects = mutableListOf<Effect>()
-        val job = launch { store.effects().toList(effects) }
+        val job = launch { store.effects.toList(effects) }
         advanceUntilIdle()
 
         assertEquals(
@@ -77,7 +77,7 @@ class EffectCachingElmStoreTest {
         advanceUntilIdle()
 
         val effects = mutableListOf<Effect>()
-        val job = launch { store.effects().toList(effects) }
+        val job = launch { store.effects.toList(effects) }
         store.accept(Event(value = 3))
         advanceUntilIdle()
 
@@ -114,9 +114,9 @@ class EffectCachingElmStoreTest {
 
         val effects1 = mutableListOf<Effect>()
         val effects2 = mutableListOf<Effect>()
-        val job1 = launch { store.effects().toList(effects1) }
+        val job1 = launch { store.effects.toList(effects1) }
         runCurrent()
-        val job2 = launch { store.effects().toList(effects2) }
+        val job2 = launch { store.effects.toList(effects2) }
         runCurrent()
 
         assertEquals(
@@ -148,12 +148,12 @@ class EffectCachingElmStoreTest {
 
         store.start()
         val effects = mutableListOf<Effect>()
-        var job1 = launch { store.effects().toList(effects) }
+        var job1 = launch { store.effects.toList(effects) }
         runCurrent()
         job1.cancel()
         store.accept(Event(value = 2))
         runCurrent()
-        job1 = launch { store.effects().toList(effects) }
+        job1 = launch { store.effects.toList(effects) }
         runCurrent()
 
         assertEquals(

@@ -31,7 +31,7 @@ class ElmRenderer<Effect : Any, State : Any>(
                  */
                 whenCreated {
                     store
-                        .effects()
+                        .effects
                         .flowWithLifecycle(
                             lifecycle = screenLifecycle,
                             minActiveState = RESUMED,
@@ -42,7 +42,7 @@ class ElmRenderer<Effect : Any, State : Any>(
             coroutineScope.launch {
                 whenCreated {
                     store
-                        .states()
+                        .states
                         .flowWithLifecycle(
                             lifecycle = screenLifecycle,
                             minActiveState = STARTED,

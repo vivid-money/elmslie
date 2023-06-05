@@ -1,6 +1,5 @@
 package vivid.money.elmslie.core.store
 
-import java.util.concurrent.atomic.AtomicBoolean
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
@@ -17,7 +16,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import vivid.money.elmslie.core.ElmScope
 import vivid.money.elmslie.core.config.ElmslieConfig
-import vivid.money.elmslie.core.store.exception.StoreAlreadyStartedException
 
 @Suppress("TooGenericExceptionCaught")
 class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
@@ -30,33 +28,26 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     private val logger = ElmslieConfig.logger
     private val eventMutex = Mutex()
 
-    private val isStarted = AtomicBoolean(false)
-
     private val effectsFlow = MutableSharedFlow<Effect>()
 
     private val statesFlow: MutableStateFlow<State> = MutableStateFlow(initialState)
 
     override val scope = ElmScope("StoreScope")
 
+    override val states: StateFlow<State> = statesFlow.asStateFlow()
+
+    override val effects: Flow<Effect> = effectsFlow.asSharedFlow()
+
     override fun accept(event: Event) = dispatchEvent(event)
 
     override fun start(): Store<Event, Effect, State> {
-        if (isStarted.compareAndSet(false, true)) {
-            startEvent?.let(::accept)
-        } else {
-            logger.fatal("Store start error", StoreAlreadyStartedException())
-        }
+        startEvent?.let(::accept)
         return this
     }
 
     override fun stop() {
-        isStarted.set(false)
         scope.cancel()
     }
-
-    override fun states(): StateFlow<State> = statesFlow.asStateFlow()
-
-    override fun effects(): Flow<Effect> = effectsFlow.asSharedFlow()
 
     private fun dispatchEvent(event: Event) {
         scope.launch {

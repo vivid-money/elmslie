@@ -10,12 +10,10 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 
 dependencies {
     implementation(project(":elmslie-core"))
-    implementation(project(":elmslie-rxjava-3"))
-    implementation(deps.rx.rxJava3)
+    implementation(deps.coroutines.core)
 
     testImplementation(deps.coroutines.test)
     testImplementation(project(":elmslie-test"))
-    testImplementation(project(":elmslie-test-rxjava-3"))
 }
 
 apply from: "../../gradle/junit-5.gradle"

@@ -48,7 +48,7 @@ class ElmStoreTest {
                 .start()
 
         val emittedStates = mutableListOf<State>()
-        val collectJob = launch { store.states().toList(emittedStates) }
+        val collectJob = launch { store.states.toList(emittedStates) }
         store.accept(Event())
         runCurrent()
         delay(3500)
@@ -78,12 +78,12 @@ class ElmStoreTest {
 
         assertEquals(
             State(0),
-            store.states().value,
+            store.states.value,
         )
         store.accept(Event(value = 10))
         advanceUntilIdle()
 
-        assertEquals(State(10), store.states().value)
+        assertEquals(State(10), store.states.value)
     }
 
     @Test
@@ -96,7 +96,7 @@ class ElmStoreTest {
                 .start()
 
         val emittedStates = mutableListOf<State>()
-        val collectJob = launch { store.states().toList(emittedStates) }
+        val collectJob = launch { store.states.toList(emittedStates) }
 
         store.accept(Event(value = 0))
         advanceUntilIdle()
@@ -122,7 +122,7 @@ class ElmStoreTest {
                 .start()
 
         val effects = mutableListOf<Effect>()
-        val collectJob = launch { store.effects().toList(effects) }
+        val collectJob = launch { store.effects.toList(effects) }
         store.accept(Event(value = 1))
         store.accept(Event(value = -1))
         advanceUntilIdle()
@@ -151,7 +151,7 @@ class ElmStoreTest {
         val effects = mutableListOf<Effect>()
         store.accept(Event(value = 1))
         runCurrent()
-        val collectJob = launch { store.effects().toList(effects) }
+        val collectJob = launch { store.effects.toList(effects) }
         store.accept(Event(value = -1))
         runCurrent()
 
@@ -184,7 +184,7 @@ class ElmStoreTest {
                 .start()
 
         val effects = mutableListOf<Effect>()
-        val collectJob = launch { store.effects().toList(effects) }
+        val collectJob = launch { store.effects.toList(effects) }
         store.accept(Event(value = 1))
         advanceUntilIdle()
 
@@ -211,8 +211,8 @@ class ElmStoreTest {
 
         val effects1 = mutableListOf<Effect>()
         val effects2 = mutableListOf<Effect>()
-        val collectJob1 = launch { store.effects().toList(effects1) }
-        val collectJob2 = launch { store.effects().toList(effects2) }
+        val collectJob1 = launch { store.effects.toList(effects1) }
+        val collectJob2 = launch { store.effects.toList(effects2) }
         store.accept(Event(value = 1))
         store.accept(Event(value = -1))
         advanceUntilIdle()
@@ -247,7 +247,7 @@ class ElmStoreTest {
                 .start()
 
         val effects = mutableListOf<Effect>()
-        val collectJob = launch { store.effects().toList(effects) }
+        val collectJob = launch { store.effects.toList(effects) }
         store.accept(Event(value = 1))
         store.accept(Event(value = 1))
         advanceUntilIdle()
@@ -281,7 +281,7 @@ class ElmStoreTest {
                 .start()
 
         val states = mutableListOf<State>()
-        val collectJob = launch { store.states().toList(states) }
+        val collectJob = launch { store.states.toList(states) }
 
         store.accept(Event(3))
         advanceUntilIdle()
