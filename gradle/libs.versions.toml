@@ -1,0 +1,29 @@
+[versions]
+agp = "8.0.2"
+coroutines = "1.7.1"
+dokka = "1.8.20"
+junit = "5.9.3"
+kotlin = "1.8.21"
+lifecycle = "2.6.1"
+
+[libraries]
+android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
+androidx-appcompat = "androidx.appcompat:appcompat:1.6.1"
+androidx-fragmentKtx = "androidx.fragment:fragment-ktx:1.6.0"
+androidx-lifecycle-common = { module = "androidx.lifecycle:lifecycle-common", version.ref = "lifecycle" }
+androidx-lifecycle-runtimeKtx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycle" }
+androidx-lifecycle-viewmodelSavedstate = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "lifecycle" }
+androidx-startup-runtime = "androidx.startup:startup-runtime:1.1.1"
+detekt-gradlePlugin = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.23.0"
+dokka-gradlePlugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
+dokka-kotlinAsJavaPlugin = { module = "org.jetbrains.dokka:kotlin-as-java-plugin", version.ref = "dokka" }
+google-material = "com.google.android.material:material:1.9.0"
+junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlinx-coroutinesCore = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-coroutinesTest = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+
+[plugins]
+kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+androidApplication = { id = "com.android.application", version.ref = "agp" }

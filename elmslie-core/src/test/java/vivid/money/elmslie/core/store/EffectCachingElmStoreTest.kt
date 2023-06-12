@@ -13,7 +13,7 @@ import vivid.money.elmslie.core.testutil.model.Command
 import vivid.money.elmslie.core.testutil.model.Effect
 import vivid.money.elmslie.core.testutil.model.Event
 import vivid.money.elmslie.core.testutil.model.State
-import vivid.money.elmslie.test.background.executor.TestDispatcherExtension
+import vivid.money.elmslie.test.TestDispatcherExtension
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class EffectCachingElmStoreTest {
