@@ -3,6 +3,7 @@ package vivid.money.elmslie.samples.coroutines.timer.elm
 internal data class State(
     val id: String,
     val secondsPassed: Long = 0,
+    val generatedId: String? = null,
     val isStarted: Boolean = false
 )
 

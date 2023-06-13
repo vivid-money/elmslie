@@ -3,6 +3,7 @@ package vivid.money.elmslie.android
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.annotation.MainThread
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
@@ -13,6 +14,10 @@ import androidx.savedstate.SavedStateRegistryOwner
 import vivid.money.elmslie.core.store.Store
 import vivid.money.elmslie.core.store.toCachedStore
 
+/**
+ * In order to access previously saved state (via [saveState]) in [storeFactory] one must use
+ * SavedStateHandle.get<Bundle>(StateBundleKey)
+ */
 @MainThread
 fun <
     Event : Any,
@@ -20,19 +25,25 @@ fun <
     State : Any,
 > Fragment.elmStore(
     key: String = this::class.java.canonicalName ?: this::class.java.simpleName,
-    getViewModelStoreOwner: () -> ViewModelStoreOwner = { this },
-    getSavedStateRegistryOwner: () -> SavedStateRegistryOwner = { this },
-    getDefaultArgs: () -> Bundle = { arguments ?: Bundle() },
-    storeFactory: (SavedStateHandle) -> Store<Event, Effect, State>,
+    viewModelStoreOwner: () -> ViewModelStoreOwner = { this },
+    savedStateRegistryOwner: () -> SavedStateRegistryOwner = { this },
+    defaultArgs: () -> Bundle = { arguments ?: bundleOf() },
+    saveState: Bundle.(State) -> Unit = {},
+    storeFactory: SavedStateHandle.() -> Store<Event, Effect, State>,
 ): Lazy<Store<Event, Effect, State>> =
     vivid.money.elmslie.android.elmStore(
         storeFactory = storeFactory,
         key = key,
-        getViewModelStoreOwner = getViewModelStoreOwner,
-        getSavedStateRegistryOwner = getSavedStateRegistryOwner,
-        getDefaultArgs = getDefaultArgs,
+        viewModelStoreOwner = viewModelStoreOwner,
+        savedStateRegistryOwner = savedStateRegistryOwner,
+        saveState = saveState,
+        defaultArgs = defaultArgs,
     )
 
+/**
+ * In order to access previously saved state (via [saveState]) in [storeFactory] one must use
+ * SavedStateHandle.get<Bundle>(StateBundleKey)
+ */
 @MainThread
 fun <
     Event : Any,
@@ -40,60 +51,77 @@ fun <
     State : Any,
 > ComponentActivity.elmStore(
     key: String = this::class.java.canonicalName ?: this::class.java.simpleName,
-    getViewModelStoreOwner: () -> ViewModelStoreOwner = { this },
-    getSavedStateRegistryOwner: () -> SavedStateRegistryOwner = { this },
-    getDefaultArgs: () -> Bundle = { this.intent?.extras ?: Bundle() },
-    storeFactory: (SavedStateHandle) -> Store<Event, Effect, State>,
+    viewModelStoreOwner: () -> ViewModelStoreOwner = { this },
+    savedStateRegistryOwner: () -> SavedStateRegistryOwner = { this },
+    defaultArgs: () -> Bundle = { this.intent?.extras ?: bundleOf() },
+    saveState: Bundle.(State) -> Unit = {},
+    storeFactory: SavedStateHandle.() -> Store<Event, Effect, State>,
 ): Lazy<Store<Event, Effect, State>> =
     vivid.money.elmslie.android.elmStore(
         storeFactory = storeFactory,
         key = key,
-        getViewModelStoreOwner = getViewModelStoreOwner,
-        getSavedStateRegistryOwner = getSavedStateRegistryOwner,
-        getDefaultArgs = getDefaultArgs,
+        viewModelStoreOwner = viewModelStoreOwner,
+        savedStateRegistryOwner = savedStateRegistryOwner,
+        defaultArgs = defaultArgs,
+        saveState = saveState,
     )
 
 @MainThread
 internal fun <
-        Event : Any,
-        Effect : Any,
-        State : Any,
+    Event : Any,
+    Effect : Any,
+    State : Any,
 > elmStore(
     key: String,
-    getViewModelStoreOwner: () -> ViewModelStoreOwner,
-    getSavedStateRegistryOwner: () -> SavedStateRegistryOwner,
-    getDefaultArgs: () -> Bundle,
-    storeFactory: (SavedStateHandle) -> Store<Event, Effect, State>,
+    viewModelStoreOwner: () -> ViewModelStoreOwner,
+    savedStateRegistryOwner: () -> SavedStateRegistryOwner,
+    defaultArgs: () -> Bundle,
+    saveState: Bundle.(State) -> Unit,
+    storeFactory: SavedStateHandle.() -> Store<Event, Effect, State>,
 ): Lazy<Store<Event, Effect, State>> =
     lazy(LazyThreadSafetyMode.NONE) {
         val factory =
             RetainedElmStoreFactory(
-                stateRegistryOwner = getSavedStateRegistryOwner.invoke(),
-                defaultArgs = getDefaultArgs.invoke(),
+                stateRegistryOwner = savedStateRegistryOwner.invoke(),
+                defaultArgs = defaultArgs.invoke(),
                 storeFactory = storeFactory,
+                saveState = saveState,
             )
-        val provider = ViewModelProvider(getViewModelStoreOwner.invoke(), factory)
+        val provider = ViewModelProvider(viewModelStoreOwner.invoke(), factory)
 
         @Suppress("UNCHECKED_CAST")
-        provider.get(key, RetainedElmStore::class.java).store as Store<Event, Effect, State>
+        provider[key, RetainedElmStore::class.java].store as Store<Event, Effect, State>
     }
 
 class RetainedElmStore<Event : Any, Effect : Any, State : Any>(
     savedStateHandle: SavedStateHandle,
-    storeFactory: (SavedStateHandle) -> Store<Event, Effect, State>,
+    storeFactory: SavedStateHandle.() -> Store<Event, Effect, State>,
+    saveState: Bundle.(State) -> Unit,
 ) : ViewModel() {
 
     val store = storeFactory.invoke(savedStateHandle).toCachedStore().also { it.start() }
 
+    init {
+        savedStateHandle.setSavedStateProvider(StateBundleKey) {
+            bundleOf().apply { saveState(store.states.value) }
+        }
+    }
+
     override fun onCleared() {
         store.stop()
+    }
+
+    companion object {
+
+        const val StateBundleKey = "elm_store_state_bundle"
     }
 }
 
 class RetainedElmStoreFactory<Event : Any, Effect : Any, State : Any>(
     stateRegistryOwner: SavedStateRegistryOwner,
     defaultArgs: Bundle,
-    private val storeFactory: (SavedStateHandle) -> Store<Event, Effect, State>,
+    private val storeFactory: SavedStateHandle.() -> Store<Event, Effect, State>,
+    private val saveState: Bundle.(State) -> Unit,
 ) : AbstractSavedStateViewModelFactory(stateRegistryOwner, defaultArgs) {
 
     override fun <T : ViewModel> create(
@@ -101,6 +129,12 @@ class RetainedElmStoreFactory<Event : Any, Effect : Any, State : Any>(
         modelClass: Class<T>,
         handle: SavedStateHandle,
     ): T {
-        @Suppress("UNCHECKED_CAST") return RetainedElmStore(handle, storeFactory) as T
+        @Suppress("UNCHECKED_CAST")
+        return RetainedElmStore(
+            savedStateHandle = handle,
+            storeFactory = storeFactory,
+            saveState = saveState,
+        )
+            as T
     }
 }

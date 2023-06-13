@@ -15,6 +15,13 @@
         tools:text="Screen id: " />
 
     <TextView
+        android:id="@+id/generatedID"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:gravity="center"
+        tools:text="Generated id: " />
+
+    <TextView
         android:id="@+id/currentValue"
         android:layout_width="match_parent"
         android:layout_height="80dp"
