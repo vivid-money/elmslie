@@ -2,7 +2,11 @@ package vivid.money.elmslie.core.store
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runCurrent
@@ -14,7 +18,7 @@ import vivid.money.elmslie.core.testutil.model.Command
 import vivid.money.elmslie.core.testutil.model.Effect
 import vivid.money.elmslie.core.testutil.model.Event
 import vivid.money.elmslie.core.testutil.model.State
-import vivid.money.elmslie.test.background.executor.TestDispatcherExtension
+import vivid.money.elmslie.test.TestDispatcherExtension
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ElmStoreTest {
