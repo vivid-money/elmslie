@@ -40,7 +40,7 @@ ext.deps = [
                 rxAndroid    : "io.reactivex.rxjava3:rxandroid:3.0.2",
         ],
         coroutines: [
-                core: "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4",
+                core: "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1",
                 test: "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4",
         ],
         test      : [
