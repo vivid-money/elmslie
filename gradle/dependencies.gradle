@@ -44,7 +44,7 @@ ext.deps = [
                 test: "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4",
         ],
         test      : [
-                jUnit5           : "org.junit.jupiter:junit-jupiter:5.9.2",
+                jUnit5           : "org.junit.jupiter:junit-jupiter:5.9.3",
                 kotestJunitRunner: "io.kotest:kotest-runner-junit5-jvm:5.5.5",
                 kotestAssertions : "io.kotest:kotest-assertions-core:5.5.5",
                 kotestProperty   : "io.kotest:kotest-property:5.5.5",
