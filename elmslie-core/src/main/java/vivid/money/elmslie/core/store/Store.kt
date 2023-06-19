@@ -4,7 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
-interface Store<Event, Effect, State> {
+interface Store<Event : Any, Effect: Any, State: Any, Command: Any> {
 
     /** Event that will be emitted upon store start. */
     val startEvent: Event?
@@ -36,7 +36,7 @@ interface Store<Event, Effect, State> {
     /**
      * Starts the operations inside the store.
      */
-    fun start(): Store<Event, Effect, State>
+    fun start(): Store<Event, Effect, State, Command>
 
     /**
      * Stops all operations inside the store and cancels coroutines scope.
@@ -46,4 +46,16 @@ interface Store<Event, Effect, State> {
 
     /** Sends a new [Event] for the store. */
     fun accept(event: Event)
+
+    /**
+     * Attach store listener to consume all that happend inside store.
+     * Not thread safe.
+     */
+    fun attachListener(storeListener: StoreListener<Event, State, Effect, Command>)
+
+    /**
+     * Deattach store listener.
+     * Not thread safe.
+     */
+    fun deattachListener(storeListener: StoreListener<Event, State, Effect, Command>)
 }
