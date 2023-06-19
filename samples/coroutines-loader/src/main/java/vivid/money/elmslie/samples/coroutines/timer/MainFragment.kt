@@ -11,9 +11,8 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import vivid.money.elmslie.android.RetainedElmStore.Companion.StateBundleKey
-import vivid.money.elmslie.android.elmStore
-import vivid.money.elmslie.android.renderer.ElmRenderer
 import vivid.money.elmslie.android.renderer.ElmRendererDelegate
+import vivid.money.elmslie.android.renderer.elmStoreWithRenderer
 import vivid.money.elmslie.samples.coroutines.timer.elm.Effect
 import vivid.money.elmslie.samples.coroutines.timer.elm.Event
 import vivid.money.elmslie.samples.coroutines.timer.elm.State
@@ -29,23 +28,16 @@ internal class MainFragment : Fragment(R.layout.fragment_main), ElmRendererDeleg
             MainFragment().apply { arguments = bundleOf(ARG to id) }
     }
 
-    override val store by
-        elmStore(
-            storeFactory = {
-                storeFactory(
-                    id = get(ARG)!!,
-                    generatedId = get<Bundle>(StateBundleKey)?.getString(GENERATED_ID),
-                )
-            },
-            saveState = { state -> putString(GENERATED_ID, state.generatedId) },
-        )
-
-    @Suppress("LeakingThis")
-    private val renderer =
-        ElmRenderer(
-            delegate = this,
-            screenLifecycle = lifecycle,
-        )
+    private val store by elmStoreWithRenderer(
+        elmRenderer = this,
+        storeFactory = {
+            storeFactory(
+                id = get(ARG)!!,
+                generatedId = get<Bundle>(StateBundleKey)?.getString(GENERATED_ID),
+            )
+        },
+        saveState = { state -> putString(GENERATED_ID, state.generatedId) },
+    )
 
     private lateinit var startButton: Button
     private lateinit var stopButton: Button
@@ -78,10 +70,10 @@ internal class MainFragment : Fragment(R.layout.fragment_main), ElmRendererDeleg
         when (effect) {
             is Effect.Error ->
                 Snackbar.make(
-                        requireView().findViewById(R.id.content),
-                        "Error!",
-                        Snackbar.LENGTH_SHORT
-                    )
+                    requireView().findViewById(R.id.content),
+                    "Error!",
+                    Snackbar.LENGTH_SHORT
+                )
                     .show()
         }
 }
