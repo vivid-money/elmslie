@@ -1,11 +1,12 @@
 package vivid.money.elmslie.core.store
 
-import java.util.concurrent.LinkedBlockingQueue
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.onSubscription
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import vivid.money.elmslie.core.ElmScope
 
 /**
@@ -22,7 +23,8 @@ class EffectCachingElmStore<Event : Any, State : Any, Effect : Any>(
     private val elmStore: Store<Event, Effect, State>,
 ) : Store<Event, Effect, State> by elmStore {
 
-    private val effectsCache = LinkedBlockingQueue<Effect>()
+    private val effectsMutex = Mutex()
+    private val effectsCache = mutableListOf<Effect>()
     private val effectsFlow = MutableSharedFlow<Effect>()
     private val storeScope = ElmScope("CachedStoreScope")
 
@@ -32,7 +34,9 @@ class EffectCachingElmStore<Event : Any, State : Any, Effect : Any>(
                 if (effectsFlow.subscriptionCount.value > 0) {
                     effectsFlow.emit(effect)
                 } else {
-                    effectsCache.add(effect)
+                    effectsMutex.withLock {
+                        effectsCache.add(effect)
+                    }
                 }
             }
         }
@@ -45,9 +49,11 @@ class EffectCachingElmStore<Event : Any, State : Any, Effect : Any>(
 
     override val effects: Flow<Effect> =
         effectsFlow.onSubscription {
-            for (effect in effectsCache) {
-                emit(effect)
+            effectsMutex.withLock {
+                for (effect in effectsCache) {
+                    emit(effect)
+                }
+                effectsCache.clear()
             }
-            effectsCache.clear()
         }
 }
