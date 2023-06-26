@@ -24,7 +24,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     private val actor: Actor<Command, out Event>,
     storeListeners: Set<StoreListener<Event, State, Effect, Command>>? = null,
     override val startEvent: Event? = null,
-) : Store<Event, Effect, State, Command> {
+) : Store<Event, Effect, State> {
 
     private val logger = ElmslieConfig.logger
     private val eventMutex = Mutex()
@@ -47,21 +47,13 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
 
     override fun accept(event: Event) = dispatchEvent(event)
 
-    override fun start(): Store<Event, Effect, State, Command> {
+    override fun start(): Store<Event, Effect, State> {
         startEvent?.let(::accept)
         return this
     }
 
     override fun stop() {
         scope.cancel()
-    }
-
-    override fun deattachListener(storeListener: StoreListener<Event, State, Effect, Command>) {
-        storeListeners.add(storeListener)
-    }
-
-    override fun attachListener(storeListener: StoreListener<Event, State, Effect, Command>) {
-        storeListeners.remove(storeListener)
     }
 
     private fun dispatchEvent(event: Event) {
@@ -111,5 +103,5 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     }
 }
 
-fun <Event : Any, State : Any, Effect : Any, Command: Any> Store<Event, State, Effect, Command>.toCachedStore() =
+fun <Event : Any, State : Any, Effect : Any> Store<Event, State, Effect>.toCachedStore() =
     EffectCachingElmStore(this)

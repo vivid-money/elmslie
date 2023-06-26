@@ -18,9 +18,9 @@ import java.util.concurrent.LinkedBlockingQueue
  * ```
  */
 // TODO Should be moved to android artifact?
-class EffectCachingElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
-    private val elmStore: Store<Event, Effect, State, Command>,
-) : Store<Event, Effect, State, Command> by elmStore {
+class EffectCachingElmStore<Event : Any, State : Any, Effect : Any>(
+    private val elmStore: Store<Event, Effect, State>,
+) : Store<Event, Effect, State> by elmStore {
 
     private val effectsCache = LinkedBlockingQueue<Effect>()
     private val effectsFlow = MutableSharedFlow<Effect>()
