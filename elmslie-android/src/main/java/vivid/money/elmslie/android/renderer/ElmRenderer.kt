@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import vivid.money.elmslie.android.StoreData
 import vivid.money.elmslie.core.config.ElmslieConfig
 import vivid.money.elmslie.core.store.Store
 
@@ -30,6 +31,7 @@ fun <
         Event : Any,
         Effect : Any,
         State : Any,
+        Command : Any,
         > elmStoreWithRenderer(
     lifecycleOwner: LifecycleOwner,
     key: String = lifecycleOwner::class.java.canonicalName ?: lifecycleOwner::class.java.simpleName,
@@ -38,10 +40,10 @@ fun <
     savedStateRegistryOwner: () -> SavedStateRegistryOwner,
     defaultArgs: () -> Bundle,
     saveState: Bundle.(State) -> Unit = {},
-    storeFactory: SavedStateHandle.() -> Store<Event, Effect, State>,
+    storeDataFactory: SavedStateHandle.() -> StoreData<Event, State, Effect, Command>,
 ): Lazy<Store<Event, Effect, State>> {
     val lazyStore = vivid.money.elmslie.android.elmStore(
-        storeFactory = storeFactory,
+        storeDataFactory = storeDataFactory,
         key = key,
         viewModelStoreOwner = viewModelStoreOwner,
         savedStateRegistryOwner = savedStateRegistryOwner,
@@ -68,6 +70,7 @@ fun <
         Event : Any,
         Effect : Any,
         State : Any,
+        Command : Any,
         > Fragment.elmStoreWithRenderer(
     key: String = this::class.java.canonicalName ?: this::class.java.simpleName,
     elmRenderer: ElmRendererDelegate<Effect, State>,
@@ -75,7 +78,7 @@ fun <
     savedStateRegistryOwner: () -> SavedStateRegistryOwner = { this },
     defaultArgs: () -> Bundle = { arguments ?: bundleOf() },
     saveState: Bundle.(State) -> Unit = {},
-    storeFactory: SavedStateHandle.() -> Store<Event, Effect, State>,
+    storeDataFactory: SavedStateHandle.() -> StoreData<Event, State, Effect, Command>,
 ): Lazy<Store<Event, Effect, State>> {
     return elmStoreWithRenderer(
         lifecycleOwner = this,
@@ -85,7 +88,7 @@ fun <
         savedStateRegistryOwner = savedStateRegistryOwner,
         defaultArgs = defaultArgs,
         saveState = saveState,
-        storeFactory = storeFactory,
+        storeDataFactory = storeDataFactory,
     )
 }
 
@@ -95,6 +98,7 @@ fun <
         Event : Any,
         Effect : Any,
         State : Any,
+        Command : Any,
         > ComponentActivity.elmStoreWithRenderer(
     key: String = this::class.java.canonicalName ?: this::class.java.simpleName,
     elmRenderer: ElmRendererDelegate<Effect, State>,
@@ -102,7 +106,7 @@ fun <
     savedStateRegistryOwner: () -> SavedStateRegistryOwner = { this },
     defaultArgs: () -> Bundle = { intent?.extras ?: bundleOf() },
     saveState: Bundle.(State) -> Unit = {},
-    storeFactory: SavedStateHandle.() -> Store<Event, Effect, State>,
+    storeDataFactory: SavedStateHandle.() -> StoreData<Event, State, Effect, Command>,
 ): Lazy<Store<Event, Effect, State>> {
     return elmStoreWithRenderer(
         lifecycleOwner = this,
@@ -112,7 +116,7 @@ fun <
         savedStateRegistryOwner = savedStateRegistryOwner,
         defaultArgs = defaultArgs,
         saveState = saveState,
-        storeFactory = storeFactory,
+        storeDataFactory = storeDataFactory,
     )
 }
 

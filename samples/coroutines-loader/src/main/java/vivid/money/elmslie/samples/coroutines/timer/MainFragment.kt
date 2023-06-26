@@ -16,7 +16,7 @@ import vivid.money.elmslie.android.renderer.elmStoreWithRenderer
 import vivid.money.elmslie.samples.coroutines.timer.elm.Effect
 import vivid.money.elmslie.samples.coroutines.timer.elm.Event
 import vivid.money.elmslie.samples.coroutines.timer.elm.State
-import vivid.money.elmslie.samples.coroutines.timer.elm.storeFactory
+import vivid.money.elmslie.samples.coroutines.timer.elm.storeDataFactory
 
 internal class MainFragment : Fragment(R.layout.fragment_main), ElmRendererDelegate<Effect, State> {
 
@@ -30,8 +30,8 @@ internal class MainFragment : Fragment(R.layout.fragment_main), ElmRendererDeleg
 
     private val store by elmStoreWithRenderer(
         elmRenderer = this,
-        storeFactory = {
-            storeFactory(
+        storeDataFactory = {
+            storeDataFactory(
                 id = get(ARG)!!,
                 generatedId = get<Bundle>(StateBundleKey)?.getString(GENERATED_ID),
             )

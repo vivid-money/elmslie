@@ -19,6 +19,7 @@ import vivid.money.elmslie.core.config.ElmslieConfig
 
 @Suppress("TooGenericExceptionCaught")
 class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
+    private val key: String?,
     initialState: State,
     private val reducer: StateReducer<Event, State, Effect, Command>,
     private val actor: Actor<Command, out Event>,

@@ -1,12 +1,12 @@
 package vivid.money.elmslie.samples.coroutines.timer.elm
 
-import vivid.money.elmslie.core.store.ElmStore
+import vivid.money.elmslie.android.StoreData
 
-internal fun storeFactory(
+internal fun storeDataFactory(
     id: String,
     generatedId: String?,
 ) =
-    ElmStore(
+    StoreData(
         initialState =
             State(
                 id = id,
