@@ -35,7 +35,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
 
     private val storeListeners: MutableSet<StoreListener<in Event, in State, in Effect, in Command>> =
         mutableSetOf<StoreListener<in Event, in State, in Effect, in Command>>().apply {
-            ElmslieConfig.globalStoreListeners?.forEach(::add)
+            ElmslieConfig.globalStoreListeners.forEach(::add)
             storeListeners?.forEach(::add)
         }
 

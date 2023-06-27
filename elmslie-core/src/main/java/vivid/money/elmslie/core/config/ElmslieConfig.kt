@@ -15,7 +15,7 @@ object ElmslieConfig {
 
     @Volatile private var _shouldStopOnProcessDeath: Boolean = true
 
-    @Volatile private var _globalStoreListeners: Set<StoreListener<Any, Any, Any, Any>>? = null
+    @Volatile private var _globalStoreListeners: Set<StoreListener<Any, Any, Any, Any>> = emptySet()
 
     val logger: ElmslieLogger
         get() = _logger
@@ -26,7 +26,7 @@ object ElmslieConfig {
     val shouldStopOnProcessDeath: Boolean
         get() = _shouldStopOnProcessDeath
 
-    val globalStoreListeners: Set<StoreListener<Any, Any, Any, Any>>?
+    val globalStoreListeners: Set<StoreListener<Any, Any, Any, Any>>
         get() = _globalStoreListeners
 
     init {
