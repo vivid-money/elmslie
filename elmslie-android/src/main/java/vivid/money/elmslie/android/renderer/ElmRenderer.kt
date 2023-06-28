@@ -85,7 +85,7 @@ fun <
         savedStateRegistryOwner = savedStateRegistryOwner,
         defaultArgs = defaultArgs,
         saveState = saveState,
-        storeFactory = storeFactory
+        storeFactory = storeFactory,
     )
 }
 
@@ -112,7 +112,7 @@ fun <
         savedStateRegistryOwner = savedStateRegistryOwner,
         defaultArgs = defaultArgs,
         saveState = saveState,
-        storeFactory = storeFactory
+        storeFactory = storeFactory,
     )
 }
 

@@ -4,7 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
-interface Store<Event, Effect, State> {
+interface Store<Event : Any, Effect: Any, State: Any> {
 
     /** Event that will be emitted upon store start. */
     val startEvent: Event?

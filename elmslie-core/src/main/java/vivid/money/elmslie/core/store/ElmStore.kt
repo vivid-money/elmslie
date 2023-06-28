@@ -22,6 +22,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     initialState: State,
     private val reducer: StateReducer<Event, State, Effect, Command>,
     private val actor: Actor<Command, out Event>,
+    storeListeners: Set<StoreListener<Event, State, Effect, Command>>? = null,
     override val startEvent: Event? = null,
 ) : Store<Event, Effect, State> {
 
@@ -31,6 +32,12 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     private val effectsFlow = MutableSharedFlow<Effect>()
 
     private val statesFlow: MutableStateFlow<State> = MutableStateFlow(initialState)
+
+    private val storeListeners: MutableSet<StoreListener<in Event, in State, in Effect, in Command>> =
+        mutableSetOf<StoreListener<in Event, in State, in Effect, in Command>>().apply {
+            ElmslieConfig.globalStoreListeners.forEach(::add)
+            storeListeners?.forEach(::add)
+        }
 
     override val scope = ElmScope("StoreScope")
 
@@ -52,11 +59,15 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     private fun dispatchEvent(event: Event) {
         scope.launch {
             try {
+                storeListeners.forEach { it.onEvent(event) }
                 logger.debug("New event: $event")
                 val (_, effects, commands) =
                     eventMutex.withLock {
+                        val oldState = statesFlow.value
                         val result = reducer.reduce(event, statesFlow.value)
-                        statesFlow.value = result.state
+                        val newState = result.state
+                        statesFlow.value = newState
+                        storeListeners.forEach { it.onStateChanged(newState, oldState, event) }
                         result
                     }
                 effects.forEach { effect -> if (isActive) dispatchEffect(effect) }
@@ -64,24 +75,30 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
             } catch (error: CancellationException) {
                 throw error
             } catch (t: Throwable) {
+                storeListeners.forEach { it.onReducerError(t, event) }
                 logger.fatal("You must handle all errors inside reducer", t)
             }
         }
     }
 
     private suspend fun dispatchEffect(effect: Effect) {
+        storeListeners.forEach { it.onEffect(effect) }
         logger.debug("New effect: $effect")
         effectsFlow.emit(effect)
     }
 
     private fun executeCommand(command: Command) {
         scope.launch {
+            storeListeners.forEach { it.onCommand(command) }
             logger.debug("Executing command: $command")
             actor
                 .execute(command)
                 .cancellable()
-                .catch { logger.nonfatal(error = it) }
-                .collect { dispatchEvent(it) }
+                .catch { throwable ->
+                    storeListeners.forEach { it.onCommandError(throwable, command) }
+                    logger.nonfatal(error = throwable)
+                }
+                .collect { accept(it) }
         }
     }
 }

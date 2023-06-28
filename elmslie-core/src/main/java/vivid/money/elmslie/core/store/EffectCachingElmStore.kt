@@ -8,6 +8,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import vivid.money.elmslie.core.ElmScope
+import java.util.concurrent.LinkedBlockingQueue
 
 /**
  * Caches effects until there is at least one collector.
