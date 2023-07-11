@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.cancellable
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -93,6 +94,9 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
             logger.debug("Executing command: $command")
             actor
                 .execute(command)
+                .onEach {
+                    logger.debug("Command $command produces event $it")
+                }
                 .cancellable()
                 .catch { throwable ->
                     storeListeners.forEach { it.onCommandError(throwable, command) }
