@@ -149,7 +149,12 @@ internal class ElmRenderer<Effect : Any, State : Any>(
                         val list = mapListItems(state)
                         state to list
                     }
-                    .catch { logger.fatal("Crash while mapping state", it) }
+                    .catch {
+                        logger.fatal(
+                            message = "Crash while mapping state",
+                            error = it,
+                        )
+                    }
                     .flowOn(ioDispatcher)
                     .collect { (state, listItems) ->
                         catchStateErrors {
@@ -171,7 +176,10 @@ internal class ElmRenderer<Effect : Any, State : Any>(
         try {
             action()
         } catch (t: Throwable) {
-            logger.fatal("Crash while rendering state", t)
+            logger.fatal(
+                message = "Crash while rendering state",
+                error = t,
+            )
             null
         }
 
@@ -180,6 +188,9 @@ internal class ElmRenderer<Effect : Any, State : Any>(
         try {
             action()
         } catch (t: Throwable) {
-            logger.fatal("Crash while handling effect", t)
+            logger.fatal(
+                message = "Crash while handling effect",
+                error = t,
+            )
         }
 }

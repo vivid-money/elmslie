@@ -65,7 +65,10 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
         scope.launch {
             try {
                 storeListeners.forEach { it.onEvent(key, event) }
-                logger.debug("$key New event: $event")
+                logger.debug(
+                    message = "New event: $event",
+                    tag = key,
+                )
                 val (_, effects, commands) =
                     eventMutex.withLock {
                         val oldState = statesFlow.value
@@ -81,27 +84,41 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
                 throw error
             } catch (t: Throwable) {
                 storeListeners.forEach { it.onReducerError(key, t, event) }
-                logger.fatal("$key You must handle all errors inside reducer", t)
+                logger.fatal(
+                    message = "You must handle all errors inside reducer",
+                    tag = key,
+                    error = t,
+                )
             }
         }
     }
 
     private suspend fun dispatchEffect(effect: Effect) {
         storeListeners.forEach { it.onEffect(key, effect) }
-        logger.debug("$key New effect: $effect")
+        logger.debug(
+            message = "New effect: $effect",
+            tag = key,
+        )
         effectsFlow.emit(effect)
     }
 
     private fun executeCommand(command: Command) {
         scope.launch {
             storeListeners.forEach { it.onCommand(key, command) }
-            logger.debug("$key Executing command: $command")
+            logger.debug(
+                message = "Executing command: $command",
+                tag = key,
+            )
             actor
                 .execute(command)
                 .cancellable()
                 .catch { throwable ->
                     storeListeners.forEach { it.onCommandError(key, throwable, command) }
-                    logger.nonfatal(message = key, error = throwable)
+                    logger.nonfatal(
+                        message = "Unhandled exception inside the command $command",
+                        tag = key,
+                        error = throwable,
+                    )
                 }
                 .collect { accept(it) }
         }
