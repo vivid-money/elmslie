@@ -24,7 +24,11 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     private val actor: Actor<Command, out Event>,
     storeListeners: Set<StoreListener<Event, State, Effect, Command>>? = null,
     override val startEvent: Event? = null,
-    private val key: String = "${reducer::class.java.canonicalName}/${actor::class.java.canonicalName}",
+    private val key: String =
+        "${reducer::class.java.canonicalName}/${actor::class.java.canonicalName}".replace(
+            "Reducer",
+            "Store",
+        ),
 ) : Store<Event, Effect, State> {
 
     private val logger = ElmslieConfig.logger
