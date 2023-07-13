@@ -25,7 +25,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     storeListeners: Set<StoreListener<Event, State, Effect, Command>>? = null,
     override val startEvent: Event? = null,
     private val key: String =
-        "${reducer::class.java.canonicalName}/${actor::class.java.canonicalName}".replace(
+        (reducer::class.java.canonicalName ?: reducer::class.java.simpleName).replace(
             "Reducer",
             "Store",
         ),
