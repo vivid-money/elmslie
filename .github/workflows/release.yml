@@ -18,6 +18,12 @@ jobs:
         with:
           ref: ${{ env.GITHUB_REF }}
 
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: zulu
+          java-version: 17
+
       - name: Ensure main branch
         run: ./.github/sh/validate_publishing_branch.sh
 
@@ -41,6 +47,12 @@ jobs:
       - uses: actions/checkout@v2
         with:
           ref: ${{ env.GITHUB_REF }}
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: zulu
+          java-version: 17
 
       - name: Update library version
         run: ./.github/sh/update_release_version.sh "libraryVersion" "$NEW_VERSION"
