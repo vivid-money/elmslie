@@ -25,6 +25,11 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     private val actor: Actor<Command, out Event>,
     storeListeners: Set<StoreListener<Event, State, Effect, Command>>? = null,
     override val startEvent: Event? = null,
+    private val key: String =
+        (reducer::class.java.canonicalName ?: reducer::class.java.simpleName).replace(
+            "Reducer",
+            "Store",
+        ),
 ) : Store<Event, Effect, State> {
 
     private val logger = ElmslieConfig.logger
@@ -60,15 +65,18 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     private fun dispatchEvent(event: Event) {
         scope.launch {
             try {
-                storeListeners.forEach { it.onEvent(event) }
-                logger.debug("New event: $event")
+                storeListeners.forEach { it.onEvent(key, event) }
+                logger.debug(
+                    message = "New event: $event",
+                    tag = key,
+                )
                 val (_, effects, commands) =
                     eventMutex.withLock {
                         val oldState = statesFlow.value
                         val result = reducer.reduce(event, statesFlow.value)
                         val newState = result.state
                         statesFlow.value = newState
-                        storeListeners.forEach { it.onStateChanged(newState, oldState, event) }
+                        storeListeners.forEach { it.onStateChanged(key, newState, oldState, event) }
                         result
                     }
                 effects.forEach { effect -> if (isActive) dispatchEffect(effect) }
@@ -76,22 +84,32 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
             } catch (error: CancellationException) {
                 throw error
             } catch (t: Throwable) {
-                storeListeners.forEach { it.onReducerError(t, event) }
-                logger.fatal("You must handle all errors inside reducer", t)
+                storeListeners.forEach { it.onReducerError(key, t, event) }
+                logger.fatal(
+                    message = "You must handle all errors inside reducer",
+                    tag = key,
+                    error = t,
+                )
             }
         }
     }
 
     private suspend fun dispatchEffect(effect: Effect) {
-        storeListeners.forEach { it.onEffect(effect) }
-        logger.debug("New effect: $effect")
+        storeListeners.forEach { it.onEffect(key, effect) }
+        logger.debug(
+            message = "New effect: $effect",
+            tag = key,
+        )
         effectsFlow.emit(effect)
     }
 
     private fun executeCommand(command: Command) {
         scope.launch {
-            storeListeners.forEach { it.onCommand(command) }
-            logger.debug("Executing command: $command")
+            storeListeners.forEach { it.onCommand(key, command) }
+            logger.debug(
+                message = "Executing command: $command",
+                tag = key,
+            )
             actor
                 .execute(command)
                 .onEach {
@@ -99,8 +117,12 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
                 }
                 .cancellable()
                 .catch { throwable ->
-                    storeListeners.forEach { it.onCommandError(throwable, command) }
-                    logger.nonfatal(error = throwable)
+                    storeListeners.forEach { it.onCommandError(key, throwable, command) }
+                    logger.nonfatal(
+                        message = "Unhandled exception inside the command $command",
+                        tag = key,
+                        error = throwable,
+                    )
                 }
                 .collect { accept(it) }
         }

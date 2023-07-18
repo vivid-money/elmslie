@@ -13,6 +13,6 @@ object AndroidLog {
     val V = log(Log::v)
 
     private fun log(
-        log: (String?, String?, Throwable?) -> Unit
-    ) = LogStrategy { _, message, error -> log(null, message, error) }
+        log: (tag: String?, message: String?, throwable: Throwable?) -> Unit,
+    ) = LogStrategy { _, tag, message, error -> log(tag, message, error) }
 }
