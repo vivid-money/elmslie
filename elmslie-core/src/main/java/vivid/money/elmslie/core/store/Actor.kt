@@ -16,5 +16,5 @@ abstract class Actor<Command : Any, Event : Any> {
         eventMapper: (T) -> Event? = { null },
         errorMapper: (error: Throwable) -> Event? = { null },
     ) = mapNotNull { eventMapper(it) }
-        .catch { errorMapper(it) ?: throw it }
+        .catch { errorMapper(it)?.let { event -> emit(event) } ?: throw it }
 }
