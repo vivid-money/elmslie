@@ -65,7 +65,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     private fun dispatchEvent(event: Event) {
         scope.launch {
             try {
-                storeListeners.forEach { it.onEvent(key, event) }
+                storeListeners.forEach { it.onBeforeEvent(key, event, statesFlow.value) }
                 logger.debug(
                     message = "New event: $event",
                     tag = key,
@@ -76,7 +76,9 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
                         val result = reducer.reduce(event, statesFlow.value)
                         val newState = result.state
                         statesFlow.value = newState
-                        storeListeners.forEach { it.onStateChanged(key, newState, oldState, event) }
+                        storeListeners.forEach {
+                            it.onAfterEvent(key, newState, oldState, event)
+                        }
                         result
                     }
                 effects.forEach { effect -> if (isActive) dispatchEffect(effect) }
@@ -95,7 +97,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     }
 
     private suspend fun dispatchEffect(effect: Effect) {
-        storeListeners.forEach { it.onEffect(key, effect) }
+        storeListeners.forEach { it.onEffect(key, effect, statesFlow.value) }
         logger.debug(
             message = "New effect: $effect",
             tag = key,
@@ -105,7 +107,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
 
     private fun executeCommand(command: Command) {
         scope.launch {
-            storeListeners.forEach { it.onCommand(key, command) }
+            storeListeners.forEach { it.onCommand(key, command, statesFlow.value) }
             logger.debug(
                 message = "Executing command: $command",
                 tag = key,
@@ -117,7 +119,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
                 }
                 .cancellable()
                 .catch { throwable ->
-                    storeListeners.forEach { it.onCommandError(key, throwable, command) }
+                    storeListeners.forEach { it.onActorError(key, throwable, command) }
                     logger.nonfatal(
                         message = "Unhandled exception inside the command $command",
                         tag = key,
