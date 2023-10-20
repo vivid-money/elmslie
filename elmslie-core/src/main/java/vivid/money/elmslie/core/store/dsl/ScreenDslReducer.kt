@@ -21,9 +21,9 @@ abstract class ScreenDslReducer<Event : Any, Ui : Any, Internal : Any, State : A
         val body = Result(state)
         @Suppress("UNCHECKED_CAST")
         when {
-            uiEventClass.java.isAssignableFrom(event.javaClass) -> body.ui(event as Ui)
-            internalEventClass.java.isAssignableFrom(event.javaClass) -> body.internal(event as Internal)
-            else -> error("Event ${event.javaClass} is neither UI nor Internal")
+            uiEventClass.isInstance(event) -> body.ui(event as Ui)
+            internalEventClass.isInstance(event) -> body.internal(event as Internal)
+            else -> error("Event ${event::class} is neither UI nor Internal")
         }
         return body.build()
     }
