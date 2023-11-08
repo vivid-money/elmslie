@@ -13,8 +13,8 @@ data class Result<State : Any, Effect : Any, Command : Any>(
         command: Command? = null,
     ) : this(
         state = state,
-        effects = effect?.let(::listOf) ?: emptyList(),
-        commands = command?.let(::listOf) ?: emptyList(),
+        effects = listOfNotNull(effect),
+        commands = listOfNotNull(command),
     )
 
     constructor(
