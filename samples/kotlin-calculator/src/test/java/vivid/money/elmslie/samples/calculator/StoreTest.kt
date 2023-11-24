@@ -1,19 +1,35 @@
 package vivid.money.elmslie.samples.calculator
 
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.RegisterExtension
-import vivid.money.elmslie.test.TestDispatcherExtension
+import kotlinx.coroutines.test.setMain
+import vivid.money.elmslie.core.config.ElmslieConfig
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class StoreTest {
 
-    @JvmField @RegisterExtension val testDispatcherExtension = TestDispatcherExtension()
+    @BeforeTest
+    fun beforeEach() {
+        val testDispatcher = StandardTestDispatcher()
+        ElmslieConfig.ioDispatchers { testDispatcher }
+        Dispatchers.setMain(testDispatcher)
+    }
+
+
+    @AfterTest
+    fun afterEach() {
+        Dispatchers.resetMain()
+    }
 
     @Test
     fun `1 + 1 = 2`() = runTest {

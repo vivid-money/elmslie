@@ -8,6 +8,6 @@ dependencies {
     implementation(projects.elmslieCore)
     implementation(libs.kotlinx.coroutinesCore)
 
+    testImplementation(projects.elmslieCore)
     testImplementation(libs.kotlinx.coroutinesTest)
-    testImplementation(testFixtures(projects.elmslieCore))
 }
