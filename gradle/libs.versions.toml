@@ -2,7 +2,6 @@
 agp = "8.0.2"
 coroutines = "1.7.1"
 dokka = "1.8.20"
-junit = "5.9.3"
 kotlin = "1.8.21"
 lifecycle = "2.6.1"
 
@@ -19,8 +18,8 @@ detekt-gradlePlugin = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.23.0"
 dokka-gradlePlugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 dokka-kotlinAsJavaPlugin = { module = "org.jetbrains.dokka:kotlin-as-java-plugin", version.ref = "dokka" }
 google-material = "com.google.android.material:material:1.9.0"
-junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlinx-coroutinesCore = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutinesTest = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 
