@@ -1,24 +1,40 @@
 package vivid.money.elmslie.core.store
 
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.RegisterExtension
+import kotlinx.coroutines.test.setMain
+import vivid.money.elmslie.core.config.ElmslieConfig
 import vivid.money.elmslie.core.testutil.model.Command
 import vivid.money.elmslie.core.testutil.model.Effect
 import vivid.money.elmslie.core.testutil.model.Event
 import vivid.money.elmslie.core.testutil.model.State
-import vivid.money.elmslie.test.TestDispatcherExtension
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class EffectCachingElmStoreTest {
 
-    @JvmField @RegisterExtension val testDispatcherExtension = TestDispatcherExtension()
+    @BeforeTest
+    fun beforeEach() {
+        val testDispatcher = StandardTestDispatcher()
+        ElmslieConfig.ioDispatchers { testDispatcher }
+        Dispatchers.setMain(testDispatcher)
+    }
+
+
+    @AfterTest
+    fun afterEach() {
+        Dispatchers.resetMain()
+    }
 
     @Test
     fun `Should collect effects which are emitted before collecting flow`() = runTest {

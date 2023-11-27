@@ -1,11 +1,9 @@
 plugins {
     id("elmslie.kotlin-lib")
-    `java-test-fixtures`
+    id("elmslie.tests-convention")
 }
 
 dependencies {
     implementation(libs.kotlinx.coroutinesCore)
-    testFixturesImplementation(libs.kotlinx.coroutinesTest)
-    testFixturesImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutinesTest)
 }

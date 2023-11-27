@@ -1,8 +1,8 @@
 package vivid.money.elmslie.core.store.dsl
 
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 object BasicScreenDslReducer :
     ScreenDslReducer<
