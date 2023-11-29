@@ -12,11 +12,12 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import money.vivid.elmslie.android.RetainedElmStore.Companion.StateBundleKey
 import money.vivid.elmslie.android.renderer.ElmRendererDelegate
-import money.vivid.elmslie.android.renderer.elmStoreWithRenderer
+import money.vivid.elmslie.android.renderer.androidElmStore
 import money.vivid.elmslie.samples.coroutines.timer.elm.Effect
 import money.vivid.elmslie.samples.coroutines.timer.elm.Event
 import money.vivid.elmslie.samples.coroutines.timer.elm.State
 import money.vivid.elmslie.samples.coroutines.timer.elm.storeFactory
+import money.vivid.elmslie.samples.coroutines.timer.R
 
 internal class MainFragment : Fragment(R.layout.fragment_main), ElmRendererDelegate<Effect, State> {
 
@@ -28,16 +29,14 @@ internal class MainFragment : Fragment(R.layout.fragment_main), ElmRendererDeleg
             MainFragment().apply { arguments = bundleOf(ARG to id) }
     }
 
-    private val store by elmStoreWithRenderer(
-        elmRenderer = this,
-        storeFactory = {
-            storeFactory(
-                id = get(ARG)!!,
-                generatedId = get<Bundle>(StateBundleKey)?.getString(GENERATED_ID),
-            )
-        },
+    private val store by androidElmStore(
         saveState = { state -> putString(GENERATED_ID, state.generatedId) },
-    )
+    ) {
+        storeFactory(
+            id = get(ARG)!!,
+            generatedId = get<Bundle>(StateBundleKey)?.getString(GENERATED_ID),
+        )
+    }
 
     private lateinit var startButton: Button
     private lateinit var stopButton: Button
