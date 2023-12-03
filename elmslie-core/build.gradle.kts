@@ -1,5 +1,5 @@
 plugins {
-    id("elmslie.kotlin-lib")
+    id("elmslie.kotlin-jvm-lib")
     id("elmslie.tests-convention")
 }
 
