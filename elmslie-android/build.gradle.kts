@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "vivid.money.elmslie.android"
+    namespace = "money.vivid.elmslie.android"
 }
 
 dependencies {

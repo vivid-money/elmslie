@@ -8,10 +8,10 @@
                 android:exported="false"
                 tools:node="merge">
             <meta-data
-                    android:name="vivid.money.elmslie.android.logger.DefaultLoggerInitializer"
+                    android:name="money.vivid.elmslie.android.logger.DefaultLoggerInitializer"
                     android:value="androidx.startup" />
             <meta-data
-                    android:name="vivid.money.elmslie.android.processdeath.ProcessDeathDetectorInitializer"
+                    android:name="money.vivid.elmslie.android.processdeath.ProcessDeathDetectorInitializer"
                     android:value="androidx.startup" />
         </provider>
     </application>
