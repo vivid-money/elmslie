@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "vivid.money.elmslie.samples.coroutines.timer"
+    namespace = "money.vivid.elmslie.samples.coroutines.timer"
 
     compileSdk = 33
     buildToolsVersion = "31.0.0"
