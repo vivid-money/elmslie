@@ -115,7 +115,10 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
             actor
                 .execute(command)
                 .onEach {
-                    logger.debug("Command $command produces event $it")
+                    logger.debug(
+                        message = "Command $command produces event $it",
+                        tag = key,
+                    )
                 }
                 .cancellable()
                 .catch { throwable ->
