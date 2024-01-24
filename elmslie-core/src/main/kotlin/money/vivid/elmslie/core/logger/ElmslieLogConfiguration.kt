@@ -23,7 +23,7 @@ class ElmslieLogConfiguration {
 
     /** Apply the same logging strategy to all log levels */
     fun always(strategy: LogStrategy) = apply {
-        LogSeverity.entries.forEach { strategies[it] = strategy }
+        LogSeverity.values().forEach { strategies[it] = strategy }
     }
 
     internal fun build() = ElmslieLogger(strategies)
