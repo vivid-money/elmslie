@@ -3,6 +3,7 @@ package money.vivid.elmslie.samples.coroutines.timer
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
+import money.vivid.elmslie.samples.coroutines.timer.R
 import kotlin.random.Random
 
 internal class MainActivity : AppCompatActivity(R.layout.activity_main) {
