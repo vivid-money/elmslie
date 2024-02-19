@@ -17,6 +17,8 @@ data class State(
     val input: Int = 0
 )
 
+sealed interface Command
+
 enum class Operation(
     op: (Int, Int) -> Int
 ) : (Int, Int) -> Int by op {

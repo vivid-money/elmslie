@@ -1,10 +1,11 @@
 package money.vivid.elmslie.core.store.dsl
 
+import money.vivid.elmslie.core.store.StateReducer
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-private object BasicDslReducer : DslReducer<TestEvent, TestState, TestEffect, TestCommand>() {
+private object BasicDslReducer : StateReducer<TestEvent, TestState, TestEffect, TestCommand>() {
 
     override fun Result.reduce(event: TestEvent) =
         when (event) {

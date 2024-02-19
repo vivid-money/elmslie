@@ -1,9 +1,9 @@
 package money.vivid.elmslie.samples.coroutines.timer.elm
 
-import money.vivid.elmslie.core.store.dsl.DslReducer
+import money.vivid.elmslie.core.store.StateReducer
 import java.util.UUID
 
-internal object TimerReducer : DslReducer<Event, State, Effect, Command>() {
+internal object TimerReducer : StateReducer<Event, State, Effect, Command>() {
 
     override fun Result.reduce(event: Event) =
         when (event) {
