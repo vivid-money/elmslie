@@ -1,18 +1,20 @@
 package money.vivid.elmslie.core.store.dsl
 
+import money.vivid.elmslie.core.store.ScreenReducer
+import money.vivid.elmslie.core.store.StateReducer
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-object BasicScreenDslReducer :
-    ScreenDslReducer<
-        TestScreenEvent,
-        TestScreenEvent.Ui,
-        TestScreenEvent.Internal,
-        TestState,
-        TestEffect,
-        TestCommand
-    >(TestScreenEvent.Ui::class, TestScreenEvent.Internal::class) {
+object BasicScreenReducer :
+    ScreenReducer<
+            TestScreenEvent,
+            TestScreenEvent.Ui,
+            TestScreenEvent.Internal,
+            TestState,
+            TestEffect,
+            TestCommand
+            >(TestScreenEvent.Ui::class, TestScreenEvent.Internal::class) {
 
     override fun Result.ui(event: TestScreenEvent.Ui) =
         when (event) {
@@ -30,7 +32,7 @@ object BasicScreenDslReducer :
 }
 
 // The same code
-object PlainScreenDslReducer : DslReducer<TestScreenEvent, TestState, TestEffect, TestCommand>() {
+object PlainScreenDslReducer : StateReducer<TestScreenEvent, TestState, TestEffect, TestCommand>() {
 
     override fun Result.reduce(event: TestScreenEvent) =
         when (event) {
@@ -53,9 +55,9 @@ object PlainScreenDslReducer : DslReducer<TestScreenEvent, TestState, TestEffect
         }
 }
 
-internal class ScreenDslReducerTest {
+internal class ScreenReducerTest {
 
-    private val reducer = BasicScreenDslReducer
+    private val reducer = BasicScreenReducer
 
     @Test
     fun `Ui event is executed`() {

@@ -57,15 +57,18 @@ class ElmStoreTest {
             override fun execute(command: Command): Flow<Event> =
                 flow { emit(Event()) }.onEach { delay(1000) }
         }
+
         val store =
             store(
-                    state = State(),
-                    reducer = { _, state ->
-                        Result(state = state.copy(value = state.value + 1), command = Command())
-                    },
-                    actor = actor,
-                )
-                .start()
+                state = State(),
+                reducer = object : StateReducer<Event, State, Effect, Command>() {
+                    override fun Result.reduce(event: Event) {
+                        state { copy(value = state.value + 1) }
+                        commands { +Command() }
+                    }
+                },
+                actor = actor,
+            ).start()
 
         val emittedStates = mutableListOf<State>()
         val collectJob = launch { store.states.toList(emittedStates) }
@@ -91,9 +94,13 @@ class ElmStoreTest {
     fun `Should update state when event is received`() = runTest {
         val store =
             store(
-                    state = State(),
-                    reducer = { event, state -> Result(state = state.copy(value = event.value)) },
-                )
+                state = State(),
+                reducer = object : StateReducer<Event, State, Effect, Command>() {
+                    override fun Result.reduce(event: Event) {
+                        state { copy(value = event.value) }
+                    }
+                },
+            )
                 .start()
 
         assertEquals(
@@ -110,9 +117,13 @@ class ElmStoreTest {
     fun `Should not update state when it's equal to previous one`() = runTest {
         val store =
             store(
-                    state = State(),
-                    reducer = { event, state -> Result(state = state.copy(value = event.value)) },
-                )
+                state = State(),
+                reducer = object : StateReducer<Event, State, Effect, Command>() {
+                    override fun Result.reduce(event: Event) {
+                        state { copy(value = event.value) }
+                    }
+                },
+            )
                 .start()
 
         val emittedStates = mutableListOf<State>()
@@ -134,11 +145,13 @@ class ElmStoreTest {
     fun `Should collect all emitted effects`() = runTest {
         val store =
             store(
-                    state = State(),
-                    reducer = { event, state ->
-                        Result(state = state, effect = Effect(value = event.value))
+                state = State(),
+                reducer = object : StateReducer<Event, State, Effect, Command>() {
+                    override fun Result.reduce(event: Event) {
+                        effects { +Effect(value = event.value) }
                     }
-                )
+                },
+            )
                 .start()
 
         val effects = mutableListOf<Effect>()
@@ -161,11 +174,13 @@ class ElmStoreTest {
     fun `Should skip the effect which is emitted before subscribing to effects`() = runTest {
         val store =
             store(
-                    state = State(),
-                    reducer = { event, state ->
-                        Result(state = state, effect = Effect(value = event.value))
+                state = State(),
+                reducer = object : StateReducer<Event, State, Effect, Command>() {
+                    override fun Result.reduce(event: Event) {
+                        effects { +Effect(value = event.value) }
                     }
-                )
+                },
+            )
                 .start()
 
         val effects = mutableListOf<Effect>()
@@ -188,19 +203,16 @@ class ElmStoreTest {
     fun `Should collect all effects emitted once per time`() = runTest {
         val store =
             store(
-                    state = State(),
-                    reducer = { event, state ->
-                        Result(
-                            state = state,
-                            commands = emptyList(),
-                            effects =
-                                listOf(
-                                    Effect(value = event.value),
-                                    Effect(value = event.value),
-                                ),
-                        )
+                state = State(),
+                reducer = object : StateReducer<Event, State, Effect, Command>() {
+                    override fun Result.reduce(event: Event) {
+                        effects {
+                            +Effect(value = event.value)
+                            +Effect(value = event.value)
+                        }
                     }
-                )
+                },
+            )
                 .start()
 
         val effects = mutableListOf<Effect>()
@@ -222,11 +234,13 @@ class ElmStoreTest {
     fun `Should collect all emitted effects by all collectors`() = runTest {
         val store =
             store(
-                    state = State(),
-                    reducer = { event, state ->
-                        Result(state = state, effect = Effect(value = event.value))
+                state = State(),
+                reducer = object : StateReducer<Event, State, Effect, Command>() {
+                    override fun Result.reduce(event: Event) {
+                        effects { +Effect(value = event.value) }
                     }
-                )
+                },
+            )
                 .start()
 
         val effects1 = mutableListOf<Effect>()
@@ -259,11 +273,13 @@ class ElmStoreTest {
     fun `Should collect duplicated effects`() = runTest {
         val store =
             store(
-                    state = State(),
-                    reducer = { event, state ->
-                        Result(state = state, effect = Effect(value = event.value))
+                state = State(),
+                reducer = object : StateReducer<Event, State, Effect, Command>() {
+                    override fun Result.reduce(event: Event) {
+                        effects { +Effect(value = event.value) }
                     }
-                )
+                },
+            )
                 .start()
 
         val effects = mutableListOf<Effect>()
@@ -289,15 +305,17 @@ class ElmStoreTest {
         }
         val store =
             store(
-                    state = State(),
-                    reducer = { event, state ->
-                        Result(
-                            state = state.copy(value = event.value),
-                            command = Command(event.value - 1).takeIf { event.value > 0 }
-                        )
-                    },
-                    actor = actor,
-                )
+                state = State(),
+                reducer = object : StateReducer<Event, State, Effect, Command>() {
+                    override fun Result.reduce(event: Event) {
+                        state { copy(value = event.value) }
+                        commands {
+                            +Command(event.value - 1).takeIf { event.value > 0 }
+                        }
+                    }
+                },
+                actor = actor,
+            )
                 .start()
 
         val states = mutableListOf<State>()

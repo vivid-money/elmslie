@@ -40,14 +40,13 @@ class EffectCachingElmStoreTest {
     fun `Should collect effects which are emitted before collecting flow`() = runTest {
         val store =
             store(
-                    state = State(),
-                    reducer = { event, state ->
-                        Result(
-                            state = state,
-                            effect = Effect(event.value),
-                        )
-                    },
-                )
+                state = State(),
+                reducer = object : StateReducer<Event, State, Effect, Command>() {
+                    override fun Result.reduce(event: Event) {
+                        effects { +Effect(value = event.value) }
+                    }
+                },
+            )
                 .toCachedStore()
 
         store.start()
@@ -76,14 +75,13 @@ class EffectCachingElmStoreTest {
     fun `Should collect effects which are emitted before collecting flow and after`() = runTest {
         val store =
             store(
-                    state = State(),
-                    reducer = { event, state ->
-                        Result(
-                            state = state,
-                            effect = Effect(event.value),
-                        )
-                    },
-                )
+                state = State(),
+                reducer = object : StateReducer<Event, State, Effect, Command>() {
+                    override fun Result.reduce(event: Event) {
+                        effects { +Effect(value = event.value) }
+                    }
+                },
+            )
                 .toCachedStore()
 
         store.start()
@@ -114,14 +112,13 @@ class EffectCachingElmStoreTest {
     fun `Should emit effects from cache only for the first subscriber`() = runTest {
         val store =
             store(
-                    state = State(),
-                    reducer = { event, state ->
-                        Result(
-                            state = state,
-                            effect = Effect(event.value),
-                        )
-                    },
-                )
+                state = State(),
+                reducer = object : StateReducer<Event, State, Effect, Command>() {
+                    override fun Result.reduce(event: Event) {
+                        effects { +Effect(value = event.value) }
+                    }
+                },
+            )
                 .toCachedStore()
 
         store.start()
@@ -152,14 +149,13 @@ class EffectCachingElmStoreTest {
     fun `Should cache effects if there is no left collectors`() = runTest {
         val store =
             store(
-                    state = State(),
-                    reducer = { event, state ->
-                        Result(
-                            state = state,
-                            effect = Effect(event.value),
-                        )
-                    },
-                )
+                state = State(),
+                reducer = object : StateReducer<Event, State, Effect, Command>() {
+                    override fun Result.reduce(event: Event) {
+                        effects { +Effect(value = event.value) }
+                    }
+                },
+            )
                 .toCachedStore()
 
         store.start()
