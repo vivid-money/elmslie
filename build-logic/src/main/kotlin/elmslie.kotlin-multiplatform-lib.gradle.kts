@@ -1,22 +1,22 @@
-@file:Suppress("UnstableApiUsage")
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     kotlin("multiplatform")
-    id("com.android.library")
     id("elmslie.detekt")
 }
 
 kotlin {
     applyDefaultHierarchyTemplate()
 
-    androidTarget {
+    jvm {
         compilations.all {
-            kotlinOptions {
-                jvmTarget = JvmTarget.toString()
+            compilerOptions.configure {
+                jvmTarget.set(JvmTarget.JVM_11)
             }
         }
     }
 
-    iosX64()
     iosArm64()
+    iosSimulatorArm64()
+    iosX64()
 }

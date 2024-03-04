@@ -1,9 +1,19 @@
 plugins {
-    id("elmslie.kotlin-jvm-lib")
-    id("elmslie.tests-convention")
+    id("elmslie.kotlin-multiplatform-lib")
 }
 
-dependencies {
-    implementation(libs.kotlinx.coroutinesCore)
-    testImplementation(libs.kotlinx.coroutinesTest)
+kotlin {
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation(libs.kotlinx.coroutinesCore)
+            }
+        }
+        val commonTest by getting {
+            dependencies {
+                implementation(libs.kotlinx.coroutinesTest)
+                implementation(libs.kotlin.test)
+            }
+        }
+    }
 }
