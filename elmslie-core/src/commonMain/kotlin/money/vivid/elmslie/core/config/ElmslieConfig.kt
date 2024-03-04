@@ -2,14 +2,17 @@ package money.vivid.elmslie.core.config
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import money.vivid.elmslie.core.logger.ElmslieLogConfiguration
 import money.vivid.elmslie.core.logger.ElmslieLogger
 import money.vivid.elmslie.core.logger.strategy.IgnoreLog
 import money.vivid.elmslie.core.store.StoreListener
+import kotlin.concurrent.Volatile
 
 object ElmslieConfig {
 
-    @Volatile private lateinit var _logger: ElmslieLogger
+    @Volatile
+    private lateinit var _logger: ElmslieLogger
 
     @Volatile private lateinit var _ioDispatchers: CoroutineDispatcher
 
