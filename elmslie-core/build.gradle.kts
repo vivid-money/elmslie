@@ -1,5 +1,6 @@
 plugins {
     id("elmslie.kotlin-multiplatform-lib")
+    alias(libs.plugins.binaryCompatibilityValidator)
 }
 
 kotlin {
