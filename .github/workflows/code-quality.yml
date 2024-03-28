@@ -31,6 +31,9 @@ jobs:
       - name: Run android lint
         run: ./gradlew lint
 
+      - name : Run api compatibility check
+        run: ./gradlew apiCheck
+
       - name: Build project
         run: ./gradlew assemble
 

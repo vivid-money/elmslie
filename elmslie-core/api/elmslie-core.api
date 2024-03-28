@@ -1,0 +1,184 @@
+public final class money/vivid/elmslie/core/ElmScopeKt {
+	public static final fun ElmScope (Ljava/lang/String;)Lkotlinx/coroutines/CoroutineScope;
+}
+
+public final class money/vivid/elmslie/core/config/ElmslieConfig {
+	public static final field INSTANCE Lmoney/vivid/elmslie/core/config/ElmslieConfig;
+	public final fun getGlobalStoreListeners ()Ljava/util/Set;
+	public final fun getIoDispatchers ()Lkotlinx/coroutines/CoroutineDispatcher;
+	public final fun getLogger ()Lmoney/vivid/elmslie/core/logger/ElmslieLogger;
+	public final fun getShouldStopOnProcessDeath ()Z
+	public final fun globalStoreListeners (Lkotlin/jvm/functions/Function0;)V
+	public final fun ioDispatchers (Lkotlin/jvm/functions/Function0;)V
+	public final fun logger (Lkotlin/jvm/functions/Function1;)V
+	public final fun shouldStopOnProcessDeath (Lkotlin/jvm/functions/Function0;)V
+}
+
+public final class money/vivid/elmslie/core/logger/ElmslieLogConfiguration {
+	public fun <init> ()V
+	public final fun always (Lmoney/vivid/elmslie/core/logger/strategy/LogStrategy;)Lmoney/vivid/elmslie/core/logger/ElmslieLogConfiguration;
+	public final fun debug (Lmoney/vivid/elmslie/core/logger/strategy/LogStrategy;)Lmoney/vivid/elmslie/core/logger/ElmslieLogConfiguration;
+	public final fun fatal (Lmoney/vivid/elmslie/core/logger/strategy/LogStrategy;)Lmoney/vivid/elmslie/core/logger/ElmslieLogConfiguration;
+	public final fun nonfatal (Lmoney/vivid/elmslie/core/logger/strategy/LogStrategy;)Lmoney/vivid/elmslie/core/logger/ElmslieLogConfiguration;
+}
+
+public final class money/vivid/elmslie/core/logger/ElmslieLogger {
+	public fun <init> (Ljava/util/Map;)V
+	public final fun debug (Ljava/lang/String;Ljava/lang/String;)V
+	public static synthetic fun debug$default (Lmoney/vivid/elmslie/core/logger/ElmslieLogger;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)V
+	public final fun fatal (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public static synthetic fun fatal$default (Lmoney/vivid/elmslie/core/logger/ElmslieLogger;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILjava/lang/Object;)V
+	public final fun nonfatal (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public static synthetic fun nonfatal$default (Lmoney/vivid/elmslie/core/logger/ElmslieLogger;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILjava/lang/Object;)V
+}
+
+public final class money/vivid/elmslie/core/logger/LogSeverity : java/lang/Enum {
+	public static final field Debug Lmoney/vivid/elmslie/core/logger/LogSeverity;
+	public static final field Fatal Lmoney/vivid/elmslie/core/logger/LogSeverity;
+	public static final field NonFatal Lmoney/vivid/elmslie/core/logger/LogSeverity;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lmoney/vivid/elmslie/core/logger/LogSeverity;
+	public static fun values ()[Lmoney/vivid/elmslie/core/logger/LogSeverity;
+}
+
+public final class money/vivid/elmslie/core/logger/strategy/IgnoreLog : money/vivid/elmslie/core/logger/strategy/LogStrategy {
+	public static final field INSTANCE Lmoney/vivid/elmslie/core/logger/strategy/IgnoreLog;
+	public fun log (Lmoney/vivid/elmslie/core/logger/LogSeverity;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+}
+
+public abstract interface class money/vivid/elmslie/core/logger/strategy/LogStrategy {
+	public abstract fun log (Lmoney/vivid/elmslie/core/logger/LogSeverity;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+}
+
+public abstract class money/vivid/elmslie/core/store/Actor {
+	public fun <init> ()V
+	protected final fun asSwitchFlow (Lkotlinx/coroutines/flow/Flow;Ljava/lang/Object;J)Lkotlinx/coroutines/flow/Flow;
+	public static synthetic fun asSwitchFlow$default (Lmoney/vivid/elmslie/core/store/Actor;Lkotlinx/coroutines/flow/Flow;Ljava/lang/Object;JILjava/lang/Object;)Lkotlinx/coroutines/flow/Flow;
+	protected final fun cancelSwitchFlow (Lkotlin/reflect/KClass;)Lkotlinx/coroutines/flow/Flow;
+	public abstract fun execute (Ljava/lang/Object;)Lkotlinx/coroutines/flow/Flow;
+	public final fun mapEvents (Lkotlinx/coroutines/flow/Flow;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Lkotlinx/coroutines/flow/Flow;
+	public static synthetic fun mapEvents$default (Lmoney/vivid/elmslie/core/store/Actor;Lkotlinx/coroutines/flow/Flow;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lkotlinx/coroutines/flow/Flow;
+}
+
+public final class money/vivid/elmslie/core/store/EffectCachingElmStore : money/vivid/elmslie/core/store/Store {
+	public fun <init> (Lmoney/vivid/elmslie/core/store/Store;)V
+	public fun accept (Ljava/lang/Object;)V
+	public fun getEffects ()Lkotlinx/coroutines/flow/Flow;
+	public fun getScope ()Lkotlinx/coroutines/CoroutineScope;
+	public fun getStartEvent ()Ljava/lang/Object;
+	public fun getStates ()Lkotlinx/coroutines/flow/StateFlow;
+	public fun start ()Lmoney/vivid/elmslie/core/store/Store;
+	public fun stop ()V
+}
+
+public final class money/vivid/elmslie/core/store/ElmStore : money/vivid/elmslie/core/store/Store {
+	public fun <init> (Ljava/lang/Object;Lmoney/vivid/elmslie/core/store/StateReducer;Lmoney/vivid/elmslie/core/store/Actor;Ljava/util/Set;Ljava/lang/Object;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/Object;Lmoney/vivid/elmslie/core/store/StateReducer;Lmoney/vivid/elmslie/core/store/Actor;Ljava/util/Set;Ljava/lang/Object;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun accept (Ljava/lang/Object;)V
+	public fun getEffects ()Lkotlinx/coroutines/flow/Flow;
+	public fun getScope ()Lkotlinx/coroutines/CoroutineScope;
+	public fun getStartEvent ()Ljava/lang/Object;
+	public fun getStates ()Lkotlinx/coroutines/flow/StateFlow;
+	public fun start ()Lmoney/vivid/elmslie/core/store/Store;
+	public fun stop ()V
+}
+
+public final class money/vivid/elmslie/core/store/ElmStoreKt {
+	public static final fun toCachedStore (Lmoney/vivid/elmslie/core/store/Store;)Lmoney/vivid/elmslie/core/store/EffectCachingElmStore;
+}
+
+public final class money/vivid/elmslie/core/store/NoOpActor : money/vivid/elmslie/core/store/Actor {
+	public fun <init> ()V
+	public fun execute (Ljava/lang/Object;)Lkotlinx/coroutines/flow/Flow;
+}
+
+public final class money/vivid/elmslie/core/store/NoOpReducer : money/vivid/elmslie/core/store/StateReducer {
+	public fun <init> ()V
+}
+
+public final class money/vivid/elmslie/core/store/Result {
+	public fun <init> (Ljava/lang/Object;)V
+	public fun <init> (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)V
+	public synthetic fun <init> (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/Object;Ljava/util/List;)V
+	public fun <init> (Ljava/lang/Object;Ljava/util/List;Ljava/util/List;)V
+	public final fun component1 ()Ljava/lang/Object;
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/Object;Ljava/util/List;Ljava/util/List;)Lmoney/vivid/elmslie/core/store/Result;
+	public static synthetic fun copy$default (Lmoney/vivid/elmslie/core/store/Result;Ljava/lang/Object;Ljava/util/List;Ljava/util/List;ILjava/lang/Object;)Lmoney/vivid/elmslie/core/store/Result;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCommands ()Ljava/util/List;
+	public final fun getEffects ()Ljava/util/List;
+	public final fun getState ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class money/vivid/elmslie/core/store/ScreenReducer : money/vivid/elmslie/core/store/StateReducer {
+	public fun <init> (Lkotlin/reflect/KClass;Lkotlin/reflect/KClass;)V
+	protected abstract fun internal (Lmoney/vivid/elmslie/core/store/StateReducer$Result;Ljava/lang/Object;)Ljava/lang/Object;
+	protected fun reduce (Lmoney/vivid/elmslie/core/store/StateReducer$Result;Ljava/lang/Object;)V
+	protected abstract fun ui (Lmoney/vivid/elmslie/core/store/StateReducer$Result;Ljava/lang/Object;)Ljava/lang/Object;
+}
+
+public abstract class money/vivid/elmslie/core/store/StateReducer {
+	public fun <init> ()V
+	public final fun reduce (Ljava/lang/Object;Ljava/lang/Object;)Lmoney/vivid/elmslie/core/store/Result;
+	protected abstract fun reduce (Lmoney/vivid/elmslie/core/store/StateReducer$Result;Ljava/lang/Object;)V
+}
+
+protected final class money/vivid/elmslie/core/store/StateReducer$Result : money/vivid/elmslie/core/store/dsl/ResultBuilder {
+	public fun <init> (Lmoney/vivid/elmslie/core/store/StateReducer;Ljava/lang/Object;)V
+}
+
+public abstract interface class money/vivid/elmslie/core/store/Store {
+	public abstract fun accept (Ljava/lang/Object;)V
+	public abstract fun getEffects ()Lkotlinx/coroutines/flow/Flow;
+	public abstract fun getScope ()Lkotlinx/coroutines/CoroutineScope;
+	public abstract fun getStartEvent ()Ljava/lang/Object;
+	public abstract fun getStates ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun start ()Lmoney/vivid/elmslie/core/store/Store;
+	public abstract fun stop ()V
+}
+
+public abstract interface class money/vivid/elmslie/core/store/StoreListener {
+	public abstract fun onActorError (Ljava/lang/String;Ljava/lang/Throwable;Ljava/lang/Object;)V
+	public abstract fun onAfterEvent (Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)V
+	public abstract fun onBeforeEvent (Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V
+	public abstract fun onCommand (Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V
+	public abstract fun onEffect (Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V
+	public abstract fun onReducerError (Ljava/lang/String;Ljava/lang/Throwable;Ljava/lang/Object;)V
+}
+
+public final class money/vivid/elmslie/core/store/StoreListener$DefaultImpls {
+	public static fun onActorError (Lmoney/vivid/elmslie/core/store/StoreListener;Ljava/lang/String;Ljava/lang/Throwable;Ljava/lang/Object;)V
+	public static fun onAfterEvent (Lmoney/vivid/elmslie/core/store/StoreListener;Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)V
+	public static fun onBeforeEvent (Lmoney/vivid/elmslie/core/store/StoreListener;Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V
+	public static fun onCommand (Lmoney/vivid/elmslie/core/store/StoreListener;Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V
+	public static fun onEffect (Lmoney/vivid/elmslie/core/store/StoreListener;Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V
+	public static fun onReducerError (Lmoney/vivid/elmslie/core/store/StoreListener;Ljava/lang/String;Ljava/lang/Throwable;Ljava/lang/Object;)V
+}
+
+public final class money/vivid/elmslie/core/store/dsl/OperationsBuilder {
+	public fun <init> ()V
+	public final fun unaryPlus (Ljava/lang/Object;)V
+}
+
+public class money/vivid/elmslie/core/store/dsl/ResultBuilder {
+	public fun <init> (Ljava/lang/Object;)V
+	public final fun commands (Lkotlin/jvm/functions/Function1;)V
+	public final fun effects (Lkotlin/jvm/functions/Function1;)V
+	public final fun getInitialState ()Ljava/lang/Object;
+	public final fun getState ()Ljava/lang/Object;
+	public final fun state (Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class money/vivid/elmslie/core/switcher/Switcher {
+	public fun <init> ()V
+	public final fun cancel (J)Lkotlinx/coroutines/flow/Flow;
+	public static synthetic fun cancel$default (Lmoney/vivid/elmslie/core/switcher/Switcher;JILjava/lang/Object;)Lkotlinx/coroutines/flow/Flow;
+	public final fun switch (JLkotlin/jvm/functions/Function0;)Lkotlinx/coroutines/flow/Flow;
+	public static synthetic fun switch$default (Lmoney/vivid/elmslie/core/switcher/Switcher;JLkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lkotlinx/coroutines/flow/Flow;
+}
+
