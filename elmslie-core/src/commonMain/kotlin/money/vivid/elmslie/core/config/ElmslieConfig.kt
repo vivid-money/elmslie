@@ -2,40 +2,30 @@ package money.vivid.elmslie.core.config
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import money.vivid.elmslie.core.logger.ElmslieLogConfiguration
 import money.vivid.elmslie.core.logger.ElmslieLogger
 import money.vivid.elmslie.core.logger.strategy.IgnoreLog
 import money.vivid.elmslie.core.store.StoreListener
+import money.vivid.elmslie.core.utils.IoDispatcher
 import kotlin.concurrent.Volatile
 
 object ElmslieConfig {
 
     @Volatile
-    private lateinit var _logger: ElmslieLogger
+    var logger: ElmslieLogger = ElmslieLogConfiguration().apply { always(IgnoreLog) }.build()
+        private set
 
-    @Volatile private lateinit var _ioDispatchers: CoroutineDispatcher
+    @Volatile
+    var ioDispatchers: CoroutineDispatcher = IoDispatcher
+        private set
 
-    @Volatile private var _shouldStopOnProcessDeath: Boolean = true
+    @Volatile
+    var shouldStopOnProcessDeath: Boolean = true
+        private set
 
-    @Volatile private var _globalStoreListeners: Set<StoreListener<Any, Any, Any, Any>> = emptySet()
-
-    val logger: ElmslieLogger
-        get() = _logger
-
-    val ioDispatchers: CoroutineDispatcher
-        get() = _ioDispatchers
-
-    val shouldStopOnProcessDeath: Boolean
-        get() = _shouldStopOnProcessDeath
-
-    val globalStoreListeners: Set<StoreListener<Any, Any, Any, Any>>
-        get() = _globalStoreListeners
-
-    init {
-        logger { always(IgnoreLog) }
-        ioDispatchers { Dispatchers.IO }
-    }
+    @Volatile
+    var globalStoreListeners: Set<StoreListener<Any, Any, Any, Any>> = emptySet()
+        private set
 
     /**
      * Configures logging and error handling
@@ -50,7 +40,7 @@ object ElmslieConfig {
      * ```
      */
     fun logger(config: (ElmslieLogConfiguration.() -> Unit)) {
-        ElmslieLogConfiguration().apply(config).build().also { _logger = it }
+        ElmslieLogConfiguration().apply(config).build().also { logger = it }
     }
 
     /**
@@ -58,14 +48,14 @@ object ElmslieConfig {
      * [Dispatchers.IO]
      */
     fun ioDispatchers(builder: () -> CoroutineDispatcher) {
-        _ioDispatchers = builder()
+        ioDispatchers = builder()
     }
 
     fun shouldStopOnProcessDeath(builder: () -> Boolean) {
-        _shouldStopOnProcessDeath = builder()
+        shouldStopOnProcessDeath = builder()
     }
 
     fun globalStoreListeners(builder: () -> Set<StoreListener<Any, Any, Any, Any>>) {
-        _globalStoreListeners = builder()
+        globalStoreListeners = builder()
     }
 }

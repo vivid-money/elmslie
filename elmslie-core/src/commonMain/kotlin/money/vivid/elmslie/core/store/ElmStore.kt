@@ -46,7 +46,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
             storeListeners?.forEach(::add)
         }
 
-    override val scope = ElmScope("StoreScope")
+    override val scope = ElmScope("${key}Scope")
 
     override val states: StateFlow<State> = statesFlow.asStateFlow()
 
