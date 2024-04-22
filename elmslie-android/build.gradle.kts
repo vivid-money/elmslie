@@ -1,5 +1,6 @@
 plugins {
     id("elmslie.android-lib")
+    alias(libs.plugins.binaryCompatibilityValidator)
 }
 
 android {
