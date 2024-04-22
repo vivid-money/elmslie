@@ -1,6 +1,8 @@
 package money.vivid.elmslie.core.store
 
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -13,12 +15,11 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import money.vivid.elmslie.core.ElmScope
 import money.vivid.elmslie.core.config.ElmslieConfig
 
 @Suppress("TooGenericExceptionCaught")
+@OptIn(ExperimentalCoroutinesApi::class)
 class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     initialState: State,
     private val reducer: StateReducer<Event, State, Effect, Command>,
@@ -26,14 +27,14 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     storeListeners: Set<StoreListener<Event, State, Effect, Command>>? = null,
     override val startEvent: Event? = null,
     private val key: String =
-        (reducer::class.qualifiedName?: reducer::class.simpleName).orEmpty().replace(
+        (reducer::class.qualifiedName ?: reducer::class.simpleName).orEmpty().replace(
             "Reducer",
             "Store",
         ),
 ) : Store<Event, Effect, State> {
 
     private val logger = ElmslieConfig.logger
-    private val eventMutex = Mutex()
+    private val eventDispatcher = ElmslieConfig.ioDispatchers.limitedParallelism(parallelism = 1)
 
     private val effectsFlow = MutableSharedFlow<Effect>()
 
@@ -51,7 +52,9 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
 
     override val effects: Flow<Effect> = effectsFlow.asSharedFlow()
 
-    override fun accept(event: Event) = dispatchEvent(event)
+    override fun accept(event: Event) {
+        scope.handleEvent(event)
+    }
 
     override fun start(): Store<Event, Effect, State> {
         startEvent?.let(::accept)
@@ -62,37 +65,30 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
         scope.cancel()
     }
 
-    private fun dispatchEvent(event: Event) {
-        scope.launch {
-            try {
-                storeListeners.forEach { it.onBeforeEvent(key, event, statesFlow.value) }
-                logger.debug(
-                    message = "New event: $event",
-                    tag = key,
-                )
-                val (_, effects, commands) =
-                    eventMutex.withLock {
-                        val oldState = statesFlow.value
-                        val result = reducer.reduce(event, statesFlow.value)
-                        val newState = result.state
-                        statesFlow.value = newState
-                        storeListeners.forEach {
-                            it.onAfterEvent(key, newState, oldState, event)
-                        }
-                        result
-                    }
-                effects.forEach { effect -> if (isActive) dispatchEffect(effect) }
-                commands.forEach { if (isActive) executeCommand(it) }
-            } catch (error: CancellationException) {
-                throw error
-            } catch (t: Throwable) {
-                storeListeners.forEach { it.onReducerError(key, t, event) }
-                logger.fatal(
-                    message = "You must handle all errors inside reducer",
-                    tag = key,
-                    error = t,
-                )
+    private fun CoroutineScope.handleEvent(event: Event) = launch(eventDispatcher) {
+        try {
+            storeListeners.forEach { it.onBeforeEvent(key, event, statesFlow.value) }
+            logger.debug(
+                message = "New event: $event",
+                tag = key,
+            )
+            val oldState = statesFlow.value
+            val (state, effects, commands) = reducer.reduce(event, statesFlow.value)
+            statesFlow.value = state
+            storeListeners.forEach {
+                it.onAfterEvent(key, state, oldState, event)
             }
+            effects.forEach { effect -> if (isActive) dispatchEffect(effect) }
+            commands.forEach { if (isActive) executeCommand(it) }
+        } catch (error: CancellationException) {
+            throw error
+        } catch (t: Throwable) {
+            storeListeners.forEach { it.onReducerError(key, t, event) }
+            logger.fatal(
+                message = "You must handle all errors inside reducer",
+                tag = key,
+                error = t,
+            )
         }
     }
 

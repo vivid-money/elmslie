@@ -1,9 +1,5 @@
 package money.vivid.elmslie.core.store
 
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -14,6 +10,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runCurrent
@@ -24,6 +21,10 @@ import money.vivid.elmslie.core.testutil.model.Command
 import money.vivid.elmslie.core.testutil.model.Effect
 import money.vivid.elmslie.core.testutil.model.Event
 import money.vivid.elmslie.core.testutil.model.State
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ElmStoreTest {
@@ -73,8 +74,7 @@ class ElmStoreTest {
         val emittedStates = mutableListOf<State>()
         val collectJob = launch { store.states.toList(emittedStates) }
         store.accept(Event())
-        runCurrent()
-        delay(3500)
+        advanceTimeBy(3500)
         store.stop()
 
         assertEquals(
