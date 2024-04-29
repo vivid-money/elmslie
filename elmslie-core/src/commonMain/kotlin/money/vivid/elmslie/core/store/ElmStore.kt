@@ -17,6 +17,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import money.vivid.elmslie.core.ElmScope
 import money.vivid.elmslie.core.config.ElmslieConfig
+import money.vivid.elmslie.core.utils.resolveStoreKey
 
 @Suppress("TooGenericExceptionCaught")
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -26,11 +27,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
     private val actor: Actor<Command, out Event>,
     storeListeners: Set<StoreListener<Event, State, Effect, Command>>? = null,
     override val startEvent: Event? = null,
-    private val key: String =
-        (reducer::class.qualifiedName ?: reducer::class.simpleName).orEmpty().replace(
-            "Reducer",
-            "Store",
-        ),
+    private val key: String = resolveStoreKey(reducer),
 ) : Store<Event, Effect, State> {
 
     private val logger = ElmslieConfig.logger
@@ -46,7 +43,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
             storeListeners?.forEach(::add)
         }
 
-    override val scope = ElmScope("StoreScope")
+    override val scope = ElmScope("${key}Scope")
 
     override val states: StateFlow<State> = statesFlow.asStateFlow()
 
