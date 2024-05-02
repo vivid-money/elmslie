@@ -16,6 +16,7 @@ androidx-lifecycle-viewmodelSavedstate = { module = "androidx.lifecycle:lifecycl
 androidx-startup-runtime = "androidx.startup:startup-runtime:1.1.1"
 detekt-gradlePlugin = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.23.0"
 dokka-gradlePlugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
+mavenPublishPlugin = { module = "com.vanniktech.maven.publish:com.vanniktech.maven.publish.gradle.plugin", version = "0.28.0" }
 dokka-kotlinAsJavaPlugin = { module = "org.jetbrains.dokka:kotlin-as-java-plugin", version.ref = "dokka" }
 google-material = "com.google.android.material:material:1.9.0"
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
