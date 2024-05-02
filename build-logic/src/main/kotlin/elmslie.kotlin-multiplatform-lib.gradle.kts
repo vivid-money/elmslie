@@ -7,7 +7,14 @@ plugins {
 }
 
 kotlin {
-    applyDefaultHierarchyTemplate()
+    applyDefaultHierarchyTemplate {
+        common {
+            group("commonWeb") {
+                withJs()
+                withWasm()
+            }
+        }
+    }
 
     jvm {
         compilations.all {
@@ -21,8 +28,11 @@ kotlin {
     iosSimulatorArm64()
     iosX64()
 
+    js(IR) {
+        browser()
+    }
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        nodejs()
+        browser()
     }
 }
