@@ -1,6 +1,6 @@
-package publishing
-
 import com.vanniktech.maven.publish.SonatypeHost
+import gradle.kotlin.dsl.accessors._089c671483fb7c20aeca81bf72df85c9.mavenPublishing
+import java.lang.IllegalArgumentException
 
 plugins {
     id("com.vanniktech.maven.publish")
@@ -15,10 +15,9 @@ val libraryGroup: String by project
 val libraryVersion: String by project
 
 afterEvaluate {
-    val pom = requireNotNull(publishingExtension.pom) {
-        println("Please, call configure function")
-    }
+    val pom = publishingExtension.pom
     with(project.mavenPublishing) {
+        checkPomRequiredFields(pom)
         publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
         signAllPublications()
 
@@ -55,5 +54,15 @@ afterEvaluate {
                 url.set(elmslieGitHubUrl)
             }
         }
+    }
+}
+
+fun checkPomRequiredFields(pom: PublishingExtension.Pom) {
+    if (pom.name.isBlank()) {
+        throw IllegalArgumentException(
+            """Pom.name cannot be empty
+            | Please, call elmsliePublishing { pom { name = "Lib name" } }
+            """.trimMargin(),
+        )
     }
 }

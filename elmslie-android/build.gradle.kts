@@ -1,8 +1,6 @@
-import publishing.PublishingExtension
-
 plugins {
     id("elmslie.android-lib")
-    id("publishing.elmslie")
+    id("elmslie.publishing")
     alias(libs.plugins.binaryCompatibilityValidator)
 }
 
@@ -11,12 +9,11 @@ android {
 }
 
 elmsliePublishing {
-    configure(
-        PublishingExtension.Pom(
-            name = "Elmslie Android",
-            description = "Elmslie is a minimalistic reactive implementation of TEA/ELM. Android specific. https://github.com/vivid-money/elmslie/",
-        ),
-    )
+    pom {
+        name = "Elmslie Android"
+        description =
+            "Elmslie is a minimalistic reactive implementation of TEA/ELM. Android specific. https://github.com/vivid-money/elmslie/"
+    }
 }
 
 dependencies {
