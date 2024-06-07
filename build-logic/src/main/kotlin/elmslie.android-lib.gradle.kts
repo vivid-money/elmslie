@@ -7,7 +7,6 @@ plugins {
     id("elmslie.base-lib")
     id("elmslie.detekt")
     id("elmslie.tests-convention")
-    `maven-publish`
 }
 
 android {
@@ -28,13 +27,6 @@ android {
         xmlReport = false
     }
 
-    publishing {
-        singleVariant("release") {
-            withJavadocJar()
-            withSourcesJar()
-        }
-    }
-
     compileOptions {
         targetCompatibility = JvmTarget
         sourceCompatibility = JvmTarget
@@ -42,17 +34,3 @@ android {
 }
 
 val catalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
-
-dependencies { catalog.findLibrary("dokka-kotlinAsJavaPlugin").ifPresent { dokkaHtmlPlugin(it) } }
-
-val libraryGroup: String by project
-val libraryVersion: String by project
-
-afterEvaluate {
-    publishing.publications.create<MavenPublication>("release") {
-        from(components["release"])
-        artifactId = project.name
-        groupId = libraryGroup
-        version = libraryVersion
-    }
-}
