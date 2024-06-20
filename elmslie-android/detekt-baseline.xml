@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>LongParameterList:ElmStoreLazy.kt$( key: String = this::class.java.canonicalName ?: this::class.java.simpleName, viewModelStoreOwner: () -> ViewModelStoreOwner = { this }, savedStateRegistryOwner: () -> SavedStateRegistryOwner = { this }, defaultArgs: () -> Bundle = { arguments ?: bundleOf() }, saveState: Bundle.(State) -> Unit = {}, storeFactory: SavedStateHandle.() -> Store&lt;Event, Effect, State>, )</ID>
+    <ID>LongParameterList:ElmStoreLazy.kt$( key: String = this::class.java.canonicalName ?: this::class.java.simpleName, viewModelStoreOwner: () -> ViewModelStoreOwner = { this }, savedStateRegistryOwner: () -> SavedStateRegistryOwner = { this }, defaultArgs: () -> Bundle = { this.intent?.extras ?: bundleOf() }, saveState: Bundle.(State) -> Unit = {}, storeFactory: SavedStateHandle.() -> Store&lt;Event, Effect, State>, )</ID>
+    <ID>LongParameterList:ElmStoreLazy.kt$( key: String, viewModelStoreOwner: () -> ViewModelStoreOwner, savedStateRegistryOwner: () -> SavedStateRegistryOwner, defaultArgs: () -> Bundle, saveState: Bundle.(State) -> Unit, storeFactory: SavedStateHandle.() -> Store&lt;Event, Effect, State>, )</ID>
+  </CurrentIssues>
+</SmellBaseline>

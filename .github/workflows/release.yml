@@ -18,6 +18,12 @@ jobs:
         with:
           ref: ${{ env.GITHUB_REF }}
 
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: zulu
+          java-version: 17
+
       - name: Ensure main branch
         run: ./.github/sh/validate_publishing_branch.sh
 
@@ -42,6 +48,12 @@ jobs:
         with:
           ref: ${{ env.GITHUB_REF }}
 
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: zulu
+          java-version: 17
+
       - name: Update library version
         run: ./.github/sh/update_release_version.sh "libraryVersion" "$NEW_VERSION"
 
@@ -60,9 +72,16 @@ jobs:
           failOnError: true
           configuration: .github/changelogconfig/configuration.json
 
+      - name: Get current git commit SHA
+        id: vars
+        run: |
+          calculatedSha=$(git rev-parse HEAD)
+          echo "::set-output name=commit_sha::$calculatedSha"
+
       - name: Create github release
         uses: ncipollo/release-action@v1
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
           tag: "${{ env.NEW_VERSION }}"
+          commit: "${{ steps.vars.outputs.commit_sha }}"
           body: ${{ steps.github_release.outputs.changelog }}
