@@ -29,7 +29,7 @@ Samples are available [here](https://github.com/vivid-money/elmslie/tree/publish
 - Pure kotlin calculator: [link](https://github.com/vivid-money/elmslie/tree/publish-elmslie-3.0/samples/kotlin-calculator)
 
 ## Download
-Library is distributed through JitPack
+Library is distributed through Maven Central
 
 #### Add repository in the root build.gradle
 ```kotlin
