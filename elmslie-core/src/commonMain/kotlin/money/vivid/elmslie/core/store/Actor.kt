@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import money.vivid.elmslie.core.config.ElmslieConfig
 import money.vivid.elmslie.core.switcher.Switcher
 import kotlin.reflect.KClass
 
@@ -24,7 +25,7 @@ abstract class Actor<Command : Any, Event : Any> {
         eventMapper: (T) -> Event? = { null },
         errorMapper: (error: Throwable) -> Event? = { null },
     ) = mapNotNull { eventMapper(it) }
-        .catch { errorMapper(it)?.let { event -> emit(event) } ?: throw it }
+        .catch { it.logErrorEvent(errorMapper)?.let { event -> emit(event) } ?: throw it }
 
     protected fun <T : Any, Command : Any> Flow<T>.asSwitchFlow(command: Command, delayMillis: Long = 0): Flow<T> {
         return flow {
@@ -41,5 +42,11 @@ abstract class Actor<Command : Any, Event : Any> {
 
     protected fun <T : Any> cancelSwitchFlow(command: KClass<out Any>): Flow<T> {
         return flow { switchers[command]?.cancel() }
+    }
+
+    private fun Throwable.logErrorEvent(errorMapper: (Throwable) -> Event?): Event? {
+        return errorMapper(this).also {
+            ElmslieConfig.logger.nonfatal(error = this)
+        }
     }
 }
