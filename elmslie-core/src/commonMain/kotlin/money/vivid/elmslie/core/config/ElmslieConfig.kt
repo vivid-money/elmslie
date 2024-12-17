@@ -6,7 +6,7 @@ import money.vivid.elmslie.core.logger.ElmslieLogConfiguration
 import money.vivid.elmslie.core.logger.ElmslieLogger
 import money.vivid.elmslie.core.logger.strategy.IgnoreLog
 import money.vivid.elmslie.core.store.StoreListener
-import money.vivid.elmslie.core.utils.IoDispatcher
+import money.vivid.elmslie.core.utils.ElmDispatcher
 import kotlin.concurrent.Volatile
 
 object ElmslieConfig {
@@ -16,7 +16,7 @@ object ElmslieConfig {
         private set
 
     @Volatile
-    var ioDispatchers: CoroutineDispatcher = IoDispatcher
+    var elmDispatcher: CoroutineDispatcher = ElmDispatcher
         private set
 
     @Volatile
@@ -45,10 +45,10 @@ object ElmslieConfig {
 
     /**
      * Configures CoroutineDispatcher for performing operations in background. Default is
-     * [Dispatchers.IO]
+     * [Dispatchers.Default]
      */
-    fun ioDispatchers(builder: () -> CoroutineDispatcher) {
-        ioDispatchers = builder()
+    fun elmDispatcher(builder: () -> CoroutineDispatcher) {
+        elmDispatcher = builder()
     }
 
     fun shouldStopOnProcessDeath(builder: () -> Boolean) {

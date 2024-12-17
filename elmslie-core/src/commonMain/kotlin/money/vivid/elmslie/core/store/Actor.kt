@@ -16,8 +16,8 @@ abstract class Actor<Command : Any, Event : Any> {
     private val mutex = Mutex()
 
     /**
-     * Executes a command. This method is performed on the [Dispatchers.IO]
-     * [kotlinx.coroutines.Dispatchers.IO] which is set by ElmslieConfig.ioDispatchers()
+     * Executes a command. This method is performed on the [Dispatchers.Default]
+     * [kotlinx.coroutines.Dispatchers.Default] which is set by ElmslieConfig.elmDispatcher()
      */
     abstract fun execute(command: Command): Flow<Event>
 

@@ -20,7 +20,7 @@ internal class ElmRenderer<Effect : Any, State : Any>(
 ) {
 
     private val logger = ElmslieConfig.logger
-    private val ioDispatcher: CoroutineDispatcher = ElmslieConfig.ioDispatchers
+    private val elmDispatcher: CoroutineDispatcher = ElmslieConfig.elmDispatcher
     private val canRender
         get() = lifecycle.currentState.isAtLeast(STARTED)
 
@@ -52,7 +52,7 @@ internal class ElmRenderer<Effect : Any, State : Any>(
                             error = it,
                         )
                     }
-                    .flowOn(ioDispatcher)
+                    .flowOn(elmDispatcher)
                     .collect { (state, listItems) ->
                         catchStateErrors {
                             if (canRender) {
