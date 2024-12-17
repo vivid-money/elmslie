@@ -60,9 +60,9 @@ class Switcher {
         }
     }
 
-    fun <Event : Any> cancel(
+    suspend fun cancel(
         delayMillis: Long = 0,
-    ): Flow<Event> = flow {
+    ) {
         delay(delayMillis)
         lock.withLock {
             currentChannel?.close()

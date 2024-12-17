@@ -2,7 +2,6 @@ package money.vivid.elmslie.core.store
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.sync.Mutex
@@ -41,6 +40,6 @@ abstract class Actor<Command : Any, Event : Any> {
     }
 
     protected fun <T : Any> cancelSwitchFlow(command: KClass<out Any>): Flow<T> {
-        return switchers[command]?.cancel() ?: emptyFlow()
+        return flow { switchers[command]?.cancel() }
     }
 }
