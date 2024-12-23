@@ -10,4 +10,5 @@ dependencies {
     implementation(libs.dokka.gradlePlugin)
     implementation(libs.kotlin.gradlePlugin)
     implementation(libs.mavenPublishPlugin)
+    implementation(libs.spotless.gradlePlugin)
 }
