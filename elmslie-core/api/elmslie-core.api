@@ -53,9 +53,12 @@ public abstract interface class money/vivid/elmslie/core/logger/strategy/LogStra
 public abstract class money/vivid/elmslie/core/store/Actor {
 	public fun <init> ()V
 	protected final fun asSwitchFlow (Lkotlinx/coroutines/flow/Flow;Ljava/lang/Object;J)Lkotlinx/coroutines/flow/Flow;
+	protected final fun asSwitchFlow (Lkotlinx/coroutines/flow/Flow;Ljava/lang/String;J)Lkotlinx/coroutines/flow/Flow;
 	public static synthetic fun asSwitchFlow$default (Lmoney/vivid/elmslie/core/store/Actor;Lkotlinx/coroutines/flow/Flow;Ljava/lang/Object;JILjava/lang/Object;)Lkotlinx/coroutines/flow/Flow;
-	protected final fun cancelSwitchFlow (Lkotlin/reflect/KClass;)Lkotlinx/coroutines/flow/Flow;
+	public static synthetic fun asSwitchFlow$default (Lmoney/vivid/elmslie/core/store/Actor;Lkotlinx/coroutines/flow/Flow;Ljava/lang/String;JILjava/lang/Object;)Lkotlinx/coroutines/flow/Flow;
+	protected final fun cancelSwitchFlow ([Ljava/lang/String;)Lkotlinx/coroutines/flow/Flow;
 	public abstract fun execute (Ljava/lang/Object;)Lkotlinx/coroutines/flow/Flow;
+	public final fun getSwitchers ()Ljava/util/Map;
 	public final fun mapEvents (Lkotlinx/coroutines/flow/Flow;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Lkotlinx/coroutines/flow/Flow;
 	public static synthetic fun mapEvents$default (Lmoney/vivid/elmslie/core/store/Actor;Lkotlinx/coroutines/flow/Flow;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lkotlinx/coroutines/flow/Flow;
 }

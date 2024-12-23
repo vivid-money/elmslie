@@ -8,11 +8,11 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import money.vivid.elmslie.core.config.ElmslieConfig
 import money.vivid.elmslie.core.switcher.Switcher
-import kotlin.reflect.KClass
 
 abstract class Actor<Command : Any, Event : Any> {
 
-    private val switchers = mutableMapOf<KClass<out Any>, Switcher>()
+    @PublishedApi
+    internal val switchers = mutableMapOf<String, Switcher>()
     private val mutex = Mutex()
 
     /**
@@ -28,9 +28,14 @@ abstract class Actor<Command : Any, Event : Any> {
         .catch { it.logErrorEvent(errorMapper)?.let { event -> emit(event) } ?: throw it }
 
     protected fun <T : Any, Command : Any> Flow<T>.asSwitchFlow(command: Command, delayMillis: Long = 0): Flow<T> {
+        val key = command::class.simpleName.orEmpty()
+        return asSwitchFlow(key, delayMillis)
+    }
+
+    protected fun <T : Any> Flow<T>.asSwitchFlow(customKey: String, delayMillis: Long = 0): Flow<T> {
         return flow {
             val switcher = mutex.withLock {
-                switchers.getOrPut(command::class) {
+                switchers.getOrPut(customKey) {
                     Switcher()
                 }
             }
@@ -40,8 +45,21 @@ abstract class Actor<Command : Any, Event : Any> {
         }
     }
 
-    protected fun <T : Any> cancelSwitchFlow(command: KClass<out Any>): Flow<T> {
-        return flow { switchers[command]?.cancel() }
+    protected inline fun <reified T : Any> cancelSwitchFlow(): Flow<Event> {
+        val key = T::class.simpleName.orEmpty()
+        return cancelSwitchFlow(key)
+    }
+
+    protected fun cancelSwitchFlow(
+        vararg keys: String,
+    ): Flow<Event> {
+        return flow<Any> {
+            keys.forEach { key ->
+                mutex.withLock {
+                    switchers.remove(key)?.cancel()
+                }
+            }
+        }.mapEvents()
     }
 
     private fun Throwable.logErrorEvent(errorMapper: (Throwable) -> Event?): Event? {

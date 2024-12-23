@@ -27,6 +27,7 @@ import money.vivid.elmslie.core.store.Actor
  * }
  * ```
  */
+@Deprecated("Will be internal. Consider migrate it's usage to 'Actor.asSwitchFlow'")
 class Switcher {
 
     private var currentChannel: SendChannel<*>? = null
