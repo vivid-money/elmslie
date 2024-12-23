@@ -22,18 +22,20 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
 
-      - name: Run unit tests
-        run: ./gradlew test
+      - name : Run api compatibility check
+        run: ./gradlew apiCheck
+
+      - name: Run spotless
+        run: ./gradlew spotlessCheck
 
       - name: Run detekt
         run: ./gradlew detekt
 
-      - name: Run android lint
-        run: ./gradlew lint
-
-      - name : Run api compatibility check
-        run: ./gradlew apiCheck
-
       - name: Build project
         run: ./gradlew assemble
 
+      - name: Run unit tests
+        run: ./gradlew test
+
+      - name: Run android lint
+        run: ./gradlew lint
