@@ -23,164 +23,145 @@ import money.vivid.elmslie.core.testutil.model.State
 @OptIn(ExperimentalCoroutinesApi::class)
 class EffectCachingElmStoreTest {
 
-    @BeforeTest
-    fun beforeEach() {
-        val testDispatcher = StandardTestDispatcher()
-        ElmslieConfig.elmDispatcher { testDispatcher }
-        Dispatchers.setMain(testDispatcher)
-    }
+  @BeforeTest
+  fun beforeEach() {
+    val testDispatcher = StandardTestDispatcher()
+    ElmslieConfig.elmDispatcher { testDispatcher }
+    Dispatchers.setMain(testDispatcher)
+  }
 
+  @AfterTest
+  fun afterEach() {
+    Dispatchers.resetMain()
+  }
 
-    @AfterTest
-    fun afterEach() {
-        Dispatchers.resetMain()
-    }
-
-    @Test
-    fun `Should collect effects which are emitted before collecting flow`() = runTest {
-        val store =
-            store(
-                state = State(),
-                reducer = object : StateReducer<Event, State, Effect, Command>() {
-                    override fun Result.reduce(event: Event) {
-                        effects { +Effect(value = event.value) }
-                    }
-                },
-            )
-                .toCachedStore()
-
-        store.start()
-        store.accept(Event(value = 1))
-        store.accept(Event(value = 2))
-        store.accept(Event(value = 2))
-        advanceUntilIdle()
-
-        val effects = mutableListOf<Effect>()
-        val job = launch { store.effects.toList(effects) }
-        advanceUntilIdle()
-
-        assertEquals(
-            listOf(
-                Effect(value = 1),
-                Effect(value = 2),
-                Effect(value = 2),
-            ),
-            effects
+  @Test
+  fun `Should collect effects which are emitted before collecting flow`() = runTest {
+    val store =
+      store(
+          state = State(),
+          reducer =
+            object : StateReducer<Event, State, Effect, Command>() {
+              override fun Result.reduce(event: Event) {
+                effects { +Effect(value = event.value) }
+              }
+            },
         )
+        .toCachedStore()
 
-        job.cancel()
-    }
+    store.start()
+    store.accept(Event(value = 1))
+    store.accept(Event(value = 2))
+    store.accept(Event(value = 2))
+    advanceUntilIdle()
 
-    @Test
-    fun `Should collect effects which are emitted before collecting flow and after`() = runTest {
-        val store =
-            store(
-                state = State(),
-                reducer = object : StateReducer<Event, State, Effect, Command>() {
-                    override fun Result.reduce(event: Event) {
-                        effects { +Effect(value = event.value) }
-                    }
-                },
-            )
-                .toCachedStore()
+    val effects = mutableListOf<Effect>()
+    val job = launch { store.effects.toList(effects) }
+    advanceUntilIdle()
 
-        store.start()
-        store.accept(Event(value = 1))
-        store.accept(Event(value = 2))
-        store.accept(Event(value = 2))
-        advanceUntilIdle()
+    assertEquals(listOf(Effect(value = 1), Effect(value = 2), Effect(value = 2)), effects)
 
-        val effects = mutableListOf<Effect>()
-        val job = launch { store.effects.toList(effects) }
-        store.accept(Event(value = 3))
-        advanceUntilIdle()
+    job.cancel()
+  }
 
-        assertEquals(
-            listOf(
-                Effect(value = 1),
-                Effect(value = 2),
-                Effect(value = 2),
-                Effect(value = 3),
-            ),
-            effects
+  @Test
+  fun `Should collect effects which are emitted before collecting flow and after`() = runTest {
+    val store =
+      store(
+          state = State(),
+          reducer =
+            object : StateReducer<Event, State, Effect, Command>() {
+              override fun Result.reduce(event: Event) {
+                effects { +Effect(value = event.value) }
+              }
+            },
         )
+        .toCachedStore()
 
-        job.cancel()
-    }
+    store.start()
+    store.accept(Event(value = 1))
+    store.accept(Event(value = 2))
+    store.accept(Event(value = 2))
+    advanceUntilIdle()
 
-    @Test
-    fun `Should emit effects from cache only for the first subscriber`() = runTest {
-        val store =
-            store(
-                state = State(),
-                reducer = object : StateReducer<Event, State, Effect, Command>() {
-                    override fun Result.reduce(event: Event) {
-                        effects { +Effect(value = event.value) }
-                    }
-                },
-            )
-                .toCachedStore()
+    val effects = mutableListOf<Effect>()
+    val job = launch { store.effects.toList(effects) }
+    store.accept(Event(value = 3))
+    advanceUntilIdle()
 
-        store.start()
-        store.accept(Event(value = 1))
-        advanceUntilIdle()
+    assertEquals(
+      listOf(Effect(value = 1), Effect(value = 2), Effect(value = 2), Effect(value = 3)),
+      effects,
+    )
 
-        val effects1 = mutableListOf<Effect>()
-        val effects2 = mutableListOf<Effect>()
-        val job1 = launch { store.effects.toList(effects1) }
-        runCurrent()
-        val job2 = launch { store.effects.toList(effects2) }
-        runCurrent()
+    job.cancel()
+  }
 
-        assertEquals(
-            listOf(
-                Effect(value = 1),
-            ),
-            effects1
+  @Test
+  fun `Should emit effects from cache only for the first subscriber`() = runTest {
+    val store =
+      store(
+          state = State(),
+          reducer =
+            object : StateReducer<Event, State, Effect, Command>() {
+              override fun Result.reduce(event: Event) {
+                effects { +Effect(value = event.value) }
+              }
+            },
         )
+        .toCachedStore()
 
-        assertEquals(emptyList<Effect>(), effects2)
+    store.start()
+    store.accept(Event(value = 1))
+    advanceUntilIdle()
 
-        job1.cancel()
-        job2.cancel()
-    }
+    val effects1 = mutableListOf<Effect>()
+    val effects2 = mutableListOf<Effect>()
+    val job1 = launch { store.effects.toList(effects1) }
+    runCurrent()
+    val job2 = launch { store.effects.toList(effects2) }
+    runCurrent()
 
-    @Test
-    fun `Should cache effects if there is no left collectors`() = runTest {
-        val store =
-            store(
-                state = State(),
-                reducer = object : StateReducer<Event, State, Effect, Command>() {
-                    override fun Result.reduce(event: Event) {
-                        effects { +Effect(value = event.value) }
-                    }
-                },
-            )
-                .toCachedStore()
+    assertEquals(listOf(Effect(value = 1)), effects1)
 
-        store.start()
-        val effects = mutableListOf<Effect>()
-        var job1 = launch { store.effects.toList(effects) }
-        runCurrent()
-        job1.cancel()
-        store.accept(Event(value = 2))
-        runCurrent()
-        job1 = launch { store.effects.toList(effects) }
-        runCurrent()
+    assertEquals(emptyList<Effect>(), effects2)
 
-        assertEquals(
-            listOf(
-                Effect(value = 2),
-            ),
-            effects
+    job1.cancel()
+    job2.cancel()
+  }
+
+  @Test
+  fun `Should cache effects if there is no left collectors`() = runTest {
+    val store =
+      store(
+          state = State(),
+          reducer =
+            object : StateReducer<Event, State, Effect, Command>() {
+              override fun Result.reduce(event: Event) {
+                effects { +Effect(value = event.value) }
+              }
+            },
         )
+        .toCachedStore()
 
-        job1.cancel()
-    }
+    store.start()
+    val effects = mutableListOf<Effect>()
+    var job1 = launch { store.effects.toList(effects) }
+    runCurrent()
+    job1.cancel()
+    store.accept(Event(value = 2))
+    runCurrent()
+    job1 = launch { store.effects.toList(effects) }
+    runCurrent()
 
-    private fun store(
-        state: State,
-        reducer: StateReducer<Event, State, Effect, Command> = NoOpReducer(),
-        actor: Actor<Command, Event> = NoOpActor()
-    ) = ElmStore(state, reducer, actor)
+    assertEquals(listOf(Effect(value = 2)), effects)
+
+    job1.cancel()
+  }
+
+  private fun store(
+    state: State,
+    reducer: StateReducer<Event, State, Effect, Command> = NoOpReducer(),
+    actor: Actor<Command, Event> = NoOpActor(),
+  ) = ElmStore(state, reducer, actor)
 }

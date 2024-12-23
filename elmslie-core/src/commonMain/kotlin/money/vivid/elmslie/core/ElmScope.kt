@@ -8,12 +8,12 @@ import money.vivid.elmslie.core.config.ElmslieConfig
 
 @Suppress("detekt.FunctionNaming")
 fun ElmScope(name: String): CoroutineScope =
-    CoroutineScope(
-        context =
-            ElmslieConfig.elmDispatcher +
-                SupervisorJob() +
-                CoroutineName(name) +
-                CoroutineExceptionHandler { _, throwable ->
-                    ElmslieConfig.logger.fatal("Unhandled error: $throwable")
-                },
-    )
+  CoroutineScope(
+    context =
+      ElmslieConfig.elmDispatcher +
+        SupervisorJob() +
+        CoroutineName(name) +
+        CoroutineExceptionHandler { _, throwable ->
+          ElmslieConfig.logger.fatal("Unhandled error: $throwable")
+        }
+  )
