@@ -6,6 +6,7 @@ plugins {
     id("org.jetbrains.dokka")
     id("elmslie.base-lib")
     id("elmslie.detekt")
+    id("elmslie.spotless")
     id("elmslie.tests-convention")
 }
 
