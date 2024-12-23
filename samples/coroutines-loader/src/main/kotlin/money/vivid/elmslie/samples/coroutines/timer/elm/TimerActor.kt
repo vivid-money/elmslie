@@ -16,7 +16,7 @@ internal object TimerActor : Actor<Command, Event>() {
                     errorMapper = { Event.OnTimeError(it) },
                 )
 
-            is Command.Stop -> cancelSwitchFlow(Command.Start::class)
+            is Command.Stop -> cancelSwitchFlow<Command.Start>()
         }
 
     @Suppress("MagicNumber")
