@@ -10,7 +10,7 @@ import money.vivid.elmslie.core.config.ElmslieConfig
 fun ElmScope(name: String): CoroutineScope =
     CoroutineScope(
         context =
-            ElmslieConfig.ioDispatchers +
+            ElmslieConfig.elmDispatcher +
                 SupervisorJob() +
                 CoroutineName(name) +
                 CoroutineExceptionHandler { _, throwable ->

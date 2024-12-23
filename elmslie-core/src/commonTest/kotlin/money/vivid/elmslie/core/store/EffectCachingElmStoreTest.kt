@@ -26,7 +26,7 @@ class EffectCachingElmStoreTest {
     @BeforeTest
     fun beforeEach() {
         val testDispatcher = StandardTestDispatcher()
-        ElmslieConfig.ioDispatchers { testDispatcher }
+        ElmslieConfig.elmDispatcher { testDispatcher }
         Dispatchers.setMain(testDispatcher)
     }
 

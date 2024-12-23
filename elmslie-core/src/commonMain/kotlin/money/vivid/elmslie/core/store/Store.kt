@@ -19,7 +19,7 @@ interface Store<Event : Any, Effect: Any, State: Any> {
      * Note that there will be no emission if a state isn't changed (it's [equals] method returned
      * `true`.
      *
-     * By default, [State] is collected in [Dispatchers.IO].
+     * By default, [State] is collected in [Dispatchers.Default].
      */
     val states: StateFlow<State>
 
@@ -29,7 +29,7 @@ interface Store<Event : Any, Effect: Any, State: Any> {
      * In order to implement cache of [Effect], consider extending [Store] with appropriate
      * behavior.
      *
-     * By default, [Effect] is collected in [Dispatchers.IO].
+     * By default, [Effect] is collected in [Dispatchers.Default].
      */
     val effects: Flow<Effect>
 

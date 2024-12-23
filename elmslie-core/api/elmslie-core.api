@@ -4,12 +4,12 @@ public final class money/vivid/elmslie/core/ElmScopeKt {
 
 public final class money/vivid/elmslie/core/config/ElmslieConfig {
 	public static final field INSTANCE Lmoney/vivid/elmslie/core/config/ElmslieConfig;
+	public final fun elmDispatcher (Lkotlin/jvm/functions/Function0;)V
+	public final fun getElmDispatcher ()Lkotlinx/coroutines/CoroutineDispatcher;
 	public final fun getGlobalStoreListeners ()Ljava/util/Set;
-	public final fun getIoDispatchers ()Lkotlinx/coroutines/CoroutineDispatcher;
 	public final fun getLogger ()Lmoney/vivid/elmslie/core/logger/ElmslieLogger;
 	public final fun getShouldStopOnProcessDeath ()Z
 	public final fun globalStoreListeners (Lkotlin/jvm/functions/Function0;)V
-	public final fun ioDispatchers (Lkotlin/jvm/functions/Function0;)V
 	public final fun logger (Lkotlin/jvm/functions/Function1;)V
 	public final fun shouldStopOnProcessDeath (Lkotlin/jvm/functions/Function0;)V
 }
@@ -176,8 +176,8 @@ public class money/vivid/elmslie/core/store/dsl/ResultBuilder {
 
 public final class money/vivid/elmslie/core/switcher/Switcher {
 	public fun <init> ()V
-	public final fun cancel (J)Lkotlinx/coroutines/flow/Flow;
-	public static synthetic fun cancel$default (Lmoney/vivid/elmslie/core/switcher/Switcher;JILjava/lang/Object;)Lkotlinx/coroutines/flow/Flow;
+	public final fun cancel (JLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun cancel$default (Lmoney/vivid/elmslie/core/switcher/Switcher;JLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public final fun switch (JLkotlin/jvm/functions/Function0;)Lkotlinx/coroutines/flow/Flow;
 	public static synthetic fun switch$default (Lmoney/vivid/elmslie/core/switcher/Switcher;JLkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lkotlinx/coroutines/flow/Flow;
 }

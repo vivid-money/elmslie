@@ -31,7 +31,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
 ) : Store<Event, Effect, State> {
 
     private val logger = ElmslieConfig.logger
-    private val eventDispatcher = ElmslieConfig.ioDispatchers.limitedParallelism(parallelism = 1)
+    private val eventDispatcher = ElmslieConfig.elmDispatcher.limitedParallelism(parallelism = 1)
 
     private val effectsFlow = MutableSharedFlow<Effect>()
 
