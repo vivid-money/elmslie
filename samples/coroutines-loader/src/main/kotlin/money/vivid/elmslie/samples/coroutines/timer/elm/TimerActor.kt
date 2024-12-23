@@ -10,13 +10,13 @@ internal object TimerActor : Actor<Command, Event>() {
     override fun execute(command: Command) =
         when (command) {
             is Command.Start -> secondsFlow()
-                .asSwitchFlow(command)
+                .switch()
                 .mapEvents(
                     eventMapper = { Event.OnTimeTick },
                     errorMapper = { Event.OnTimeError(it) },
                 )
 
-            is Command.Stop -> cancelSwitchFlow<Command.Start>()
+            is Command.Stop -> cancelSwitchFlows().mapEvents()
         }
 
     @Suppress("MagicNumber")
