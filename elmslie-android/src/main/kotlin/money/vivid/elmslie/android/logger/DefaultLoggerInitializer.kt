@@ -7,10 +7,10 @@ import money.vivid.elmslie.core.config.ElmslieConfig
 
 class DefaultLoggerInitializer : Initializer<Unit> {
 
-    override fun create(context: Context) {
-        val isDebug = 0 != context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE
-        if (isDebug) ElmslieConfig.defaultDebugLogger() else ElmslieConfig.defaultReleaseLogger()
-    }
+  override fun create(context: Context) {
+    val isDebug = 0 != context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE
+    if (isDebug) ElmslieConfig.defaultDebugLogger() else ElmslieConfig.defaultReleaseLogger()
+  }
 
-    override fun dependencies(): MutableList<Class<out Initializer<*>>> = mutableListOf()
+  override fun dependencies(): MutableList<Class<out Initializer<*>>> = mutableListOf()
 }

@@ -6,9 +6,9 @@ import androidx.startup.Initializer
 
 class ProcessDeathDetectorInitializer : Initializer<Unit> {
 
-    override fun create(context: Context) {
-        ProcessDeathDetector.init(context.applicationContext as Application)
-    }
+  override fun create(context: Context) {
+    ProcessDeathDetector.init(context.applicationContext as Application)
+  }
 
-    override fun dependencies(): MutableList<Class<out Initializer<*>>> = mutableListOf()
+  override fun dependencies(): MutableList<Class<out Initializer<*>>> = mutableListOf()
 }
