@@ -1,39 +1,38 @@
 @file:Suppress("UnstableApiUsage")
 
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
+  id("com.android.application")
+  id("org.jetbrains.kotlin.android")
+  id("elmslie.spotless")
 }
 
 android {
-    namespace = "money.vivid.elmslie.samples.coroutines.timer"
+  namespace = "money.vivid.elmslie.samples.coroutines.timer"
 
-    compileSdk = 33
-    buildToolsVersion = "31.0.0"
+  compileSdk = 33
+  buildToolsVersion = "31.0.0"
 
-    buildFeatures { buildConfig = true }
+  buildFeatures { buildConfig = true }
 
-    defaultConfig {
-        minSdk = 21
-        targetSdk = 33
-    }
+  defaultConfig {
+    minSdk = 21
+    targetSdk = 33
+  }
 
-    compileOptions {
-        targetCompatibility = JavaVersion.VERSION_11
-        sourceCompatibility = JavaVersion.VERSION_11
-    }
+  compileOptions {
+    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_11
+  }
 
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
-    }
+  kotlinOptions { jvmTarget = JavaVersion.VERSION_11.toString() }
 }
 
 dependencies {
-    implementation(projects.elmslieAndroid)
-    implementation(projects.elmslieCore)
+  implementation(projects.elmslieAndroid)
+  implementation(projects.elmslieCore)
 
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.fragmentKtx)
-    implementation(libs.google.material)
-    implementation(libs.kotlinx.coroutinesCore)
+  implementation(libs.androidx.appcompat)
+  implementation(libs.androidx.fragmentKtx)
+  implementation(libs.google.material)
+  implementation(libs.kotlinx.coroutinesCore)
 }
