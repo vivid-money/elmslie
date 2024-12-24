@@ -12,9 +12,9 @@ abstract class ScreenReducer<
 >(private val uiEventClass: KClass<Ui>, private val internalEventClass: KClass<Internal>) :
   StateReducer<Event, State, Effect, Command>() {
 
-  protected abstract fun Result.ui(event: Ui): Any?
+  protected abstract fun Result.ui(event: Ui)
 
-  protected abstract fun Result.internal(event: Internal): Any?
+  protected abstract fun Result.internal(event: Internal)
 
   override fun Result.reduce(event: Event) {
     @Suppress("UNCHECKED_CAST")

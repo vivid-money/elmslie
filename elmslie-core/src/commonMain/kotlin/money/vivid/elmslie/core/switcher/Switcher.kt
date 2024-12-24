@@ -1,5 +1,7 @@
 package money.vivid.elmslie.core.switcher
 
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -34,18 +36,21 @@ internal class Switcher {
   /**
    * Collect given flow as a job and cancels all previous ones.
    *
-   * @param delayMillis operation delay measured with milliseconds. Can be specified to debounce
-   *   existing requests.
+   * @param delay operation delay measured with milliseconds. Can be specified to debounce existing
+   *   requests.
    * @param action actual event source
    */
-  fun <Event : Any> switch(delayMillis: Long = 0, action: () -> Flow<Event>): Flow<Event> {
+  fun <Event : Any> switch(
+    delay: Duration = 0.milliseconds,
+    action: () -> Flow<Event>,
+  ): Flow<Event> {
     return callbackFlow {
       lock.withLock {
         currentChannel?.close()
         currentChannel = channel
       }
 
-      delay(delayMillis)
+      delay(delay)
 
       action.invoke().onEach { send(it) }.catch { close(it) }.collect()
 

@@ -58,8 +58,8 @@ public abstract class money/vivid/elmslie/core/store/Actor {
 	public final fun getSwitchers ()Ljava/util/Map;
 	public final fun mapEvents (Lkotlinx/coroutines/flow/Flow;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Lkotlinx/coroutines/flow/Flow;
 	public static synthetic fun mapEvents$default (Lmoney/vivid/elmslie/core/store/Actor;Lkotlinx/coroutines/flow/Flow;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lkotlinx/coroutines/flow/Flow;
-	protected final fun switch (Lkotlinx/coroutines/flow/Flow;Ljava/lang/String;J)Lkotlinx/coroutines/flow/Flow;
-	public static synthetic fun switch$default (Lmoney/vivid/elmslie/core/store/Actor;Lkotlinx/coroutines/flow/Flow;Ljava/lang/String;JILjava/lang/Object;)Lkotlinx/coroutines/flow/Flow;
+	protected final fun switch-SxA4cEA (Lkotlinx/coroutines/flow/Flow;Ljava/lang/String;J)Lkotlinx/coroutines/flow/Flow;
+	public static synthetic fun switch-SxA4cEA$default (Lmoney/vivid/elmslie/core/store/Actor;Lkotlinx/coroutines/flow/Flow;Ljava/lang/String;JILjava/lang/Object;)Lkotlinx/coroutines/flow/Flow;
 }
 
 public final class money/vivid/elmslie/core/store/EffectCachingElmStore : money/vivid/elmslie/core/store/Store {
@@ -119,9 +119,9 @@ public final class money/vivid/elmslie/core/store/Result {
 
 public abstract class money/vivid/elmslie/core/store/ScreenReducer : money/vivid/elmslie/core/store/StateReducer {
 	public fun <init> (Lkotlin/reflect/KClass;Lkotlin/reflect/KClass;)V
-	protected abstract fun internal (Lmoney/vivid/elmslie/core/store/StateReducer$Result;Ljava/lang/Object;)Ljava/lang/Object;
+	protected abstract fun internal (Lmoney/vivid/elmslie/core/store/StateReducer$Result;Ljava/lang/Object;)V
 	protected fun reduce (Lmoney/vivid/elmslie/core/store/StateReducer$Result;Ljava/lang/Object;)V
-	protected abstract fun ui (Lmoney/vivid/elmslie/core/store/StateReducer$Result;Ljava/lang/Object;)Ljava/lang/Object;
+	protected abstract fun ui (Lmoney/vivid/elmslie/core/store/StateReducer$Result;Ljava/lang/Object;)V
 }
 
 public abstract class money/vivid/elmslie/core/store/StateReducer {
