@@ -11,7 +11,7 @@ env:
   ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGINMEMORYKEYPASSWORD }}
 
 jobs:
-  validate:
+  publish:
     runs-on: macos-latest
     steps:
       - name: Checkout
