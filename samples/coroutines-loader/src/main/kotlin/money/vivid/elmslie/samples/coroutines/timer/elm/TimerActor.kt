@@ -14,7 +14,7 @@ internal object TimerActor : Actor<Command, Event>() {
           .switch(Command.Start::class)
           .mapEvents(eventMapper = { Event.OnTimeTick }, errorMapper = { Event.OnTimeError(it) })
 
-      is Command.Stop -> cancelSwitchFlowOn<Command.Start>().mapEvents()
+      is Command.Stop -> cancelSwitchFlows(Command.Start::class).mapEvents()
     }
 
   @Suppress("MagicNumber")
@@ -25,8 +25,4 @@ internal object TimerActor : Actor<Command, Event>() {
     }
     error("Test error")
   }
-}
-
-internal inline fun <reified StartCommand : Any> Actor<*, *>.cancelSwitchFlowOn(): Flow<Unit> {
-  return cancelSwitchFlows(StartCommand::class)
 }
