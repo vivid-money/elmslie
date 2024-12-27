@@ -13,7 +13,7 @@ import money.vivid.elmslie.core.switcher.Switcher
 
 abstract class Actor<Command : Any, Event : Any> {
 
-  @PublishedApi internal val switchers = mutableMapOf<String, Switcher>()
+  @PublishedApi internal val switchers = mutableMapOf<Any, Switcher>()
   private val mutex = Mutex()
 
   /**
@@ -33,16 +33,11 @@ abstract class Actor<Command : Any, Event : Any> {
    * Extension function to switch the flow by a given key and optional delay. This function ensures
    * that only one flow with the same key is active at a time.
    *
-   * @param key The key to identify the flow. Defaults to the class name of the Actor. If there is
-   *   more than one usage of the switch function in the same Actor, it is recommended to provide a
-   *   unique key.
+   * @param key The key to identify the flow.
    * @param delay The delay in milliseconds before launching the initial flow. Defaults to 0.
    * @return A new flow that emits the values from the original flow.
    */
-  protected fun <T : Any> Flow<T>.switch(
-    key: String = defaultSwitchFlowKey,
-    delay: Duration = 0.milliseconds,
-  ): Flow<T> {
+  fun <T : Any> Flow<T>.switch(key: Any, delay: Duration = 0.milliseconds): Flow<T> {
     return flow {
       val switcher = mutex.withLock { switchers.getOrPut(key) { Switcher() } }
       switcher.switch(delay) { this@switch }.collect { emit(it) }
@@ -52,10 +47,10 @@ abstract class Actor<Command : Any, Event : Any> {
   /**
    * Cancels the switch flow(s) by a given key(s).
    *
-   * @param keys The keys to identify the flows. Defaults to the class name of the Actor.
+   * @param keys The keys to identify the flows.
    * @return A new flow that emits [Unit] when switch flows are cancelled.
    */
-  protected fun cancelSwitchFlows(vararg keys: String = arrayOf(defaultSwitchFlowKey)): Flow<Unit> {
+  fun cancelSwitchFlows(vararg keys: Any): Flow<Unit> {
     return flow {
       keys.forEach { key -> mutex.withLock { switchers.remove(key)?.cancel() } }
       emit(Unit)
@@ -65,7 +60,4 @@ abstract class Actor<Command : Any, Event : Any> {
   private fun Throwable.logErrorEvent(errorMapper: (Throwable) -> Event?): Event? {
     return errorMapper(this).also { ElmslieConfig.logger.nonfatal(error = this) }
   }
-
-  private inline val defaultSwitchFlowKey: String
-    get() = this::class.simpleName.orEmpty()
 }
