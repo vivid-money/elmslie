@@ -1,5 +1,7 @@
 package money.vivid.elmslie.core.store
 
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -34,16 +36,16 @@ abstract class Actor<Command : Any, Event : Any> {
    * @param key The key to identify the flow. Defaults to the class name of the Actor. If there is
    *   more than one usage of the switch function in the same Actor, it is recommended to provide a
    *   unique key.
-   * @param delayMillis The delay in milliseconds before launching the initial flow. Defaults to 0.
+   * @param delay The delay in milliseconds before launching the initial flow. Defaults to 0.
    * @return A new flow that emits the values from the original flow.
    */
   protected fun <T : Any> Flow<T>.switch(
     key: String = defaultSwitchFlowKey,
-    delayMillis: Long = 0,
+    delay: Duration = 0.milliseconds,
   ): Flow<T> {
     return flow {
       val switcher = mutex.withLock { switchers.getOrPut(key) { Switcher() } }
-      switcher.switch(delayMillis) { this@switch }.collect { emit(it) }
+      switcher.switch(delay) { this@switch }.collect { emit(it) }
     }
   }
 
