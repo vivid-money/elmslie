@@ -13,16 +13,13 @@ import money.vivid.elmslie.core.switcher.Switcher
 
 abstract class Actor<Command : Any, Event : Any> {
 
-  @PublishedApi internal val switchers = mutableMapOf<Any, Switcher>()
+  private val switchers = mutableMapOf<Any, Switcher>()
   private val mutex = Mutex()
 
-  /**
-   * Executes a command. This method is performed on the [Dispatchers.Default]
-   * [kotlinx.coroutines.Dispatchers.Default] which is set by ElmslieConfig.elmDispatcher()
-   */
+  /** Executes a command. This method is performed on the [ElmslieConfig.elmDispatcher]. */
   abstract fun execute(command: Command): Flow<Event>
 
-  fun <T : Any> Flow<T>.mapEvents(
+  protected fun <T : Any> Flow<T>.mapEvents(
     eventMapper: (T) -> Event? = { null },
     errorMapper: (error: Throwable) -> Event? = { null },
   ) =
@@ -37,7 +34,7 @@ abstract class Actor<Command : Any, Event : Any> {
    * @param delay The delay in milliseconds before launching the initial flow. Defaults to 0.
    * @return A new flow that emits the values from the original flow.
    */
-  fun <T : Any> Flow<T>.switch(key: Any, delay: Duration = 0.milliseconds): Flow<T> {
+  protected fun <T : Any> Flow<T>.switch(key: Any, delay: Duration = 0.milliseconds): Flow<T> {
     return flow {
       val switcher = mutex.withLock { switchers.getOrPut(key) { Switcher() } }
       switcher.switch(delay) { this@switch }.collect { emit(it) }
@@ -50,7 +47,7 @@ abstract class Actor<Command : Any, Event : Any> {
    * @param keys The keys to identify the flows.
    * @return A new flow that emits [Unit] when switch flows are cancelled.
    */
-  fun cancelSwitchFlows(vararg keys: Any): Flow<Unit> {
+  protected fun cancelSwitchFlows(vararg keys: Any): Flow<Unit> {
     return flow {
       keys.forEach { key -> mutex.withLock { switchers.remove(key)?.cancel() } }
       emit(Unit)

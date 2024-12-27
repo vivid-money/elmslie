@@ -58,8 +58,7 @@ internal class Switcher {
     }
   }
 
-  suspend fun cancel(delayMillis: Long = 0) {
-    delay(delayMillis)
+  suspend fun cancel() {
     lock.withLock {
       currentChannel?.close()
       currentChannel = null
