@@ -11,8 +11,8 @@ plugins {
 }
 
 android {
-  compileSdk = 33
-  buildToolsVersion = "31.0.0"
+  compileSdk = 35
+  buildToolsVersion = "35.0.0"
 
   defaultConfig { minSdk = 21 }
 
@@ -29,8 +29,8 @@ android {
   }
 
   compileOptions {
-    targetCompatibility = JvmTarget
-    sourceCompatibility = JvmTarget
+    targetCompatibility = JvmVersion
+    sourceCompatibility = JvmVersion
   }
 }
 

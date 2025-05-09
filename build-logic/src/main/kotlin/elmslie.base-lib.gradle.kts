@@ -1,8 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 tasks.withType<JavaCompile> {
-  targetCompatibility = JvmTarget.toString()
-  sourceCompatibility = JvmTarget.toString()
+  targetCompatibility = JvmVersion.toString()
+  sourceCompatibility = JvmVersion.toString()
 }
 
-tasks.withType<KotlinCompile> { kotlinOptions.jvmTarget = JvmTarget.toString() }
+tasks.withType<KotlinCompile> { compilerOptions { jvmTarget.set(JvmTarget) } }

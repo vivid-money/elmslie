@@ -1,6 +1,7 @@
 plugins {
     id("org.jetbrains.kotlin.jvm")
     id("elmslie.detekt")
+    id("elmslie.spotless")
     id("elmslie.tests-convention")
 }
 

@@ -1,5 +1,7 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+@file:OptIn(ExperimentalWasmDsl::class, ExperimentalKotlinGradlePluginApi::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
   kotlin("multiplatform")
@@ -12,17 +14,17 @@ kotlin {
     common {
       group("commonWeb") {
         withJs()
-        withWasm()
+        withWasmJs()
       }
     }
   }
 
-  jvm { compilations.all { compilerOptions.configure { jvmTarget.set(JvmTarget.JVM_11) } } }
+  jvm { compilerOptions { jvmTarget.set(JvmTarget) } }
 
   iosArm64()
   iosSimulatorArm64()
   iosX64()
 
   js(IR) { browser() }
-  @OptIn(ExperimentalWasmDsl::class) wasmJs { browser() }
+  wasmJs { browser() }
 }

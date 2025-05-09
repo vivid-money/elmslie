@@ -18,7 +18,7 @@ dependencies {
   api(projects.elmslieCore)
 
   implementation(libs.androidx.appcompat)
-  implementation(libs.androidx.lifecycle.runtimeKtx)
-  implementation(libs.androidx.lifecycle.viewmodelSavedstate)
+  implementation(libs.androidx.lifecycle.runtime)
+  implementation(libs.androidx.lifecycle.viewmodel)
   implementation(libs.androidx.startup.runtime)
 }
