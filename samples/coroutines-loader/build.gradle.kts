@@ -1,22 +1,21 @@
-@file:Suppress("UnstableApiUsage")
-
 plugins {
   id("com.android.application")
   id("org.jetbrains.kotlin.android")
+  id("elmslie.detekt")
   id("elmslie.spotless")
 }
 
 android {
   namespace = "money.vivid.elmslie.samples.coroutines.timer"
 
-  compileSdk = 33
-  buildToolsVersion = "31.0.0"
+  compileSdk = 35
+  buildToolsVersion = "35.0.0"
 
   buildFeatures { buildConfig = true }
 
   defaultConfig {
     minSdk = 21
-    targetSdk = 33
+    targetSdk = 35
   }
 
   compileOptions {

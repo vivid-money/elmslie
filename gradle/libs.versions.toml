@@ -1,31 +1,28 @@
 [versions]
-agp = "8.0.2"
-coroutines = "1.8.0"
-dokka = "1.8.20"
-kotlin = "1.9.23"
-lifecycle = "2.6.1"
+agp = "8.10.0"
+coroutines = "1.9.0"
+dokka = "2.0.0"
+kotlin = "2.0.21"
+lifecycle = "2.9.0"
 
 [libraries]
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
-androidx-appcompat = "androidx.appcompat:appcompat:1.6.1"
-androidx-fragmentKtx = "androidx.fragment:fragment-ktx:1.6.0"
-androidx-lifecycle-common = { module = "androidx.lifecycle:lifecycle-common", version.ref = "lifecycle" }
-androidx-lifecycle-runtimeKtx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
+androidx-appcompat = "androidx.appcompat:appcompat:1.7.0"
+androidx-fragmentKtx = "androidx.fragment:fragment-ktx:1.8.6"
+androidx-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycle" }
-androidx-lifecycle-viewmodelSavedstate = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "lifecycle" }
-androidx-startup-runtime = "androidx.startup:startup-runtime:1.1.1"
-detekt-gradlePlugin = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.23.0"
+androidx-startup-runtime = "androidx.startup:startup-runtime:1.2.0"
+detekt-gradlePlugin = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.23.8"
 dokka-gradlePlugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
-mavenPublishPlugin = { module = "com.vanniktech.maven.publish:com.vanniktech.maven.publish.gradle.plugin", version = "0.28.0" }
-dokka-kotlinAsJavaPlugin = { module = "org.jetbrains.dokka:kotlin-as-java-plugin", version.ref = "dokka" }
-google-material = "com.google.android.material:material:1.9.0"
+google-material = "com.google.android.material:material:1.12.0"
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlinx-coroutinesCore = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutinesTest = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
-spotless-gradlePlugin = "com.diffplug.spotless:spotless-plugin-gradle:6.25.0"
+mavenPublishPlugin = { module = "com.vanniktech.maven.publish:com.vanniktech.maven.publish.gradle.plugin", version = "0.28.0" }
+spotless-gradlePlugin = "com.diffplug.spotless:spotless-plugin-gradle:7.0.3"
 
 [plugins]
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 androidApplication = { id = "com.android.application", version.ref = "agp" }
-binaryCompatibilityValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version = "0.14.0" }
+binaryCompatibilityValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version = "0.17.0" }
