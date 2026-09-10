@@ -58,10 +58,10 @@ public final class money/vivid/elmslie/android/processdeath/ProcessDeathDetector
 }
 
 public abstract interface class money/vivid/elmslie/android/renderer/ElmRendererDelegate {
-	public abstract fun handleEffect (Ljava/lang/Object;)Lkotlin/Unit;
-	public abstract fun mapList (Ljava/lang/Object;)Ljava/util/List;
+	public fun handleEffect (Ljava/lang/Object;)Lkotlin/Unit;
+	public fun mapList (Ljava/lang/Object;)Ljava/util/List;
 	public abstract fun render (Ljava/lang/Object;)V
-	public abstract fun renderList (Ljava/lang/Object;Ljava/util/List;)V
+	public fun renderList (Ljava/lang/Object;Ljava/util/List;)V
 }
 
 public final class money/vivid/elmslie/android/renderer/ElmRendererDelegate$DefaultImpls {
