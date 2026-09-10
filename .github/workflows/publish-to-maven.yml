@@ -44,4 +44,4 @@ jobs:
               publishToMavenLocal
 
       - name: Publishing
-        run: ./gradlew publishToMavenCentral
+        run: ./gradlew publishToMavenCentral --no-configuration-cache
