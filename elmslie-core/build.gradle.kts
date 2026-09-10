@@ -14,8 +14,8 @@ kotlin {
   android { namespace = "money.vivid.elmslie.core" }
 
   sourceSets {
-    val commonMain by getting { dependencies { api(libs.kotlinx.coroutinesCore) } }
-    val commonTest by getting {
+    commonMain { dependencies { api(libs.kotlinx.coroutinesCore) } }
+    commonTest {
       dependencies {
         implementation(libs.kotlinx.coroutinesTest)
         implementation(libs.kotlin.test)

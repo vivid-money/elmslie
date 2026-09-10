@@ -35,9 +35,6 @@ android {
     ignoreTestSources = true
     abortOnError = true
     warningsAsErrors = true
-
-    htmlReport = true
-    xmlReport = false
   }
 
   compileOptions {

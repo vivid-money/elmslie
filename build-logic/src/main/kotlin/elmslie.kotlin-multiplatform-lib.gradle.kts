@@ -68,7 +68,7 @@ kotlin {
 
   mingwX64()
 
-  js(IR) { browser() }
+  js { browser() }
   wasmJs { browser() }
 }
 
