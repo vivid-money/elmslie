@@ -28,20 +28,9 @@ jobs:
           java-version: 21
 
       - name: Cache Kotlin/Native
-        if: github.ref == 'refs/heads/main'
-        uses: actions/cache@v6
+        uses: ./.github/actions/cache-kotlin-native
         with:
-          path: ~/.konan
-          key: konan-${{ runner.os }}-${{ hashFiles('gradle/libs.versions.toml') }}
-          restore-keys: konan-${{ runner.os }}-
-
-      - name: Restore Kotlin/Native
-        if: github.ref != 'refs/heads/main'
-        uses: actions/cache/restore@v6
-        with:
-          path: ~/.konan
-          key: konan-${{ runner.os }}-${{ hashFiles('gradle/libs.versions.toml') }}
-          restore-keys: konan-${{ runner.os }}-
+          save: ${{ github.ref == 'refs/heads/main' }}
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6

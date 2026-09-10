@@ -1,0 +1,35 @@
+name: Cache Kotlin/Native
+description: Restores the Kotlin/Native toolchain from the cache, and saves it back when requested.
+
+inputs:
+  save:
+    description: Save the toolchain back to the cache once the job succeeds.
+    default: 'false'
+
+runs:
+  using: composite
+  steps:
+    - name: Resolve Kotlin version
+      id: kotlin
+      shell: bash
+      run: |
+        VERSION=$(./.github/sh/parse_version_catalog.sh kotlin)
+        echo "version=$VERSION" >>"$GITHUB_OUTPUT"
+
+    - name: Cache Kotlin/Native
+      if: inputs.save == 'true'
+      uses: actions/cache@v6
+      with:
+        path: |
+          ~/.konan
+          !~/.konan/dependencies/cache
+        key: konan-${{ runner.os }}-${{ steps.kotlin.outputs.version }}
+
+    - name: Restore Kotlin/Native
+      if: inputs.save != 'true'
+      uses: actions/cache/restore@v6
+      with:
+        path: |
+          ~/.konan
+          !~/.konan/dependencies/cache
+        key: konan-${{ runner.os }}-${{ steps.kotlin.outputs.version }}
