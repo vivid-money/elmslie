@@ -49,6 +49,21 @@ allprojects {
 
 `implementation 'money.vivid.elmslie:elmslie-android:{latest-version}'`
 
+- BOM - pins every Elmslie module to one version
+
+```kotlin
+dependencies {
+    implementation(platform("money.vivid.elmslie:elmslie-bom:{latest-version}"))
+    implementation("money.vivid.elmslie:elmslie-core")
+    implementation("money.vivid.elmslie:elmslie-android")
+}
+```
+
+#### Supported platforms
+
+`elmslie-core` publishes Android, JVM, iOS, macOS, tvOS, watchOS, Linux, Windows,
+JS and Wasm/JS targets. `elmslie-android` publishes Android only.
+
 
 ## Related articles
 - Why did we select ELM? ([Russian](https://habr.com/ru/company/vivid_money/blog/534386/), [English](https://medium.com/@klimchuk.daniil/how-we-chose-presentation-layer-architecture-and-didnt-regret-it-bc694cab3e80))

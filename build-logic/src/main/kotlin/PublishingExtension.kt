@@ -1,6 +1,6 @@
 abstract class PublishingExtension {
 
-  internal lateinit var pom: Pom
+  internal var pom: Pom = Pom()
 
   fun pom(block: Pom.() -> Unit) {
     pom = Pom().apply(block)

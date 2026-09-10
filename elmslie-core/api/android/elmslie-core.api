@@ -143,12 +143,12 @@ public abstract interface class money/vivid/elmslie/core/store/Store {
 }
 
 public abstract interface class money/vivid/elmslie/core/store/StoreListener {
-	public abstract fun onActorError (Ljava/lang/String;Ljava/lang/Throwable;Ljava/lang/Object;)V
-	public abstract fun onAfterEvent (Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)V
-	public abstract fun onBeforeEvent (Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V
-	public abstract fun onCommand (Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V
-	public abstract fun onEffect (Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V
-	public abstract fun onReducerError (Ljava/lang/String;Ljava/lang/Throwable;Ljava/lang/Object;)V
+	public fun onActorError (Ljava/lang/String;Ljava/lang/Throwable;Ljava/lang/Object;)V
+	public fun onAfterEvent (Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)V
+	public fun onBeforeEvent (Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V
+	public fun onCommand (Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V
+	public fun onEffect (Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V
+	public fun onReducerError (Ljava/lang/String;Ljava/lang/Throwable;Ljava/lang/Object;)V
 }
 
 public final class money/vivid/elmslie/core/store/StoreListener$DefaultImpls {

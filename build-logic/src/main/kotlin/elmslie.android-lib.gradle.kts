@@ -1,20 +1,32 @@
 @file:Suppress("UnstableApiUsage")
+@file:OptIn(ExperimentalAbiValidation::class)
+
+import org.jetbrains.kotlin.gradle.dsl.abi.BinariesSource
+import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 
 plugins {
   id("com.android.library")
-  id("org.jetbrains.kotlin.android")
   id("org.jetbrains.dokka")
+  id("org.jetbrains.dokka-javadoc")
   id("elmslie.base-lib")
   id("elmslie.detekt")
   id("elmslie.spotless")
   id("elmslie.tests-convention")
 }
 
-android {
-  compileSdk = 35
-  buildToolsVersion = "35.0.0"
+kotlin {
+  explicitApi()
 
-  defaultConfig { minSdk = 21 }
+  abiValidation {
+    binariesSource.set(BinariesSource.MAVEN_PUBLICATIONS)
+    referenceDumpDir.set(layout.projectDirectory.dir("api"))
+  }
+}
+
+android {
+  compileSdk = AndroidCompileSdk
+
+  defaultConfig { minSdk = AndroidMinSdk }
 
   lint {
     checkReleaseBuilds = false
@@ -33,5 +45,3 @@ android {
     sourceCompatibility = JvmVersion
   }
 }
-
-val catalog = extensions.getByType<VersionCatalogsExtension>().named("libs")

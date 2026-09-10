@@ -1,4 +1,5 @@
-import com.vanniktech.maven.publish.SonatypeHost
+import com.vanniktech.maven.publish.JavadocJar
+import com.vanniktech.maven.publish.KotlinMultiplatform
 
 plugins { id("com.vanniktech.maven.publish") }
 
@@ -10,12 +11,31 @@ val publishingExtension =
 val libraryGroup: String by project
 val libraryVersion: String by project
 
+val skipSigning =
+  providers.gradleProperty("elmslie.skipSigning").map(String::toBoolean).getOrElse(false)
+
+plugins.withId("org.jetbrains.kotlin.multiplatform") {
+  mavenPublishing {
+    configure(
+      KotlinMultiplatform(
+        javadocJar = JavadocJar.Dokka("dokkaGeneratePublicationHtml"),
+        sourcesJar = true,
+      )
+    )
+  }
+}
+
+tasks.withType<AbstractArchiveTask>().configureEach {
+  isPreserveFileTimestamps = false
+  isReproducibleFileOrder = true
+}
+
 afterEvaluate {
   val pom = publishingExtension.pom
   with(project.mavenPublishing) {
     checkPomRequiredFields(pom)
-    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
-    signAllPublications()
+    publishToMavenCentral()
+    if (!skipSigning) signAllPublications()
 
     coordinates(libraryGroup, project.name, libraryVersion)
 
