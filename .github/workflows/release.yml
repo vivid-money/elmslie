@@ -12,17 +12,21 @@ env:
 
 jobs:
   validate:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
+    timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v7
         with:
-          ref: ${{ env.GITHUB_REF }}
+          ref: ${{ github.ref }}
 
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v6
         with:
           distribution: zulu
-          java-version: 17
+          java-version: 21
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Ensure main branch
         run: ./.github/sh/validate_publishing_branch.sh
@@ -30,11 +34,10 @@ jobs:
       - name: Validate library version update
         run: ./.github/sh/validate_version_update.sh "libraryVersion" "$NEW_VERSION"
 
-      - name: Validate jitpack publishing
+      - name: Validate publications
         run: |
           ./gradlew \
-              -Pgroup=com.github.vivid-money \
-              -Pversion=$VERSION \
+              -Pelmslie.skipSigning=true \
               -xtest \
               -xlint \
               build \
@@ -43,21 +46,18 @@ jobs:
   release:
     needs: validate
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v7
         with:
-          ref: ${{ env.GITHUB_REF }}
-
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: zulu
-          java-version: 17
+          ref: ${{ github.ref }}
 
       - name: Update library version
         run: ./.github/sh/update_release_version.sh "libraryVersion" "$NEW_VERSION"
 
-      - uses: stefanzweifel/git-auto-commit-action@v4
+      - uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "Update library version to ${{ env.NEW_VERSION }}"
           file_pattern: gradle.properties
@@ -65,7 +65,7 @@ jobs:
 
       - name: Build Changelog
         id: github_release
-        uses: mikepenz/release-changelog-builder-action@v1
+        uses: mikepenz/release-changelog-builder-action@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           toTag: HEAD
@@ -74,9 +74,7 @@ jobs:
 
       - name: Get current git commit SHA
         id: vars
-        run: |
-          calculatedSha=$(git rev-parse HEAD)
-          echo "::set-output name=commit_sha::$calculatedSha"
+        run: echo "commit_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Create github release
         uses: ncipollo/release-action@v1
