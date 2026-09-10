@@ -5,12 +5,18 @@ import androidx.activity.ComponentActivity
 import androidx.annotation.MainThread
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.AbstractSavedStateViewModelFactory
+import androidx.lifecycle.DEFAULT_ARGS_KEY
+import androidx.lifecycle.SAVED_STATE_REGISTRY_OWNER_KEY
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.createSavedStateHandle
+import androidx.lifecycle.viewmodel.CreationExtras
+import androidx.lifecycle.viewmodel.MutableCreationExtras
 import androidx.savedstate.SavedStateRegistryOwner
+import money.vivid.elmslie.core.store.EffectCachingElmStore
 import money.vivid.elmslie.core.store.Store
 import money.vivid.elmslie.core.store.toCachedStore
 
@@ -19,7 +25,7 @@ import money.vivid.elmslie.core.store.toCachedStore
  * SavedStateHandle.get<Bundle>(StateBundleKey)
  */
 @MainThread
-fun <Event : Any, Effect : Any, State : Any> Fragment.elmStore(
+public fun <Event : Any, Effect : Any, State : Any> Fragment.elmStore(
   key: String = this::class.java.canonicalName ?: this::class.java.simpleName,
   viewModelStoreOwner: () -> ViewModelStoreOwner = { this },
   savedStateRegistryOwner: () -> SavedStateRegistryOwner = { this },
@@ -41,7 +47,7 @@ fun <Event : Any, Effect : Any, State : Any> Fragment.elmStore(
  * SavedStateHandle.get<Bundle>(StateBundleKey)
  */
 @MainThread
-fun <Event : Any, Effect : Any, State : Any> ComponentActivity.elmStore(
+public fun <Event : Any, Effect : Any, State : Any> ComponentActivity.elmStore(
   key: String = this::class.java.canonicalName ?: this::class.java.simpleName,
   viewModelStoreOwner: () -> ViewModelStoreOwner = { this },
   savedStateRegistryOwner: () -> SavedStateRegistryOwner = { this },
@@ -68,26 +74,29 @@ internal fun <Event : Any, Effect : Any, State : Any> elmStore(
   storeFactory: SavedStateHandle.() -> Store<Event, Effect, State>,
 ): Lazy<Store<Event, Effect, State>> =
   lazy(LazyThreadSafetyMode.NONE) {
+    val storeOwner = viewModelStoreOwner.invoke()
     val factory =
       RetainedElmStoreFactory(
         stateRegistryOwner = savedStateRegistryOwner.invoke(),
+        viewModelStoreOwner = storeOwner,
         defaultArgs = defaultArgs.invoke(),
         storeFactory = storeFactory,
         saveState = saveState,
       )
-    val provider = ViewModelProvider(viewModelStoreOwner.invoke(), factory)
+    val provider = ViewModelProvider(storeOwner, factory)
 
     @Suppress("UNCHECKED_CAST")
     provider[key, RetainedElmStore::class.java].store as Store<Event, Effect, State>
   }
 
-class RetainedElmStore<Event : Any, Effect : Any, State : Any>(
+public class RetainedElmStore<Event : Any, Effect : Any, State : Any>(
   savedStateHandle: SavedStateHandle,
   storeFactory: SavedStateHandle.() -> Store<Event, Effect, State>,
   saveState: Bundle.(State) -> Unit,
 ) : ViewModel() {
 
-  val store = storeFactory.invoke(savedStateHandle).toCachedStore().also { it.start() }
+  public val store: EffectCachingElmStore<Event, State, Effect> =
+    storeFactory.invoke(savedStateHandle).toCachedStore().also { it.start() }
 
   init {
     savedStateHandle.setSavedStateProvider(StateBundleKey) {
@@ -99,27 +108,31 @@ class RetainedElmStore<Event : Any, Effect : Any, State : Any>(
     store.stop()
   }
 
-  companion object {
+  public companion object {
 
-    const val StateBundleKey = "elm_store_state_bundle"
+    public const val StateBundleKey: String = "elm_store_state_bundle"
   }
 }
 
-class RetainedElmStoreFactory<Event : Any, Effect : Any, State : Any>(
-  stateRegistryOwner: SavedStateRegistryOwner,
-  defaultArgs: Bundle,
+public class RetainedElmStoreFactory<Event : Any, Effect : Any, State : Any>(
+  private val stateRegistryOwner: SavedStateRegistryOwner,
+  private val viewModelStoreOwner: ViewModelStoreOwner,
+  private val defaultArgs: Bundle,
   private val storeFactory: SavedStateHandle.() -> Store<Event, Effect, State>,
   private val saveState: Bundle.(State) -> Unit,
-) : AbstractSavedStateViewModelFactory(stateRegistryOwner, defaultArgs) {
+) : ViewModelProvider.Factory {
 
-  override fun <T : ViewModel> create(
-    key: String,
-    modelClass: Class<T>,
-    handle: SavedStateHandle,
-  ): T {
+  override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
+    val savedStateExtras =
+      MutableCreationExtras(extras).apply {
+        set(SAVED_STATE_REGISTRY_OWNER_KEY, stateRegistryOwner)
+        set(VIEW_MODEL_STORE_OWNER_KEY, viewModelStoreOwner)
+        set(DEFAULT_ARGS_KEY, defaultArgs)
+      }
+
     @Suppress("UNCHECKED_CAST")
     return RetainedElmStore(
-      savedStateHandle = handle,
+      savedStateHandle = savedStateExtras.createSavedStateHandle(),
       storeFactory = storeFactory,
       saveState = saveState,
     )

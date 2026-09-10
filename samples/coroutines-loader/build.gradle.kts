@@ -1,6 +1,6 @@
 plugins {
   id("com.android.application")
-  id("org.jetbrains.kotlin.android")
+  id("elmslie.base-lib")
   id("elmslie.detekt")
   id("elmslie.spotless")
 }
@@ -8,22 +8,19 @@ plugins {
 android {
   namespace = "money.vivid.elmslie.samples.coroutines.timer"
 
-  compileSdk = 35
-  buildToolsVersion = "35.0.0"
+  compileSdk = 37
 
   buildFeatures { buildConfig = true }
 
   defaultConfig {
-    minSdk = 21
-    targetSdk = 35
+    minSdk = 23
+    targetSdk = 37
   }
 
   compileOptions {
     targetCompatibility = JavaVersion.VERSION_11
     sourceCompatibility = JavaVersion.VERSION_11
   }
-
-  kotlinOptions { jvmTarget = JavaVersion.VERSION_11.toString() }
 }
 
 dependencies {

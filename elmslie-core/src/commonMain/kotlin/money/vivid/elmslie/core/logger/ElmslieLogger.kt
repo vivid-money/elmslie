@@ -4,15 +4,15 @@ import money.vivid.elmslie.core.logger.strategy.IgnoreLog
 import money.vivid.elmslie.core.logger.strategy.LogStrategy
 
 /** Logs events happening in the Elmslie library */
-class ElmslieLogger(private val strategy: Map<LogSeverity, LogStrategy>) {
+public class ElmslieLogger(private val strategy: Map<LogSeverity, LogStrategy>) {
 
-  fun fatal(message: String = "", tag: String? = null, error: Throwable? = null) =
+  public fun fatal(message: String = "", tag: String? = null, error: Throwable? = null): Unit =
     handle(severity = LogSeverity.Fatal, message = message, tag = tag, error = error)
 
-  fun nonfatal(message: String = "", tag: String? = null, error: Throwable? = null) =
+  public fun nonfatal(message: String = "", tag: String? = null, error: Throwable? = null): Unit =
     handle(severity = LogSeverity.NonFatal, message, tag = tag, error = error)
 
-  fun debug(message: String, tag: String? = null) =
+  public fun debug(message: String, tag: String? = null): Unit =
     handle(severity = LogSeverity.Debug, message, tag = tag, error = null)
 
   private fun handle(severity: LogSeverity, message: String, tag: String?, error: Throwable?) {

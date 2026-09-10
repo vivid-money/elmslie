@@ -15,8 +15,11 @@ public final class money/vivid/elmslie/android/RetainedElmStore : androidx/lifec
 public final class money/vivid/elmslie/android/RetainedElmStore$Companion {
 }
 
-public final class money/vivid/elmslie/android/RetainedElmStoreFactory : androidx/lifecycle/AbstractSavedStateViewModelFactory {
-	public fun <init> (Landroidx/savedstate/SavedStateRegistryOwner;Landroid/os/Bundle;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)V
+public final class money/vivid/elmslie/android/RetainedElmStoreFactory : androidx/lifecycle/ViewModelProvider$Factory {
+	public fun <init> (Landroidx/savedstate/SavedStateRegistryOwner;Landroidx/lifecycle/ViewModelStoreOwner;Landroid/os/Bundle;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)V
+	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
+	public fun create (Ljava/lang/Class;Landroidx/lifecycle/viewmodel/CreationExtras;)Landroidx/lifecycle/ViewModel;
+	public fun create (Lkotlin/reflect/KClass;Landroidx/lifecycle/viewmodel/CreationExtras;)Landroidx/lifecycle/ViewModel;
 }
 
 public final class money/vivid/elmslie/android/logger/DefaultLoggerConfigurationsKt {
@@ -58,10 +61,10 @@ public final class money/vivid/elmslie/android/processdeath/ProcessDeathDetector
 }
 
 public abstract interface class money/vivid/elmslie/android/renderer/ElmRendererDelegate {
-	public abstract fun handleEffect (Ljava/lang/Object;)Lkotlin/Unit;
-	public abstract fun mapList (Ljava/lang/Object;)Ljava/util/List;
+	public fun handleEffect (Ljava/lang/Object;)Lkotlin/Unit;
+	public fun mapList (Ljava/lang/Object;)Ljava/util/List;
 	public abstract fun render (Ljava/lang/Object;)V
-	public abstract fun renderList (Ljava/lang/Object;Ljava/util/List;)V
+	public fun renderList (Ljava/lang/Object;Ljava/util/List;)V
 }
 
 public final class money/vivid/elmslie/android/renderer/ElmRendererDelegate$DefaultImpls {

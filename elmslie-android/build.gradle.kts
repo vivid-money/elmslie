@@ -1,7 +1,6 @@
 plugins {
   id("elmslie.android-lib")
   id("elmslie.publishing")
-  alias(libs.plugins.binaryCompatibilityValidator)
 }
 
 android { namespace = "money.vivid.elmslie.android" }

@@ -9,22 +9,22 @@ import money.vivid.elmslie.core.logger.strategy.IgnoreLog
 import money.vivid.elmslie.core.store.StoreListener
 import money.vivid.elmslie.core.utils.ElmDispatcher
 
-object ElmslieConfig {
+public object ElmslieConfig {
 
   @Volatile
-  var logger: ElmslieLogger = ElmslieLogConfiguration().apply { always(IgnoreLog) }.build()
+  public var logger: ElmslieLogger = ElmslieLogConfiguration().apply { always(IgnoreLog) }.build()
     private set
 
   @Volatile
-  var elmDispatcher: CoroutineDispatcher = ElmDispatcher
+  public var elmDispatcher: CoroutineDispatcher = ElmDispatcher
     private set
 
   @Volatile
-  var shouldStopOnProcessDeath: Boolean = true
+  public var shouldStopOnProcessDeath: Boolean = true
     private set
 
   @Volatile
-  var globalStoreListeners: Set<StoreListener<Any, Any, Any, Any>> = emptySet()
+  public var globalStoreListeners: Set<StoreListener<Any, Any, Any, Any>> = emptySet()
     private set
 
   /**
@@ -39,7 +39,7 @@ object ElmslieConfig {
    * }
    * ```
    */
-  fun logger(config: (ElmslieLogConfiguration.() -> Unit)) {
+  public fun logger(config: (ElmslieLogConfiguration.() -> Unit)) {
     ElmslieLogConfiguration().apply(config).build().also { logger = it }
   }
 
@@ -47,15 +47,15 @@ object ElmslieConfig {
    * Configures CoroutineDispatcher for performing operations in background. Default is
    * [Dispatchers.Default]
    */
-  fun elmDispatcher(builder: () -> CoroutineDispatcher) {
+  public fun elmDispatcher(builder: () -> CoroutineDispatcher) {
     elmDispatcher = builder()
   }
 
-  fun shouldStopOnProcessDeath(builder: () -> Boolean) {
+  public fun shouldStopOnProcessDeath(builder: () -> Boolean) {
     shouldStopOnProcessDeath = builder()
   }
 
-  fun globalStoreListeners(builder: () -> Set<StoreListener<Any, Any, Any, Any>>) {
+  public fun globalStoreListeners(builder: () -> Set<StoreListener<Any, Any, Any, Any>>) {
     globalStoreListeners = builder()
   }
 }

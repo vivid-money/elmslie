@@ -4,13 +4,13 @@ import android.util.Log
 import money.vivid.elmslie.core.logger.strategy.LogStrategy
 
 /** Uses default android logging mechanism for reporting */
-object AndroidLog {
+public object AndroidLog {
 
-  val E = log(Log::e)
-  val W = log(Log::w)
-  val I = log(Log::i)
-  val D = log(Log::d)
-  val V = log(Log::v)
+  public val E: LogStrategy = log(Log::e)
+  public val W: LogStrategy = log(Log::w)
+  public val I: LogStrategy = log(Log::i)
+  public val D: LogStrategy = log(Log::d)
+  public val V: LogStrategy = log(Log::v)
 
   private fun log(log: (tag: String?, message: String?, throwable: Throwable?) -> Unit) =
     LogStrategy { _, tag, message, error ->

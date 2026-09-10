@@ -1,4 +1,6 @@
-import com.vanniktech.maven.publish.SonatypeHost
+import com.vanniktech.maven.publish.JavadocJar
+import com.vanniktech.maven.publish.KotlinMultiplatform
+import com.vanniktech.maven.publish.SourcesJar
 
 plugins { id("com.vanniktech.maven.publish") }
 
@@ -7,17 +9,36 @@ private val elmslieGitHubUrl = "https://github.com/vivid-money/elmslie"
 val publishingExtension =
   project.extensions.create("elmsliePublishing", PublishingExtension::class.java)
 
-val libraryGroup: String by project
-val libraryVersion: String by project
+val libraryGroup = providers.gradleProperty("libraryGroup")
+val libraryVersion = providers.gradleProperty("libraryVersion")
+
+val skipSigning =
+  providers.gradleProperty("elmslie.skipSigning").map(String::toBoolean).getOrElse(false)
+
+plugins.withId("org.jetbrains.kotlin.multiplatform") {
+  mavenPublishing {
+    configure(
+      KotlinMultiplatform(
+        javadocJar = JavadocJar.Dokka("dokkaGeneratePublicationHtml"),
+        sourcesJar = SourcesJar.Sources(),
+      )
+    )
+  }
+}
+
+tasks.withType<AbstractArchiveTask>().configureEach {
+  isPreserveFileTimestamps = false
+  isReproducibleFileOrder = true
+}
 
 afterEvaluate {
   val pom = publishingExtension.pom
   with(project.mavenPublishing) {
     checkPomRequiredFields(pom)
-    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
-    signAllPublications()
+    publishToMavenCentral()
+    if (!skipSigning) signAllPublications()
 
-    coordinates(libraryGroup, project.name, libraryVersion)
+    coordinates(libraryGroup.get(), project.name, libraryVersion.get())
 
     pom {
       name.set(pom.name)

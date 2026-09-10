@@ -30,7 +30,7 @@ internal class MainFragment : Fragment(R.layout.fragment_main), ElmRendererDeleg
   private val store by
     androidElmStore(saveState = { state -> putString(GENERATED_ID, state.generatedId) }) {
       storeFactory(
-        id = get(ARG)!!,
+        id = requireNotNull(get(ARG)),
         generatedId = get<Bundle>(StateBundleKey)?.getString(GENERATED_ID),
       )
     }

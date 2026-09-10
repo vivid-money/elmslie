@@ -2,7 +2,7 @@ package money.vivid.elmslie.core.store
 
 import kotlin.reflect.KClass
 
-abstract class ScreenReducer<
+public abstract class ScreenReducer<
   Event : Any,
   Ui : Any,
   Internal : Any,

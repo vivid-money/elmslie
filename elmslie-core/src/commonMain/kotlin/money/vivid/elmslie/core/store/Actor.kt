@@ -11,20 +11,21 @@ import kotlinx.coroutines.sync.withLock
 import money.vivid.elmslie.core.config.ElmslieConfig
 import money.vivid.elmslie.core.switcher.Switcher
 
-abstract class Actor<Command : Any, Event : Any> {
+public abstract class Actor<Command : Any, Event : Any> {
 
   private val switchers = mutableMapOf<Any, Switcher>()
   private val mutex = Mutex()
 
   /** Executes a command. This method is performed on the [ElmslieConfig.elmDispatcher]. */
-  abstract fun execute(command: Command): Flow<Event>
+  public abstract fun execute(command: Command): Flow<Event>
 
   protected fun <T : Any> Flow<T>.mapEvents(
     eventMapper: (T) -> Event? = { null },
     errorMapper: (error: Throwable) -> Event? = { null },
-  ) =
-    mapNotNull { eventMapper(it) }
-      .catch { it.logErrorEvent(errorMapper)?.let { event -> emit(event) } ?: throw it }
+  ): Flow<Event> = mapNotNull {
+    eventMapper(it)
+  }
+    .catch { it.logErrorEvent(errorMapper)?.let { event -> emit(event) } ?: throw it }
 
   /**
    * Extension function to switch the flow by a given key and optional delay. This function ensures

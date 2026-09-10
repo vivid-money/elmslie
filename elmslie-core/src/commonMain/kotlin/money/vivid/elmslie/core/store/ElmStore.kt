@@ -21,7 +21,7 @@ import money.vivid.elmslie.core.utils.resolveStoreKey
 
 @Suppress("TooGenericExceptionCaught")
 @OptIn(ExperimentalCoroutinesApi::class)
-class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
+public class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
   initialState: State,
   private val reducer: StateReducer<Event, State, Effect, Command>,
   private val actor: Actor<Command, out Event>,
@@ -43,7 +43,7 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
       storeListeners?.forEach(::add)
     }
 
-  override val scope = ElmScope("${key}Scope")
+  override val scope: CoroutineScope = ElmScope("${key}Scope")
 
   override val states: StateFlow<State> = statesFlow.asStateFlow()
 
@@ -108,5 +108,5 @@ class ElmStore<Event : Any, State : Any, Effect : Any, Command : Any>(
   }
 }
 
-fun <Event : Any, State : Any, Effect : Any> Store<Event, State, Effect>.toCachedStore() =
-  EffectCachingElmStore(this)
+public fun <Event : Any, State : Any, Effect : Any> Store<Event, State, Effect>.toCachedStore():
+  EffectCachingElmStore<Event, Effect, State> = EffectCachingElmStore(this)

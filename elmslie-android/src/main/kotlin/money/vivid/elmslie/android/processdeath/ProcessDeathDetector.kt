@@ -4,12 +4,12 @@ import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 
-object ProcessDeathDetector {
+public object ProcessDeathDetector {
 
   private var isFirstStart = true
 
   /** Will be true in one onCreate..onResume cycle */
-  var isRestoringAfterProcessDeath = false
+  public var isRestoringAfterProcessDeath: Boolean = false
     private set
 
   internal fun init(app: Application) {
