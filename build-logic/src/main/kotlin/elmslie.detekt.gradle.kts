@@ -1,18 +1,20 @@
-@file:Suppress("UnstableApiUsage")
+import dev.detekt.gradle.Detekt
 
-import io.gitlab.arturbosch.detekt.Detekt
-
-plugins { id("io.gitlab.arturbosch.detekt") }
+plugins { id("dev.detekt") }
 
 detekt {
   parallel = true
-  config.setFrom("$rootDir/detekt/detekt.yml")
+  buildUponDefaultConfig = true
+  config.setFrom(rootProject.layout.projectDirectory.file("detekt/detekt.yml"))
 }
 
-tasks.withType<Detekt> {
-  reports {
-    html.required.set(true)
-    xml.required.set(false)
-    txt.required.set(false)
+tasks.withType<Detekt> { reports { html.required.set(true) } }
+
+val detektAll =
+  tasks.register("detektAll") {
+    group = "verification"
+    description = "Runs detekt over every source set of this module."
+    dependsOn(tasks.withType<Detekt>())
   }
-}
+
+plugins.withId("base") { tasks.named("check") { dependsOn(detektAll) } }

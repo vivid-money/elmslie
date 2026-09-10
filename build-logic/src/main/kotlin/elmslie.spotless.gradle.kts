@@ -1,7 +1,14 @@
 plugins { id("com.diffplug.spotless") }
 
+val ktfmtVersion =
+  extensions
+    .getByType<VersionCatalogsExtension>()
+    .named("libs")
+    .findVersion("ktfmt")
+    .get()
+    .requiredVersion
+
 spotless {
-  val ktfmtVersion = "0.53"
   kotlin {
     ktfmt(ktfmtVersion).googleStyle()
     target("src/**/*.kt")
