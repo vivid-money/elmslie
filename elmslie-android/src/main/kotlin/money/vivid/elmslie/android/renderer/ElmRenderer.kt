@@ -53,8 +53,7 @@ internal class ElmRenderer<Effect : Any, State : Any>(
     }
   }
 
-  private fun mapListItems(state: State) =
-    catchStateErrors { delegate.mapList(state) } ?: emptyList()
+  private fun mapListItems(state: State) = catchStateErrors { delegate.mapList(state) }.orEmpty()
 
   @Suppress("TooGenericExceptionCaught")
   private fun <T> catchStateErrors(action: () -> T?) =

@@ -7,7 +7,7 @@ import money.vivid.elmslie.core.logger.LogSeverity
 import money.vivid.elmslie.core.logger.strategy.LogStrategy
 
 /** Strategy that performs a crash on every log event it receives. Use wisely. */
-object Crash : LogStrategy {
+public object Crash : LogStrategy {
 
   private val errorHandler = Handler(Looper.getMainLooper()) { throw it.obj as Throwable }
 

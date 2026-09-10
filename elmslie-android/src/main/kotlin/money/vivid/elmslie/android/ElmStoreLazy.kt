@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.savedstate.SavedStateRegistryOwner
+import money.vivid.elmslie.core.store.EffectCachingElmStore
 import money.vivid.elmslie.core.store.Store
 import money.vivid.elmslie.core.store.toCachedStore
 
@@ -19,7 +20,7 @@ import money.vivid.elmslie.core.store.toCachedStore
  * SavedStateHandle.get<Bundle>(StateBundleKey)
  */
 @MainThread
-fun <Event : Any, Effect : Any, State : Any> Fragment.elmStore(
+public fun <Event : Any, Effect : Any, State : Any> Fragment.elmStore(
   key: String = this::class.java.canonicalName ?: this::class.java.simpleName,
   viewModelStoreOwner: () -> ViewModelStoreOwner = { this },
   savedStateRegistryOwner: () -> SavedStateRegistryOwner = { this },
@@ -41,7 +42,7 @@ fun <Event : Any, Effect : Any, State : Any> Fragment.elmStore(
  * SavedStateHandle.get<Bundle>(StateBundleKey)
  */
 @MainThread
-fun <Event : Any, Effect : Any, State : Any> ComponentActivity.elmStore(
+public fun <Event : Any, Effect : Any, State : Any> ComponentActivity.elmStore(
   key: String = this::class.java.canonicalName ?: this::class.java.simpleName,
   viewModelStoreOwner: () -> ViewModelStoreOwner = { this },
   savedStateRegistryOwner: () -> SavedStateRegistryOwner = { this },
@@ -81,13 +82,14 @@ internal fun <Event : Any, Effect : Any, State : Any> elmStore(
     provider[key, RetainedElmStore::class.java].store as Store<Event, Effect, State>
   }
 
-class RetainedElmStore<Event : Any, Effect : Any, State : Any>(
+public class RetainedElmStore<Event : Any, Effect : Any, State : Any>(
   savedStateHandle: SavedStateHandle,
   storeFactory: SavedStateHandle.() -> Store<Event, Effect, State>,
   saveState: Bundle.(State) -> Unit,
 ) : ViewModel() {
 
-  val store = storeFactory.invoke(savedStateHandle).toCachedStore().also { it.start() }
+  public val store: EffectCachingElmStore<Event, State, Effect> =
+    storeFactory.invoke(savedStateHandle).toCachedStore().also { it.start() }
 
   init {
     savedStateHandle.setSavedStateProvider(StateBundleKey) {
@@ -99,13 +101,13 @@ class RetainedElmStore<Event : Any, Effect : Any, State : Any>(
     store.stop()
   }
 
-  companion object {
+  public companion object {
 
-    const val StateBundleKey = "elm_store_state_bundle"
+    public const val StateBundleKey: String = "elm_store_state_bundle"
   }
 }
 
-class RetainedElmStoreFactory<Event : Any, Effect : Any, State : Any>(
+public class RetainedElmStoreFactory<Event : Any, Effect : Any, State : Any>(
   stateRegistryOwner: SavedStateRegistryOwner,
   defaultArgs: Bundle,
   private val storeFactory: SavedStateHandle.() -> Store<Event, Effect, State>,

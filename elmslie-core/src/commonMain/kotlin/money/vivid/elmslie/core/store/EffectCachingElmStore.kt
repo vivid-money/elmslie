@@ -20,7 +20,7 @@ import money.vivid.elmslie.core.ElmScope
  * ```
  */
 // TODO Should be moved to android artifact?
-class EffectCachingElmStore<Event : Any, State : Any, Effect : Any>(
+public class EffectCachingElmStore<Event : Any, State : Any, Effect : Any>(
   private val elmStore: Store<Event, Effect, State>
 ) : Store<Event, Effect, State> by elmStore {
 
@@ -46,13 +46,12 @@ class EffectCachingElmStore<Event : Any, State : Any, Effect : Any>(
     storeScope.cancel()
   }
 
-  override val effects: Flow<Effect> =
-    effectsFlow.onSubscription {
-      effectsMutex.withLock {
-        for (effect in effectsCache) {
-          emit(effect)
-        }
-        effectsCache.clear()
+  override val effects: Flow<Effect> = effectsFlow.onSubscription {
+    effectsMutex.withLock {
+      for (effect in effectsCache) {
+        emit(effect)
       }
+      effectsCache.clear()
     }
+  }
 }

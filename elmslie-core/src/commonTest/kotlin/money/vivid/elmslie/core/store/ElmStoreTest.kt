@@ -55,8 +55,10 @@ class ElmStoreTest {
   fun `Should stop getting state updates when the store is stopped`() = runTest {
     val actor =
       object : Actor<Command, Event>() {
-        override fun execute(command: Command): Flow<Event> =
-          flow { emit(Event()) }.onEach { delay(1000) }
+        override fun execute(command: Command): Flow<Event> = flow {
+          emit(Event())
+        }
+          .onEach { delay(1000) }
       }
 
     val store =

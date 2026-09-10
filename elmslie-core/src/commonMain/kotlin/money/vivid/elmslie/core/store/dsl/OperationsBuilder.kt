@@ -3,11 +3,11 @@ package money.vivid.elmslie.core.store.dsl
 @DslMarker internal annotation class OperationsBuilderDsl
 
 @OperationsBuilderDsl
-class OperationsBuilder<T : Any> {
+public class OperationsBuilder<T : Any> {
 
   private val list = mutableListOf<T>()
 
-  operator fun T?.unaryPlus() {
+  public operator fun T?.unaryPlus() {
     this?.let(list::add)
   }
 

@@ -7,7 +7,7 @@ import kotlinx.coroutines.SupervisorJob
 import money.vivid.elmslie.core.config.ElmslieConfig
 
 @Suppress("detekt.FunctionNaming")
-fun ElmScope(name: String): CoroutineScope =
+public fun ElmScope(name: String): CoroutineScope =
   CoroutineScope(
     context =
       ElmslieConfig.elmDispatcher +

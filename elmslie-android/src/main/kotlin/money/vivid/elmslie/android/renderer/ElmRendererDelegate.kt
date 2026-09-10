@@ -16,14 +16,14 @@ import money.vivid.elmslie.android.elmStore
 import money.vivid.elmslie.core.store.Store
 
 @Suppress("OptionalUnit")
-interface ElmRendererDelegate<Effect : Any, State : Any> {
-  fun render(state: State)
+public interface ElmRendererDelegate<Effect : Any, State : Any> {
+  public fun render(state: State)
 
-  fun handleEffect(effect: Effect): Unit? = Unit
+  public fun handleEffect(effect: Effect): Unit? = Unit
 
-  fun mapList(state: State): List<Any> = emptyList()
+  public fun mapList(state: State): List<Any> = emptyList()
 
-  fun renderList(state: State, list: List<Any>): Unit = Unit
+  public fun renderList(state: State, list: List<Any>): Unit = Unit
 }
 
 /**
@@ -40,7 +40,8 @@ interface ElmRendererDelegate<Effect : Any, State : Any> {
  */
 @Suppress("LongParameterList")
 @MainThread
-fun <Event : Any, Effect : Any, State : Any> ElmRendererDelegate<Effect, State>.androidElmStore(
+public fun <Event : Any, Effect : Any, State : Any> ElmRendererDelegate<Effect, State>
+  .androidElmStore(
   key: String = this::class.java.canonicalName ?: this::class.java.simpleName,
   defaultArgs: () -> Bundle = {
     val args =
@@ -68,7 +69,8 @@ fun <Event : Any, Effect : Any, State : Any> ElmRendererDelegate<Effect, State>.
 
 @Suppress("LongParameterList")
 @MainThread
-fun <Event : Any, Effect : Any, State : Any> ElmRendererDelegate<Effect, State>.androidElmStore(
+public fun <Event : Any, Effect : Any, State : Any> ElmRendererDelegate<Effect, State>
+  .androidElmStore(
   key: String = this::class.java.canonicalName ?: this::class.java.simpleName,
   viewModelStoreOwner: () -> ViewModelStoreOwner,
   savedStateRegistryOwner: () -> SavedStateRegistryOwner,
